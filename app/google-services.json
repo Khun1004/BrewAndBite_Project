@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "472557613578",
+    "firebase_url": "https://coffeeonlineshop-ce1f4-default-rtdb.firebaseio.com",
+    "project_id": "coffeeonlineshop-ce1f4",
+    "storage_bucket": "coffeeonlineshop-ce1f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472557613578:android:ba9b5bd97f45c8649965f3",
+        "android_client_info": {
+          "package_name": "com.example.coffeeonlineshop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472557613578:android:5724b1329f3dd9969965f3",
+        "android_client_info": {
+          "package_name": "com.example.mycoffeeonlineshopapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
