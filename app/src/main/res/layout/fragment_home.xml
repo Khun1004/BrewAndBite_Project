@@ -1,375 +1,420 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Home 탭 화면 -->
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Home 탭 화면: 위쪽 헤더는 고정, 아래 내용만 스크롤 -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
+    android:id="@+id/homeRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bb_cream"
-    android:fillViewport="true"
     tools:context=".home.HomeFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- ① 고정 헤더: 진한 커피색 그라데이션 (상태바 아래까지 이어짐) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerBox"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="32dp">
+        android:background="@drawable/bg_home_header"
+        android:elevation="4dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="44dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- ① 헤더: 진한 커피색 그라데이션 (상태바 아래까지 이어짐) -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/headerBox"
+        <!-- 장식: 위에서 본 커피잔 모양의 동그라미들 -->
+        <ImageView
+            android:id="@+id/decoRings"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/bg_header_rings"
+            android:translationX="80dp"
+            android:translationY="-40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 프로필 + 인사말 + 찜 + 알림 -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageProfile"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:contentDescription="@string/nav_my"
+            android:padding="2dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/profile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.BrewBite.Circle"
+            app:strokeColor="@color/bb_nav_active"
+            app:strokeWidth="2dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
+            app:layout_constraintEnd_toStartOf="@+id/buttonFavorite"
+            app:layout_constraintStart_toEndOf="@+id/imageProfile"
+            app:layout_constraintTop_toTopOf="@+id/imageProfile">
+
+            <TextView
+                android:id="@+id/textGreeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bb_beige"
+                android:textSize="12sp"
+                tools:text="좋은 오후예요 🌤️" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_question"
+                android:textColor="@color/bb_cream"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/buttonFavorite"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="@string/nav_favorite"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/favorite_white"
+            app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
+            app:layout_constraintEnd_toStartOf="@+id/buttonBell"
+            app:layout_constraintTop_toTopOf="@+id/imageProfile"
+            app:tint="@color/bb_cream" />
+
+        <ImageView
+            android:id="@+id/buttonBell"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="@null"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/bell_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageProfile"
+            app:tint="@color/bb_cream" />
+
+        <!-- 브랜드 -->
+        <TextView
+            android:id="@+id/textEyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:letterSpacing="0.25"
+            android:text="@string/header_eyebrow"
+            android:textColor="@color/bb_nav_active"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+
+        <TextView
+            android:id="@+id/textBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/stash"
+            android:letterSpacing="0.03"
+            android:text="@string/brand_name"
+            android:textColor="@color/bb_cream"
+            android:textSize="40sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textEyebrow" />
+
+        <TextView
+            android:id="@+id/textTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/brand_tagline"
+            android:textColor="@color/bb_beige"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textBrand" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ② 검색: 헤더 아래 경계선에 반쯤 걸쳐 있음 (헤더와 함께 고정) -->
+    <LinearLayout
+        android:id="@+id/searchRow"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/headerBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerBox">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="6dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/search_icon"
+                    app:tint="@color/bb_muted" />
+
+                <EditText
+                    android:id="@+id/editSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:autofillHints=""
+                    android:background="@null"
+                    android:hint="@string/search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/bb_espresso"
+                    android:textColorHint="@color/bb_muted"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageView
+            android:id="@+id/buttonFilter"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_filter_button"
+            android:contentDescription="@null"
+            android:elevation="6dp"
+            android:padding="16dp"
+            android:src="@drawable/settings" />
+    </LinearLayout>
+
+    <!-- ③ 스크롤되는 내용 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchRow">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_home_header"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="56dp">
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
 
-            <!-- 장식: 위에서 본 커피잔 모양의 동그라미들 -->
-            <ImageView
-                android:id="@+id/decoRings"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/bg_header_rings"
-                android:translationX="90dp"
-                android:translationY="-20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- 프로필 + 인사말 + 찜 + 알림 -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/imageProfile"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:contentDescription="@string/nav_my"
-                android:padding="2dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearance.BrewBite.Circle"
-                app:strokeColor="@color/bb_nav_active"
-                app:strokeWidth="2dp" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
-                app:layout_constraintEnd_toStartOf="@+id/buttonFavorite"
-                app:layout_constraintStart_toEndOf="@+id/imageProfile"
-                app:layout_constraintTop_toTopOf="@+id/imageProfile">
-
-                <TextView
-                    android:id="@+id/textGreeting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/bb_beige"
-                    android:textSize="12sp"
-                    tools:text="좋은 오후예요 🌤️" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_question"
-                    android:textColor="@color/bb_cream"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/buttonFavorite"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_header_button"
-                android:contentDescription="@string/nav_favorite"
-                android:padding="11dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/favorite_white"
-                app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
-                app:layout_constraintEnd_toStartOf="@+id/buttonBell"
-                app:layout_constraintTop_toTopOf="@+id/imageProfile"
-                app:tint="@color/bb_cream" />
-
-            <ImageView
-                android:id="@+id/buttonBell"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:background="@drawable/bg_header_button"
-                android:contentDescription="@null"
-                android:padding="11dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/bell_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/imageProfile"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/imageProfile"
-                app:tint="@color/bb_cream" />
-
-            <!-- 브랜드 -->
-            <TextView
-                android:id="@+id/textEyebrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:letterSpacing="0.25"
-                android:text="@string/header_eyebrow"
-                android:textColor="@color/bb_nav_active"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
-
-            <TextView
-                android:id="@+id/textBrand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/stash"
-                android:letterSpacing="0.03"
-                android:text="@string/brand_name"
-                android:textColor="@color/bb_cream"
-                android:textSize="44sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textEyebrow" />
-
-            <TextView
-                android:id="@+id/textTagline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/brand_tagline"
-                android:textColor="@color/bb_beige"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textBrand" />
-
-            <!-- 오늘의 추천 -->
+            <!-- 오늘의 추천 카드 -->
             <LinearLayout
                 android:id="@+id/todayPick"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:background="@drawable/bg_pill_glass"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/bg_today_card"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingVertical="8dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="14dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textTagline">
+                android:padding="14dp">
 
-                <TextView
-                    android:id="@+id/textTodayEmoji"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    tools:text="🍯" />
+                <FrameLayout
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/bg_plate">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="@string/today_pick_label"
-                    android:textColor="@color/bb_nav_active"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textTodayPick"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:textColor="@color/bb_cream"
-                    android:textSize="13sp"
-                    tools:text="Caramel Macchiato · 5,800원" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:text="›"
-                    android:textColor="@color/bb_nav_active"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- ② 검색: 헤더 아래쪽에 반쯤 걸쳐 있음 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-28dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="6dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="6dp"
-                app:strokeWidth="0dp">
+                    <TextView
+                        android:id="@+id/textTodayEmoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="30sp"
+                        tools:text="🍯" />
+                </FrameLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/search_icon"
-                        app:tint="@color/bb_muted" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.1"
+                        android:text="@string/today_pick_label"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-                    <EditText
-                        android:id="@+id/editSearch"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:autofillHints=""
-                        android:background="@null"
-                        android:hint="@string/search_hint"
-                        android:imeOptions="actionSearch"
-                        android:inputType="text"
+                    <TextView
+                        android:id="@+id/textTodayName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/bb_espresso"
-                        android:textColorHint="@color/bb_muted"
-                        android:textSize="14sp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Caramel Macchiato" />
+
+                    <TextView
+                        android:id="@+id/textTodayPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="13sp"
+                        tools:text="5,800원" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <ImageView
-                android:id="@+id/buttonFilter"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/bg_filter_button"
-                android:contentDescription="@null"
-                android:elevation="6dp"
-                android:padding="16dp"
-                android:src="@drawable/settings" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip_selected"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="7dp"
+                    android:text="@string/today_pick_go"
+                    android:textColor="@color/bb_nav_active"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-        <!-- 카테고리 (3 x 2) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/section_category"
-            android:textColor="@color/bb_espresso"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="false"
-            android:paddingHorizontal="15dp"
-            tools:itemCount="6"
-            tools:listitem="@layout/item_category" />
-
-        <!-- 인기 메뉴 (가로 스크롤) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp">
-
+            <!-- 카테고리 (3 x 2) -->
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/section_popular"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/section_category"
                 android:textColor="@color/bb_espresso"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textSeeAll"
-                android:layout_width="wrap_content"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerCategory"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:text="@string/see_all"
-                android:textColor="@color/bb_brown"
-                android:textSize="13sp" />
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="15dp"
+                tools:itemCount="6"
+                tools:listitem="@layout/item_category" />
+
+            <!-- 인기 메뉴 (가로 스크롤) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/section_popular"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textSeeAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="@string/see_all"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerPopular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp"
+                tools:listitem="@layout/item_popular" />
+
+            <!-- 추천 메뉴 (선택한 카테고리 / 검색 결과) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
+
+                <TextView
+                    android:id="@+id/textRecommendTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="추천 메뉴 · Coffee" />
+
+                <TextView
+                    android:id="@+id/textRecommendSeeAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="@string/see_all"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="20dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_menu" />
+
+            <TextView
+                android:id="@+id/textEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingVertical="32dp"
+                android:text="@string/empty_result"
+                android:textColor="@color/bb_muted"
+                android:visibility="gone" />
+
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerPopular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="false"
-            android:orientation="horizontal"
-            android:paddingHorizontal="14dp"
-            tools:listitem="@layout/item_popular" />
-
-        <!-- 추천 메뉴 (선택한 카테고리 / 검색 결과) -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp">
-
-            <TextView
-                android:id="@+id/textRecommendTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/bb_espresso"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:text="추천 메뉴 · Coffee" />
-
-            <TextView
-                android:id="@+id/textRecommendSeeAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="4dp"
-                android:text="@string/see_all"
-                android:textColor="@color/bb_brown"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:nestedScrollingEnabled="false"
-            android:paddingHorizontal="20dp"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_menu" />
-
-        <TextView
-            android:id="@+id/textEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="32dp"
-            android:text="@string/empty_result"
-            android:textColor="@color/bb_muted"
-            android:visibility="gone" />
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

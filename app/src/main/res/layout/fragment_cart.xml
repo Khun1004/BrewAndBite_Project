@@ -9,61 +9,65 @@
     android:background="@color/bb_cream"
     tools:context=".cart.CartFragment">
 
-    <!-- 상단: 제목 + 전체 삭제 -->
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <!-- 공통 헤더 (Cart / Store / Order / My Page 동일) -->
+    <include
+        android:id="@+id/pageHeader"
+        layout="@layout/layout_page_header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/titleBox"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cart_title"
-            android:textColor="@color/bb_espresso"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/bb_muted"
-            android:textSize="12sp"
-            tools:text="3개 메뉴" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textClear"
-        android:layout_width="wrap_content"
+    <!-- 헤더 아래 줄: 담은 메뉴 수 + 전체 삭제 -->
+    <LinearLayout
+        android:id="@+id/cartToolbar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:padding="6dp"
-        android:text="@string/cart_clear"
-        android:textColor="@color/bb_brown"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="@+id/titleBox"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/titleBox" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader">
+
+        <TextView
+            android:id="@+id/textItemCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="담은 메뉴 3개" />
+
+        <TextView
+            android:id="@+id/textClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="7dp"
+            android:text="@string/cart_clear"
+            android:textColor="@color/bb_brown"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <!-- 담은 메뉴 목록 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCart"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
         android:paddingBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/summaryBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleBox"
+        app:layout_constraintTop_toBottomOf="@+id/cartToolbar"
         tools:itemCount="3"
         tools:listitem="@layout/item_cart" />
 
@@ -78,7 +82,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader">
 
         <TextView
             android:layout_width="wrap_content"

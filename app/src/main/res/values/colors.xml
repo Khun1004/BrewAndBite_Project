@@ -22,6 +22,12 @@
     <color name="bb_nav_inactive">#A08B7C</color>
     <color name="bb_nav_active">#EEB388</color>
 
+    <!-- 영업 상태 -->
+    <color name="bb_open">#2F9E5B</color>
+    <color name="bb_open_bg">#E1F2E7</color>
+    <color name="bb_closed">#C9503F</color>
+    <color name="bb_closed_bg">#F7E3DF</color>
+
     <!-- 홈 헤더 -->
     <color name="bb_header_start">#4A3326</color>
     <color name="bb_header_end">#1E130D</color>

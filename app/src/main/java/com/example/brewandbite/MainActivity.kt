@@ -1,5 +1,7 @@
 package com.example.brewandbite
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.os.Bundle
@@ -54,7 +56,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupBottomNav()
-        showTab(savedInstanceState?.getInt(KEY_TAB, TAB_HOME) ?: TAB_HOME)
+        val startTab = savedInstanceState?.getInt(KEY_TAB, TAB_HOME)
+            ?: intent.getIntExtra(EXTRA_TAB, TAB_HOME)
+        showTab(startTab)
+    }
+
+    /** 이미 열려 있을 때 다른 화면에서 openTab()으로 돌아오면 여기로 들어온다 */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.hasExtra(EXTRA_TAB)) showTab(intent.getIntExtra(EXTRA_TAB, TAB_HOME))
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -112,9 +123,8 @@ class MainActivity : AppCompatActivity() {
         currentTab = index
         updateTabUi(index)
 
-        // 홈은 헤더가 어두워서 상태바 글자를 밝게, 나머지 탭은 어둡게
-        WindowCompat.getInsetsController(window, window.decorView)
-            .isAppearanceLightStatusBars = index != TAB_HOME
+        // 모든 탭의 헤더가 어두운 커피색이라 상태바 글자(시계·배터리)는 항상 밝게
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
     }
 
     private fun createTabFragment(index: Int): Fragment = when (index) {
@@ -179,5 +189,15 @@ class MainActivity : AppCompatActivity() {
         const val TAB_MY = 4
 
         private const val KEY_TAB = "current_tab"
+        private const val EXTRA_TAB = "extra_tab"
+
+        /** 다른 화면(예: 메뉴 목록)에서 특정 탭으로 돌아가기 */
+        fun openTab(context: Context, tab: Int) {
+            context.startActivity(
+                Intent(context, MainActivity::class.java)
+                    .putExtra(EXTRA_TAB, tab)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            )
+        }
     }
 }

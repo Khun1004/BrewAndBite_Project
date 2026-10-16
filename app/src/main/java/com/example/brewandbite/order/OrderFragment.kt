@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.R
+import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentOrderBinding
 
 /**
- * Order 탭 (빈 화면 · 팀원 작업 공간)
+ * Order 탭 (헤더 아래는 빈 화면 · 팀원 작업 공간)
+ * 헤더는 공통 헤더(layout_page_header.xml)라서 따로 만들 필요 없음
  *
  * 이미 연결되어 있는 곳:
  *  - 하단 탭 바의 Order 탭 → 이 화면
@@ -34,7 +36,11 @@ class OrderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.orderRoot.applyStatusBarPadding()
+        // 공통 헤더 (Cart / Store / My Page와 같은 모양)
+        binding.pageHeader.setup(
+            R.string.header_order_eyebrow, R.string.header_order_title, "🧾",
+            getString(R.string.header_order_subtitle)
+        )
 
         // TODO (팀원): 여기부터 Order 화면 코드를 작성하세요
     }

@@ -13,9 +13,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
 import com.example.brewandbite.cart.CartManager
-import com.example.brewandbite.MainActivity
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.data.Category
 import com.example.brewandbite.data.MenuItem
@@ -25,7 +25,7 @@ import com.example.brewandbite.databinding.FragmentHomeBinding
 import com.example.brewandbite.menu.MenuListActivity
 import java.util.Calendar
 
-/** Home 탭: 헤더 + 검색 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
+/** Home 탭: 고정 헤더 + 검색 / 스크롤: 오늘의 추천 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 헤더가 상태바 아래까지 이어지도록, 헤더 안쪽에만 상태바 높이만큼 여백
+        // 헤더가 상태바 아래까지 이어지도록, 헤더 안쪽에만 상태바 높이만큼 여백 (헤더는 스크롤해도 고정)
         binding.headerBox.applyStatusBarPadding()
 
         setupHeader()
@@ -87,11 +87,12 @@ class HomeFragment : Fragment() {
             binding.textBrand.text = spannable
         }
 
-        // 오늘의 추천: 날짜마다 다른 메뉴 하나
+        // 오늘의 추천 카드: 날짜마다 다른 메뉴 하나
         val all = MenuRepository.menuItems
         val today = all[Calendar.getInstance().get(Calendar.DAY_OF_YEAR) % all.size]
         binding.textTodayEmoji.text = today.emoji
-        binding.textTodayPick.text = getString(R.string.today_pick_value, today.name, today.price.toWon())
+        binding.textTodayName.text = today.name
+        binding.textTodayPrice.text = today.price.toWon()
         binding.todayPick.setOnClickListener { MenuListActivity.start(requireContext(), today.categoryId) }
 
         binding.imageProfile.setOnClickListener { (requireActivity() as MainActivity).showTab(MainActivity.TAB_MY) }

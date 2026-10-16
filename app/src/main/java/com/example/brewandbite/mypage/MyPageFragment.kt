@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.R
+import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentMypageBinding
 
 /** My Page 탭 (준비 중) */
@@ -21,7 +22,11 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.mypageRoot.applyStatusBarPadding()
+        // 공통 헤더 (Cart / Store / Order와 같은 모양)
+        binding.pageHeader.setup(
+            R.string.header_my_eyebrow, R.string.header_my_title, "👤",
+            getString(R.string.header_my_subtitle)
+        )
 
         // TODO: 화면 내용을 여기에 작성
     }

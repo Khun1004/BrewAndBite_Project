@@ -27,6 +27,57 @@
     <string name="header_eyebrow">COFFEE · DRINKS · FOOD</string>
     <string name="today_pick_label">오늘의 추천</string>
     <string name="today_pick_value">%1$s · %2$s</string>
+    <string name="today_pick_go">보러 가기 ›</string>
+    <string name="cart_eyebrow">MY CART</string>
+    <string name="cart_header_summary">%1$d개 메뉴 · %2$s</string>
+    <string name="menu_eyebrow">BREW &amp; BITE MENU</string>
+
+    <!-- 탭 공통 헤더 -->
+    <string name="header_cart_title">Cart</string>
+    <string name="header_store_eyebrow">OUR STORE</string>
+    <string name="header_store_title">Store</string>
+    <string name="header_store_subtitle">매장 정보</string>
+    <string name="header_order_eyebrow">MY ORDERS</string>
+    <string name="header_order_title">Order</string>
+    <string name="header_order_subtitle">주문하기 · 주문 내역</string>
+    <string name="header_my_eyebrow">MY PAGE</string>
+    <string name="header_my_title">My Page</string>
+    <string name="header_my_subtitle">회원 정보 · 주문 기록</string>
+
+    <!-- Store 화면 -->
+    <string name="store_open_now">지금 영업 중</string>
+    <string name="store_closed_now">지금은 영업 시간이 아니에요</string>
+    <string name="store_closes_at">%1$s에 영업을 마쳐요</string>
+    <string name="store_opens_at">오늘은 %1$s에 문을 열어요</string>
+    <string name="store_closed_today">오늘 영업은 끝났어요 · 내일 또 만나요</string>
+    <string name="store_today_hours">오늘 %1$s – %2$s</string>
+    <string name="store_name_eyebrow">OUR NAME</string>
+    <string name="store_brew_meaning">우려내다 · 추출하다</string>
+    <string name="store_brew_items">커피 · 라떼 · 차</string>
+    <string name="store_bite_meaning">한입 · 가볍게 먹는 음식</string>
+    <string name="store_bite_items">디저트 · 베이커리 · 식사</string>
+    <string name="store_name_summary">한 잔의 음료와 한입의 음식</string>
+    <string name="store_section_info">매장 정보</string>
+    <string name="store_label_address">주소</string>
+    <string name="store_label_phone">전화</string>
+    <string name="store_copy">복사</string>
+    <string name="store_map">지도</string>
+    <string name="store_call">전화 걸기</string>
+    <string name="store_copied">주소를 복사했어요</string>
+    <string name="store_no_map_app">지도 앱을 찾을 수 없어요</string>
+    <string name="store_no_phone_app">전화 앱을 찾을 수 없어요</string>
+    <string name="store_section_hours">운영 시간</string>
+    <string name="store_today">오늘</string>
+    <string name="store_hours_value">%1$s – %2$s</string>
+    <string name="store_section_delivery">배달 정보</string>
+    <string name="store_delivery_ok">배달 가능</string>
+    <string name="store_delivery_no">배달 불가</string>
+    <string name="store_delivery_area">배달 지역</string>
+    <string name="store_delivery_min">최소 주문</string>
+    <string name="store_delivery_fee">배달비</string>
+    <string name="store_delivery_time">예상 시간</string>
+    <string name="store_delivery_fee_value">%1$s · %2$s 이상 무료</string>
+    <string name="store_section_service">매장 서비스</string>
 
     <!-- 준비 중인 탭 -->
     <string name="store_title">매장 정보</string>
@@ -45,6 +96,7 @@
     <string name="cart_title">장바구니</string>
     <string name="cart_menu_count">%1$d개 메뉴</string>
     <string name="cart_clear">전체 삭제</string>
+    <string name="cart_item_count">담은 메뉴 %1$d개</string>
     <string name="cart_clear_title">장바구니를 비울까요?</string>
     <string name="cart_clear_message">담은 메뉴가 모두 삭제돼요.</string>
     <string name="cart_clear_ok">비우기</string>

@@ -8,50 +8,135 @@
     android:background="@color/bb_cream"
     tools:context=".menu.MenuListActivity">
 
-    <!-- 상단 바: 뒤로가기 + 제목 -->
-    <ImageView
-        android:id="@+id/buttonBack"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_circle_button"
-        android:contentDescription="@string/back"
-        android:padding="13dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/bb_espresso" />
-
-    <LinearLayout
-        android:id="@+id/titleBox"
+    <!-- 고정 헤더: 뒤로가기 + 장바구니 / 카테고리 제목 (상태바 아래까지 이어짐) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
+        android:background="@drawable/bg_home_header"
+        android:elevation="4dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="26dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonBack">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/decoRings"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/bg_header_rings"
+            android:translationX="70dp"
+            android:translationY="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/buttonBack"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="@string/back"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/bb_cream" />
+
+        <!-- 장바구니 버튼 + 수량 뱃지 -->
+        <FrameLayout
+            android:id="@+id/buttonCart"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:clickable="true"
+            android:contentDescription="@string/nav_cart"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/buttonBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/buttonBack">
+
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="bottom|start"
+                android:background="@drawable/bg_header_button"
+                android:importantForAccessibility="no"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/btn_2"
+                app:tint="@color/bb_cream" />
+
+            <TextView
+                android:id="@+id/badgeCart"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_badge"
+                android:gravity="center"
+                android:minWidth="18dp"
+                android:paddingHorizontal="4dp"
+                android:textColor="@color/bb_espresso"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="3"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textEyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:letterSpacing="0.25"
+            android:text="@string/menu_eyebrow"
+            android:textColor="@color/bb_nav_active"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
 
         <TextView
             android:id="@+id/textTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/bb_espresso"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/stash"
+            android:maxLines="1"
+            android:textColor="@color/bb_cream"
+            android:textSize="36sp"
+            app:layout_constraintEnd_toStartOf="@+id/textCategoryEmoji"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textEyebrow"
             tools:text="Coffee" />
 
         <TextView
             android:id="@+id/textSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/bb_muted"
-            android:textSize="12sp"
+            android:textColor="@color/bb_beige"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textTitle"
             tools:text="커피 · 10개 메뉴" />
-    </LinearLayout>
+
+        <!-- 카테고리 이모지 (유리 원 안) -->
+        <TextView
+            android:id="@+id/textCategoryEmoji"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_header_button"
+            android:gravity="center"
+            android:textSize="30sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textSubtitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textEyebrow"
+            tools:text="☕" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- 카테고리 칩 (가로 스크롤) -->
     <androidx.recyclerview.widget.RecyclerView
@@ -64,7 +149,7 @@
         android:paddingHorizontal="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonBack"
+        app:layout_constraintTop_toBottomOf="@+id/headerBox"
         tools:listitem="@layout/item_chip" />
 
     <!-- 메뉴 2열 그리드 -->

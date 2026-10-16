@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
-import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.common.setup
 import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.FragmentCartBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,7 +32,8 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.cartRoot.applyStatusBarPadding()
+        // 공통 헤더: MY CART / Cart / 🛒  (부제는 refresh()에서 메뉴 수·총액으로)
+        binding.pageHeader.setup(R.string.cart_eyebrow, R.string.header_cart_title, "🛒")
 
         cartAdapter = CartAdapter(
             onIncrease = { item -> CartManager.increase(item.menuId) },
@@ -47,6 +48,7 @@ class CartFragment : Fragment() {
 
         // 비어 있을 때 '메뉴 보러 가기' → Home 탭
         binding.buttonGoMenu.setOnClickListener { mainActivity().showTab(MainActivity.TAB_HOME) }
+        // 헤더 아래 줄의 전체 삭제 버튼
         binding.textClear.setOnClickListener { confirmClear() }
         // 주문하기 → Order 탭 (팀원이 작성)
         binding.buttonOrder.setOnClickListener { mainActivity().showTab(MainActivity.TAB_ORDER) }
@@ -76,17 +78,23 @@ class CartFragment : Fragment() {
         val items = CartManager.getItems()
         val isEmpty = items.isEmpty()
 
-        cartAdapter.submitList(items)
+        // 목록이 바뀐 뒤 줄마다 이미지 좌우 배치를 다시 맞춤
+        cartAdapter.submitList(items) { cartAdapter.refreshSides() }
 
         b.emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
         b.recyclerCart.visibility = if (isEmpty) View.GONE else View.VISIBLE
         b.summaryBox.visibility = if (isEmpty) View.GONE else View.VISIBLE
-        b.textClear.visibility = if (isEmpty) View.INVISIBLE else View.VISIBLE
-
-        b.textSubtitle.text = getString(R.string.cart_menu_count, items.size)
-        b.textTotalCount.text = getString(R.string.cart_count_value, CartManager.totalCount())
+        b.cartToolbar.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        b.textItemCount.text = getString(R.string.cart_item_count, items.size)
 
         val totalPrice = CartManager.totalPrice().toWon()
+        b.pageHeader.textSubtitle.text = if (isEmpty) {
+            getString(R.string.cart_empty)
+        } else {
+            getString(R.string.cart_header_summary, items.size, totalPrice)
+        }
+        b.textTotalCount.text = getString(R.string.cart_count_value, CartManager.totalCount())
+
         b.textTotalPrice.text = totalPrice
         b.buttonOrder.text = getString(R.string.cart_order_button, totalPrice)
     }

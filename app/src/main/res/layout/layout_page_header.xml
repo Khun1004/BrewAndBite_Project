@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    탭 화면 공통 헤더 (Cart / Store / Order / My Page)
+    사용법: <include android:id="@+id/pageHeader" layout="@layout/layout_page_header" ... />
+    글자는 코드에서 binding.pageHeader.setup(...) 으로 넣는다 (common/PageHeader.kt)
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_home_header"
+    android:elevation="4dp"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="22dp">
+
+    <!-- 장식: 위에서 본 커피잔 모양의 동그라미들
+         높이를 헤더에 맞춰서(0dp + 위/아래 연결) 헤더가 장식 때문에 커지지 않게 함.
+         scale로 크게 보이게만 하고, 넘치는 부분은 헤더 밖에서 잘림 -->
+    <ImageView
+        android:id="@+id/decoRings"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:importantForAccessibility="no"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:src="@drawable/bg_header_rings"
+        android:translationX="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textEyebrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="0.25"
+        android:textColor="@color/bb_nav_active"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="MY CART" />
+
+    <!-- 오른쪽 위 버튼 (필요한 화면만 보이게. 예: Cart의 '전체 삭제') -->
+    <TextView
+        android:id="@+id/textHeaderAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_pill_glass"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="7dp"
+        android:textColor="@color/bb_cream"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/textEyebrow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textEyebrow"
+        tools:text="전체 삭제"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/stash"
+        android:maxLines="1"
+        android:textColor="@color/bb_cream"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toStartOf="@+id/textHeaderEmoji"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textEyebrow"
+        tools:text="Cart" />
+
+    <TextView
+        android:id="@+id/textSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:textColor="@color/bb_beige"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toStartOf="@+id/textHeaderEmoji"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textTitle"
+        tools:text="3개 메뉴 · 24,500원" />
+
+    <!-- 화면 이모지 (유리 원 안) -->
+    <TextView
+        android:id="@+id/textHeaderEmoji"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_header_button"
+        android:gravity="center"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textTitle"
+        tools:text="🛒" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

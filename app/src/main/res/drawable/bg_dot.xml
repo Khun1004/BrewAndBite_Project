@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 작은 동그라미 (영업 상태 점). 색은 코드에서 backgroundTint로 바꿈 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/white" />
+</shape>

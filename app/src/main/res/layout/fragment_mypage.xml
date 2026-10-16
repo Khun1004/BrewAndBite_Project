@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- My Page 탭 화면 (준비 중) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mypageRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bb_cream"
-    android:gravity="center"
-    android:orientation="vertical"
     tools:context=".mypage.MyPageFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- 공통 헤더 (Cart / Store / Order / My Page 동일) -->
+    <include
+        android:id="@+id/pageHeader"
+        layout="@layout/layout_page_header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="👤"
-        android:textSize="52sp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- TODO: 화면 내용 (지금은 준비 중 안내) -->
     <TextView
+        android:id="@+id/textPlaceholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/mypage_title"
-        android:textColor="@color/bb_espresso"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="@string/placeholder_desc"
         android:textColor="@color/bb_muted"
-        android:textSize="13sp" />
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
