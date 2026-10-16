@@ -40,7 +40,12 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.firebase.database)
+    // Firebase: BoM이 auth / database 버전을 서로 맞춰 준다
+    // 34.12.0 = firebase-auth 24.0.1 + firebase-database 22.0.1 (이 프로젝트의 Kotlin 2.2와 호환)
+    // ⚠️ 35.x 이상은 Kotlin 2.4로 만들어져서 지금 프로젝트에서는 빌드 에러가 남
+    implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)

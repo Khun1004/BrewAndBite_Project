@@ -1,14 +1,18 @@
 package com.example.brewandbite.cart
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
+import com.example.brewandbite.auth.AuthManager
+import com.example.brewandbite.auth.LoginActivity
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.FragmentCartBinding
@@ -21,6 +25,11 @@ class CartFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var cartAdapter: CartAdapter
+
+    /** 로그인 화면에서 로그인에 성공하고 돌아오면 바로 Order 탭으로 */
+    private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) mainActivity().showTab(MainActivity.TAB_ORDER)
+    }
 
     /** 장바구니가 바뀌면 화면 전체를 다시 그린다 */
     private val cartListener = CartManager.CartListener { refresh() }
@@ -50,8 +59,14 @@ class CartFragment : Fragment() {
         binding.buttonGoMenu.setOnClickListener { mainActivity().showTab(MainActivity.TAB_HOME) }
         // 헤더 아래 줄의 전체 삭제 버튼
         binding.textClear.setOnClickListener { confirmClear() }
-        // 주문하기 → Order 탭 (팀원이 작성)
-        binding.buttonOrder.setOnClickListener { mainActivity().showTab(MainActivity.TAB_ORDER) }
+        // 주문하기 → (로그인 안 했으면 로그인 먼저) → Order 탭 (팀원이 작성)
+        binding.buttonOrder.setOnClickListener {
+            if (AuthManager.isLoggedIn()) {
+                mainActivity().showTab(MainActivity.TAB_ORDER)
+            } else {
+                loginLauncher.launch(LoginActivity.intent(requireContext()))
+            }
+        }
     }
 
     override fun onStart() {

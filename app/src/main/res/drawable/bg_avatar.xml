@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 프로필 동그라미 (이름 첫 글자) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:angle="315"
+        android:endColor="@color/bb_header_end"
+        android:startColor="@color/bb_brown" />
+    <stroke android:width="3dp" android:color="@color/bb_nav_active" />
+</shape>

@@ -79,6 +79,55 @@
     <string name="store_delivery_fee_value">%1$s · %2$s 이상 무료</string>
     <string name="store_section_service">매장 서비스</string>
 
+    <!-- 로그인 / 회원가입 -->
+    <string name="auth_close">닫기</string>
+    <string name="auth_login_eyebrow">WELCOME BACK</string>
+    <string name="auth_login_title">로그인</string>
+    <string name="auth_login_desc">로그인하고 주문과 배달을 시작해요</string>
+    <string name="auth_signup_eyebrow">JOIN US</string>
+    <string name="auth_signup_title">회원가입</string>
+    <string name="auth_signup_desc">한 번만 입력하면 다음 주문부터 자동으로 채워져요</string>
+    <string name="auth_email">이메일</string>
+    <string name="auth_password">비밀번호</string>
+    <string name="auth_password_hint">6자 이상</string>
+    <string name="auth_password_confirm">비밀번호 확인</string>
+    <string name="auth_name">이름</string>
+    <string name="auth_phone">연락처</string>
+    <string name="auth_address">배달 주소</string>
+    <string name="auth_address_detail">상세 주소 (동·호수)</string>
+    <string name="auth_section_account">계정 정보</string>
+    <string name="auth_section_delivery">배달 정보</string>
+    <string name="auth_login_button">로그인</string>
+    <string name="auth_signup_button">가입하기</string>
+    <string name="auth_loading">잠시만 기다려 주세요…</string>
+    <string name="auth_no_account">아직 회원이 아니신가요?</string>
+    <string name="auth_go_signup">회원가입</string>
+    <string name="auth_have_account">이미 회원이신가요?</string>
+    <string name="auth_go_login">로그인</string>
+    <string name="auth_err_email">이메일 형식을 확인해 주세요</string>
+    <string name="auth_err_password">비밀번호는 6자 이상이에요</string>
+    <string name="auth_err_password_match">비밀번호가 서로 달라요</string>
+    <string name="auth_err_required">입력해 주세요</string>
+    <string name="auth_err_phone">연락처를 확인해 주세요</string>
+    <string name="auth_welcome">%1$s님, 환영해요!</string>
+    <string name="auth_login_success">로그인했어요</string>
+
+    <!-- My Page -->
+    <string name="my_login_needed">로그인이 필요해요</string>
+    <string name="my_login_desc">로그인하면 주문하고, 배달 주소와\n주문 기록을 저장할 수 있어요</string>
+    <string name="my_login_button">로그인 / 회원가입</string>
+    <string name="my_hello">%1$s님, 반가워요</string>
+    <string name="my_label_phone">연락처</string>
+    <string name="my_label_address">배달 주소</string>
+    <string name="my_menu_orders">주문 기록</string>
+    <string name="my_menu_favorites">찜한 메뉴</string>
+    <string name="my_menu_soon">곧 추가돼요</string>
+    <string name="my_logout">로그아웃</string>
+    <string name="my_logout_title">로그아웃할까요?</string>
+    <string name="my_logout_done">로그아웃했어요</string>
+    <string name="my_loading">회원 정보를 불러오는 중…</string>
+    <string name="my_empty_value">-</string>
+
     <!-- 준비 중인 탭 -->
     <string name="store_title">매장 정보</string>
     <string name="mypage_title">My Page</string>

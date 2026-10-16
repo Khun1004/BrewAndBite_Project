@@ -8,6 +8,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:472557613578:android:18acb6d89c83ccef9965f3",
+        "android_client_info": {
+          "package_name": "com.example.brewandbite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:472557613578:android:ba9b5bd97f45c8649965f3",
         "android_client_info": {
           "package_name": "com.example.coffeeonlineshop"
@@ -29,7 +48,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:472557613578:android:5724b1329f3dd9969965f3",
         "android_client_info": {
-          "package_name": "com.example.brewandbite"
+          "package_name": "com.example.mycoffeeonlineshopapp"
         }
       },
       "oauth_client": [],
