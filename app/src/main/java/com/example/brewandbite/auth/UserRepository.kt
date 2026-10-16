@@ -33,6 +33,17 @@ object UserRepository {
             .addOnFailureListener { onDone(false) }
     }
 
+    /**
+     * 내 회원 정보 일부만 바꾸기 (예: 이름·연락처, 주소).
+     * 예) UserRepository.updateMyFields(mapOf("address" to "대구 북구 ...", "addressDetail" to "101호"))
+     */
+    fun updateMyFields(fields: Map<String, Any>, onDone: (success: Boolean) -> Unit = {}) {
+        val uid = AuthManager.currentUid() ?: return onDone(false)
+        usersRef.child(uid).updateChildren(fields)
+            .addOnSuccessListener { onDone(true) }
+            .addOnFailureListener { onDone(false) }
+    }
+
     /** 로그인한 내 회원 정보 불러오기 (로그인 안 했으면 null) */
     fun loadMyProfile(onResult: (UserProfile?) -> Unit) {
         val uid = AuthManager.currentUid()

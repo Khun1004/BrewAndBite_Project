@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 결제 수단 한 줄: 이모지 · 이름 · [기본] · ✕ -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_payment_row"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="4dp">
+
+    <TextView
+        android:id="@+id/textPayEmoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        tools:text="💳" />
+
+    <TextView
+        android:id="@+id/textPayName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/bb_espresso"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="신한카드 •••• 1234" />
+
+    <TextView
+        android:id="@+id/textPayDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_default_tag"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="2dp"
+        android:text="@string/my_payment_default"
+        android:textColor="@color/bb_nav_active"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/buttonPayDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/my_delete"
+        android:padding="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close"
+        app:tint="@color/bb_muted" />
+</LinearLayout>

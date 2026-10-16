@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- My Page 탭: 로그인 전에는 로그인 안내, 로그인 후에는 내 정보 + 로그아웃 -->
+<!-- My Page 탭: 로그인 전에는 로그인 안내, 로그인 후에는 프로필 + 펼치는 목록(내 정보·주소·결제 수단·주문 기록·찜) + 로그아웃 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -99,26 +99,76 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_info_card"
-                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="16dp">
 
+                    <TextView
+                        android:id="@+id/textAvatar"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/bg_avatar"
+                        android:gravity="center"
+                        android:textColor="@color/bb_cream"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="쿤" />
+
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/textAvatar"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
-                            android:background="@drawable/bg_avatar"
-                            android:gravity="center"
-                            android:textColor="@color/bb_cream"
-                            android:textSize="24sp"
+                            android:id="@+id/textName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/bb_espresso"
+                            android:textSize="19sp"
                             android:textStyle="bold"
-                            tools:text="쿤" />
+                            tools:text="쿤산웨이" />
+
+                        <TextView
+                            android:id="@+id/textEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="13sp"
+                            tools:text="khun@example.com" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ── 👤 내 정보 ── -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_info_card"
+                    android:orientation="vertical">
+
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <LinearLayout
+                        android:id="@+id/rowInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="68dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_circle"
+                            android:gravity="center"
+                            android:text="👤"
+                            android:textSize="19sp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -128,206 +178,596 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/textName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:text="@string/my_section_info"
                                 android:textColor="@color/bb_espresso"
-                                android:textSize="19sp"
-                                android:textStyle="bold"
-                                tools:text="쿤산웨이" />
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textEmail"
+                                android:id="@+id/textInfoSummary"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
                                 android:textColor="@color/bb_muted"
-                                android:textSize="13sp"
-                                tools:text="khun@example.com" />
+                                android:textSize="12sp"
+                                tools:text="010-1234-5678" />
                         </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronInfo"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@color/bb_divider" />
-
+                    <!-- 펼쳐지는 내용 -->
                     <LinearLayout
+                        android:id="@+id/contentInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
-                        <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="📞"
-                            android:textSize="18sp" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_label_name"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/textInfoName"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="쿤산웨이" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_label_email"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/textInfoEmail"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="khun@example.com" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="72dp"
                                 android:layout_height="wrap_content"
                                 android:text="@string/my_label_phone"
                                 android:textColor="@color/bb_muted"
-                                android:textSize="11sp" />
+                                android:textSize="13sp" />
 
                             <TextView
-                                android:id="@+id/textPhone"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/textInfoPhone"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 android:textColor="@color/bb_espresso"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
                                 tools:text="010-1234-5678" />
                         </LinearLayout>
-                    </LinearLayout>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonEditInfo"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginTop="4dp"
+                            android:backgroundTint="@color/bb_beige_light"
+                            android:text="@string/my_edit_info"
+                            android:textColor="@color/bb_brown"
+                            android:textStyle="bold"
+                            app:cornerRadius="14dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ── 📍 배달 주소 ── -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_info_card"
+                    android:orientation="vertical">
+
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
                     <LinearLayout
+                        android:id="@+id/rowAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:background="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:minHeight="68dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
 
                         <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
                             android:gravity="center"
                             android:text="📍"
-                            android:textSize="18sp" />
+                            android:textSize="19sp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="14dp"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/my_label_address"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="11sp" />
+                                android:text="@string/my_section_address"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textAddress"
+                                android:id="@+id/textAddressSummary"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="12sp"
+                                tools:text="대구광역시 북구 복현로 35 101호" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronAddress"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
+                    </LinearLayout>
+
+                    <!-- 펼쳐지는 내용 -->
+                    <LinearLayout
+                        android:id="@+id/contentAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_label_address"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/textInfoAddress"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 android:textColor="@color/bb_espresso"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
-                                tools:text="대구광역시 북구 복현로 35 101호" />
+                                tools:text="대구광역시 북구 복현로 35" />
                         </LinearLayout>
-                    </LinearLayout>
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="72dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_label_address_detail"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/textInfoAddressDetail"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                tools:text="101호" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonEditAddress"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginTop="4dp"
+                            android:backgroundTint="@color/bb_beige_light"
+                            android:text="@string/my_edit_address"
+                            android:textColor="@color/bb_brown"
+                            android:textStyle="bold"
+                            app:cornerRadius="14dp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
-                <!-- 메뉴 목록 (다음 단계에서 연결) -->
+                <!-- ── 💳 결제 수단 ── -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:background="@drawable/bg_info_card"
                     android:orientation="vertical">
 
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <LinearLayout
+                        android:id="@+id/rowPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="68dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_circle"
+                            android:gravity="center"
+                            android:text="💳"
+                            android:textSize="19sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_section_payment"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/textPaymentSummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="12sp"
+                                tools:text="1개 · 기본: 신한카드 •••• 1234" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronPayment"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
+                    </LinearLayout>
+
+                    <!-- 펼쳐지는 내용 -->
+                    <LinearLayout
+                        android:id="@+id/contentPayment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
+
+                        <TextView
+                            android:id="@+id/textPaymentTip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/my_payment_tip"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="11sp" />
+
+                        <!-- 결제 수단 목록 (item_payment_method 를 코드에서 넣음) -->
+                        <LinearLayout
+                            android:id="@+id/paymentList"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+
+                        <TextView
+                            android:id="@+id/textNoPayment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lineSpacingExtra="2dp"
+                            android:paddingVertical="10dp"
+                            android:text="@string/my_no_payment"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="13sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonAddPayment"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginTop="4dp"
+                            android:backgroundTint="@color/bb_beige_light"
+                            android:text="@string/my_add_payment"
+                            android:textColor="@color/bb_brown"
+                            android:textStyle="bold"
+                            app:cornerRadius="14dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ── 🧾 주문 기록 ── -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_info_card"
+                    android:orientation="vertical">
+
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
                     <LinearLayout
                         android:id="@+id/rowOrders"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
+                        android:minHeight="68dp"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="16dp">
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_circle"
+                            android:gravity="center"
                             android:text="🧾"
-                            android:textSize="18sp" />
+                            android:textSize="19sp" />
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="14dp"
                             android:layout_weight="1"
-                            android:text="@string/my_menu_orders"
-                            android:textColor="@color/bb_espresso"
-                            android:textSize="15sp" />
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/my_menu_soon"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="12sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_section_orders"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:text="›"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="18sp" />
+                            <TextView
+                                android:id="@+id/textOrdersSummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="12sp"
+                                tools:text="0건" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronOrders"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
+                    <!-- 펼쳐지는 내용 -->
+                    <LinearLayout
+                        android:id="@+id/contentOrders"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/bb_divider" />
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lineSpacingExtra="2dp"
+                            android:paddingVertical="10dp"
+                            android:text="@string/my_orders_empty"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ── ♡ 찜한 메뉴 ── -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_info_card"
+                    android:orientation="vertical">
+
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
                     <LinearLayout
                         android:id="@+id/rowFavorites"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
+                        android:minHeight="68dp"
                         android:orientation="horizontal"
-                        android:paddingHorizontal="16dp">
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_circle"
+                            android:gravity="center"
                             android:text="♡"
-                            android:textSize="18sp" />
+                            android:textSize="19sp" />
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="14dp"
                             android:layout_weight="1"
-                            android:text="@string/my_menu_favorites"
-                            android:textColor="@color/bb_espresso"
-                            android:textSize="15sp" />
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/my_menu_soon"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="12sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_section_favorites"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:text="›"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="18sp" />
+                            <TextView
+                                android:id="@+id/textFavoritesSummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="12sp"
+                                tools:text="곧 추가돼요" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronFavorites"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
                     </LinearLayout>
 
+                    <!-- 펼쳐지는 내용 -->
+                    <LinearLayout
+                        android:id="@+id/contentFavorites"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:lineSpacingExtra="2dp"
+                            android:paddingVertical="10dp"
+                            android:text="@string/my_favorites_empty"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton

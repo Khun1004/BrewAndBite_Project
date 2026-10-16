@@ -26,6 +26,8 @@ import com.example.brewandbite.databinding.FragmentOrderBinding
  *  - Cart의 '주문하기'는 로그인한 사람만 이 화면으로 온다 (로그인 안 했으면 로그인 화면 먼저)
  *  - AuthManager.currentUid()          내 회원 ID (주문 저장 위치: orders/{회원ID})
  *  - UserRepository.loadMyProfile { }  이름·연락처·주소 불러와서 배달 정보 칸 자동 입력
+ *  - PaymentRepository.loadMyPayments { list -> }  My Page에서 등록한 결제 수단 목록
+ *      (기본 결제 수단: list.firstOrNull { it.defaultMethod }, 화면 표시: it.displayName())
  *
  * 다른 탭으로 이동: (requireActivity() as MainActivity).showTab(MainActivity.TAB_HOME)
  */
