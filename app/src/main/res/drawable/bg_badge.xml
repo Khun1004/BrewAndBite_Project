@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cart 아이콘 위의 숫자 뱃지 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bb_nav_active" />
+    <corners android:radius="9dp" />
+    <stroke android:width="1.5dp" android:color="@color/bb_nav_bg" />
+</shape>

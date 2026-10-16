@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 메뉴 카드 위에 걸쳐 있는 동그란 접시 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/white" />
+    <stroke android:width="7dp" android:color="@color/bb_beige_light" />
+</shape>

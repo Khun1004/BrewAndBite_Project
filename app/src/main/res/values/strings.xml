@@ -1,3 +1,65 @@
 <resources>
-    <string name="app_name">MyCoffeeOnlineShopApp</string>
+    <string name="app_name">Brew &amp; Bite</string>
+
+    <!-- Home -->
+    <string name="home_greeting">안녕하세요 👋</string>
+    <string name="home_question">오늘은 뭘 드실래요?</string>
+    <string name="brand_name">BREW &amp; BITE</string>
+    <string name="brand_tagline">Coffee, Food &amp; Good Moments.</string>
+    <string name="brand_slogan">Sip. Bite. Enjoy.</string>
+    <string name="search_hint">커피, 디저트, 음식 검색</string>
+    <string name="section_category">카테고리</string>
+    <string name="section_popular">인기 메뉴</string>
+    <string name="see_all">전체 보기</string>
+    <string name="section_recommend">추천 메뉴 · %1$s</string>
+    <string name="section_search_result">검색 결과 (%1$d)</string>
+    <string name="empty_result">찾는 메뉴가 없어요</string>
+    <string name="added_to_cart">%1$s 담았어요 · 장바구니 %2$d개</string>
+    <string name="menu_count">%1$s · %2$d개 메뉴</string>
+    <string name="back">뒤로가기</string>
+    <string name="coming_soon">%1$s 화면은 준비 중이에요</string>
+
+    <!-- 홈 헤더 -->
+    <string name="greeting_morning">좋은 아침이에요 ☀️</string>
+    <string name="greeting_afternoon">좋은 오후예요 🌤️</string>
+    <string name="greeting_evening">좋은 저녁이에요 🌙</string>
+    <string name="greeting_night">늦은 밤에도 반가워요 ✨</string>
+    <string name="header_eyebrow">COFFEE · DRINKS · FOOD</string>
+    <string name="today_pick_label">오늘의 추천</string>
+    <string name="today_pick_value">%1$s · %2$s</string>
+
+    <!-- 준비 중인 탭 -->
+    <string name="store_title">매장 정보</string>
+    <string name="mypage_title">My Page</string>
+    <string name="placeholder_desc">곧 만나요! 준비 중인 화면이에요</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_cart">Cart</string>
+    <string name="nav_favorite">Favorite</string>
+    <string name="nav_store">Store</string>
+    <string name="cart_summary">장바구니 %1$d개 · %2$s</string>
+    <string name="cart_empty">장바구니가 비어 있어요</string>
+
+    <!-- Cart 화면 -->
+    <string name="cart_title">장바구니</string>
+    <string name="cart_menu_count">%1$d개 메뉴</string>
+    <string name="cart_clear">전체 삭제</string>
+    <string name="cart_clear_title">장바구니를 비울까요?</string>
+    <string name="cart_clear_message">담은 메뉴가 모두 삭제돼요.</string>
+    <string name="cart_clear_ok">비우기</string>
+    <string name="cart_cancel">취소</string>
+    <string name="cart_empty_desc">마음에 드는 메뉴를 담아 보세요</string>
+    <string name="cart_go_menu">메뉴 보러 가기</string>
+    <string name="cart_unit_price">개당 %1$s</string>
+    <string name="cart_total_count_label">총 수량</string>
+    <string name="cart_count_value">%1$d개</string>
+    <string name="cart_total_price_label">결제 예정 금액</string>
+    <string name="cart_order_button">%1$s 주문하기</string>
+    <string name="cart_removed">%1$s 삭제했어요</string>
+    <string name="cart_remove">삭제</string>
+    <string name="cart_minus">수량 줄이기</string>
+    <string name="cart_plus">수량 늘리기</string>
+    <string name="nav_order">Order</string>
+    <string name="nav_my">My Page</string>
 </resources>

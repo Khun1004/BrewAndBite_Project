@@ -1,19 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 탭 화면을 담는 틀: 위쪽은 탭마다 바뀌는 화면, 아래쪽은 항상 보이는 탭 바 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bb_cream"
+    android:clipChildren="false"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- 탭 화면이 들어가는 자리 (Home / Cart / Store / Order / My Page) -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 하단 탭 바 (항상 보임) -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="68dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_bottom_nav"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="12dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/navCart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 선택되면 이 동그라미가 위로 솟아오름 -->
+            <FrameLayout
+                android:id="@+id/circleCart"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/iconCart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/nav_cart"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/btn_2"
+                    app:tint="@color/bb_nav_inactive" />
+
+                <!-- 장바구니 수량 뱃지 -->
+                <TextView
+                    android:id="@+id/badgeCart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="18dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/bg_badge"
+                    android:elevation="10dp"
+                    android:gravity="center"
+                    android:minWidth="18dp"
+                    android:paddingHorizontal="4dp"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="3"
+                    tools:visibility="visible" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:text="@string/nav_cart"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navStore"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 선택되면 이 동그라미가 위로 솟아오름 -->
+            <FrameLayout
+                android:id="@+id/circleStore"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/iconStore"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/nav_store"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_store"
+                    app:tint="@color/bb_nav_inactive" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelStore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:text="@string/nav_store"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 선택되면 이 동그라미가 위로 솟아오름 -->
+            <FrameLayout
+                android:id="@+id/circleHome"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/iconHome"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/nav_home"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/bb_nav_inactive" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:text="@string/nav_home"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navOrder"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 선택되면 이 동그라미가 위로 솟아오름 -->
+            <FrameLayout
+                android:id="@+id/circleOrder"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/iconOrder"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/nav_order"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/btn_4"
+                    app:tint="@color/bb_nav_inactive" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:text="@string/nav_order"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navMy"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 선택되면 이 동그라미가 위로 솟아오름 -->
+            <FrameLayout
+                android:id="@+id/circleMy"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipChildren="false">
+
+                <ImageView
+                    android:id="@+id/iconMy"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/nav_my"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/btn_5"
+                    app:tint="@color/bb_nav_inactive" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/labelMy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-6dp"
+                android:text="@string/nav_my"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

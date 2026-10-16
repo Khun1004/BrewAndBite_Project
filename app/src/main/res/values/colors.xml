@@ -7,4 +7,24 @@
     <color name="brown2">#564742</color>
     <color name="brown3">#3d2c21</color>
     <color name="lightBrown">#eeb388</color>
+
+    <!-- Brew & Bite 브랜드 컬러 (계획서 OPTION A: 따뜻한 카페 스타일) -->
+    <color name="bb_brown">#6B4A36</color>
+    <color name="bb_cream">#FAF6EF</color>
+    <color name="bb_beige">#D9C7A7</color>
+    <color name="bb_beige_light">#F1E8DA</color>
+    <color name="bb_espresso">#2B1A12</color>
+    <color name="bb_muted">#8C7B6E</color>
+    <color name="bb_divider">#E8DFD2</color>
+
+    <!-- 하단 탭 -->
+    <color name="bb_nav_bg">#2B1A12</color>
+    <color name="bb_nav_inactive">#A08B7C</color>
+    <color name="bb_nav_active">#EEB388</color>
+
+    <!-- 홈 헤더 -->
+    <color name="bb_header_start">#4A3326</color>
+    <color name="bb_header_end">#1E130D</color>
+    <color name="bb_glass">#1AFFFFFF</color>
+    <color name="bb_glass_stroke">#2EFFFFFF</color>
 </resources>

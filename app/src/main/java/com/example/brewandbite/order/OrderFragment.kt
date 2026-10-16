@@ -1,0 +1,46 @@
+package com.example.brewandbite.order
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.databinding.FragmentOrderBinding
+
+/**
+ * Order 탭 (빈 화면 · 팀원 작업 공간)
+ *
+ * 이미 연결되어 있는 곳:
+ *  - 하단 탭 바의 Order 탭 → 이 화면
+ *  - Cart 화면의 '주문하기' 버튼 → 이 화면
+ *
+ * 쓸 수 있는 장바구니 데이터 (cart/CartManager.kt):
+ *  - CartManager.getItems()    담긴 메뉴 목록
+ *  - CartManager.totalPrice()  총 금액  (금액 표시: totalPrice().toWon())
+ *  - CartManager.clear()       주문 완료 후 장바구니 비우기
+ *
+ * 다른 탭으로 이동: (requireActivity() as MainActivity).showTab(MainActivity.TAB_HOME)
+ */
+class OrderFragment : Fragment() {
+
+    private var _binding: FragmentOrderBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentOrderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.orderRoot.applyStatusBarPadding()
+
+        // TODO (팀원): 여기부터 Order 화면 코드를 작성하세요
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MyCoffeeOnlineShopApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.BrewAndBite" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/bb_brown</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/bb_beige</item>
+        <item name="android:windowBackground">@color/bb_cream</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.MyCoffeeOnlineShopApp" parent="Base.Theme.MyCoffeeOnlineShopApp" />
+    <style name="Theme.BrewAndBite" parent="Base.Theme.BrewAndBite" />
+
+    <!-- 원형 프로필 이미지 -->
+    <style name="ShapeAppearance.BrewBite.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

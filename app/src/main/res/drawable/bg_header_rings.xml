@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 헤더 오른쪽 위 장식: 위에서 본 커피잔처럼 겹친 동그라미 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <stroke android:width="1.5dp" android:color="#26EEB388" />
+        </shape>
+    </item>
+    <item android:bottom="28dp" android:left="28dp" android:right="28dp" android:top="28dp">
+        <shape android:shape="oval">
+            <stroke android:width="1.5dp" android:color="#33EEB388" />
+        </shape>
+    </item>
+    <item android:bottom="56dp" android:left="56dp" android:right="56dp" android:top="56dp">
+        <shape android:shape="oval">
+            <solid android:color="#14EEB388" />
+            <stroke android:width="1.5dp" android:color="#40EEB388" />
+        </shape>
+    </item>
+    <item android:bottom="88dp" android:left="88dp" android:right="88dp" android:top="88dp">
+        <shape android:shape="oval">
+            <solid android:color="#1FEEB388" />
+        </shape>
+    </item>
+</layer-list>

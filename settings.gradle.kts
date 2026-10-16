@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BrewAndBite_Project"
+rootProject.name = "BrewAndBite"
 include(":app")

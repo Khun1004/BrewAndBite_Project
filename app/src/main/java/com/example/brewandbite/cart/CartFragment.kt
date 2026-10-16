@@ -1,0 +1,102 @@
+package com.example.brewandbite.cart
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.brewandbite.MainActivity
+import com.example.brewandbite.R
+import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.data.toWon
+import com.example.brewandbite.databinding.FragmentCartBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+
+/** Cart 탭: 담은 메뉴 목록, 수량 조절, 삭제, 총 금액, 주문하기 */
+class CartFragment : Fragment() {
+
+    private var _binding: FragmentCartBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var cartAdapter: CartAdapter
+
+    /** 장바구니가 바뀌면 화면 전체를 다시 그린다 */
+    private val cartListener = CartManager.CartListener { refresh() }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentCartBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.cartRoot.applyStatusBarPadding()
+
+        cartAdapter = CartAdapter(
+            onIncrease = { item -> CartManager.increase(item.menuId) },
+            onDecrease = { item -> CartManager.decrease(item.menuId) },   // 1개에서 줄이면 삭제됨
+            onRemove = { item ->
+                CartManager.remove(item.menuId)
+                Toast.makeText(requireContext(), getString(R.string.cart_removed, item.name), Toast.LENGTH_SHORT).show()
+            }
+        )
+        binding.recyclerCart.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerCart.adapter = cartAdapter
+
+        // 비어 있을 때 '메뉴 보러 가기' → Home 탭
+        binding.buttonGoMenu.setOnClickListener { mainActivity().showTab(MainActivity.TAB_HOME) }
+        binding.textClear.setOnClickListener { confirmClear() }
+        // 주문하기 → Order 탭 (팀원이 작성)
+        binding.buttonOrder.setOnClickListener { mainActivity().showTab(MainActivity.TAB_ORDER) }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        CartManager.addListener(cartListener)
+        refresh()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        CartManager.removeListener(cartListener)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun mainActivity() = requireActivity() as MainActivity
+
+    /** CartManager의 현재 내용으로 화면을 다시 그린다 */
+    private fun refresh() {
+        val b = _binding ?: return
+        val items = CartManager.getItems()
+        val isEmpty = items.isEmpty()
+
+        cartAdapter.submitList(items)
+
+        b.emptyView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        b.recyclerCart.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        b.summaryBox.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        b.textClear.visibility = if (isEmpty) View.INVISIBLE else View.VISIBLE
+
+        b.textSubtitle.text = getString(R.string.cart_menu_count, items.size)
+        b.textTotalCount.text = getString(R.string.cart_count_value, CartManager.totalCount())
+
+        val totalPrice = CartManager.totalPrice().toWon()
+        b.textTotalPrice.text = totalPrice
+        b.buttonOrder.text = getString(R.string.cart_order_button, totalPrice)
+    }
+
+    private fun confirmClear() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.cart_clear_title)
+            .setMessage(R.string.cart_clear_message)
+            .setNegativeButton(R.string.cart_cancel, null)
+            .setPositiveButton(R.string.cart_clear_ok) { _, _ -> CartManager.clear() }
+            .show()
+    }
+}

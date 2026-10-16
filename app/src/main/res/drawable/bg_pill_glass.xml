@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 헤더 안의 '오늘의 추천' 반투명 알약 모양 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bb_glass" />
+    <corners android:radius="22dp" />
+    <stroke android:width="1dp" android:color="@color/bb_glass_stroke" />
+</shape>

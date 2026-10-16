@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mycoffeeonlineshopapp"
+    namespace = "com.example.brewandbite"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.example.mycoffeeonlineshopapp"
+        applicationId = "com.example.brewandbite"
         minSdk = 24
         targetSdk = 37
         versionCode = 1
@@ -25,6 +25,9 @@ android {
                 enable = false
             }
         }
+    }
+    buildFeatures {
+        viewBinding = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -44,4 +47,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation("com.github.bumptech.glide:glide:5.0.5")
     implementation("com.google.code.gson:gson:2.13.2")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
 }
