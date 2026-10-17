@@ -123,12 +123,15 @@
                 android:paddingBottom="20dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutEmail"
+                    android:id="@+id/layoutPhone"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="@string/auth_email"
+                    android:hint="@string/phone_hint"
+                    app:placeholderText="010-1234-5678"
+                    app:startIconDrawable="@drawable/ic_phone"
+                    app:startIconTint="@color/bb_brown"
                     app:boxCornerRadiusBottomEnd="14dp"
                     app:boxCornerRadiusBottomStart="14dp"
                     app:boxCornerRadiusTopEnd="14dp"
@@ -137,10 +140,11 @@
                     app:hintTextColor="@color/bb_brown">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editEmail"
+                        android:id="@+id/editPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"
+                        android:inputType="phone"
+                        android:maxLength="13"
                         android:maxLines="1"
                         android:textColor="@color/bb_espresso"
                         android:textSize="15sp" />
@@ -170,6 +174,20 @@
                         android:textColor="@color/bb_espresso"
                         android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 비밀번호 찾기 -->
+                <TextView
+                    android:id="@+id/textForgot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="4dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="6dp"
+                    android:text="@string/auth_forgot"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
                 <!-- 오류 메시지 -->
                 <TextView
@@ -205,6 +223,13 @@
                     android:layout_marginTop="12dp"
                     android:indeterminateTint="@color/bb_brown"
                     android:visibility="gone" />
+
+                <!-- 또는 Google 계정으로 -->
+                <include
+                    android:id="@+id/googleBox"
+                    layout="@layout/layout_google_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <!-- 로그인 ↔ 회원가입 이동 -->

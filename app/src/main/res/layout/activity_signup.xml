@@ -132,6 +132,20 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
+                <!-- Google 로 가입할 때만 보임: 연결된 Google 계정 -->
+                <TextView
+                    android:id="@+id/textGoogleAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_verified_tag"
+                    android:padding="14dp"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="14sp"
+                    android:visibility="gone"
+                    tools:text="✅ Google 계정 연결됨 · khun@gmail.com"
+                    tools:visibility="visible" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layoutName"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -163,6 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:hint="@string/auth_email"
+                    app:helperText="@string/auth_email_helper"
                     app:boxCornerRadiusBottomEnd="14dp"
                     app:boxCornerRadiusBottomStart="14dp"
                     app:boxCornerRadiusTopEnd="14dp"
@@ -337,6 +352,13 @@
                     android:layout_marginTop="12dp"
                     android:indeterminateTint="@color/bb_brown"
                     android:visibility="gone" />
+
+                <!-- 또는 Google 계정으로 -->
+                <include
+                    android:id="@+id/googleBox"
+                    layout="@layout/layout_google_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <!-- 로그인 ↔ 회원가입 이동 -->

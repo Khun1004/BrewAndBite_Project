@@ -790,6 +790,112 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- ── 🔒 계정 보안 ── -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_info_card"
+                    android:orientation="vertical">
+
+                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <LinearLayout
+                        android:id="@+id/rowSecurity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="68dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="12dp">
+
+                        <TextView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_circle"
+                            android:gravity="center"
+                            android:text="🔒"
+                            android:textSize="19sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_section_security"
+                                android:textColor="@color/bb_espresso"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/textSecuritySummary"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:textColor="@color/bb_muted"
+                                android:textSize="12sp"
+                                tools:text="비밀번호 변경" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/chevronSecurity"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
+                    </LinearLayout>
+
+                    <!-- 펼쳐지는 내용 -->
+                    <LinearLayout
+                        android:id="@+id/contentSecurity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingBottom="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/bb_divider" />
+
+                        <TextView
+                            android:id="@+id/textSecurityDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:lineSpacingExtra="2dp"
+                            android:text="@string/my_security_desc"
+                            android:textColor="@color/bb_muted"
+                            android:textSize="13sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonChangePassword"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:backgroundTint="@color/bb_beige_light"
+                            android:text="@string/my_change_password"
+                            android:textColor="@color/bb_brown"
+                            android:textStyle="bold"
+                            app:cornerRadius="14dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonLogout"
                     style="@style/Widget.Material3.Button.OutlinedButton"

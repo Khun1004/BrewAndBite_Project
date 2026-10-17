@@ -21,11 +21,13 @@ import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.auth.LoginActivity
 import com.example.brewandbite.auth.PaymentMethod
 import com.example.brewandbite.auth.PaymentRepository
+import com.example.brewandbite.auth.PhoneIndex
 import com.example.brewandbite.auth.PhoneVerifier
 import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.DialogAddPaymentBinding
+import com.example.brewandbite.databinding.DialogChangePasswordBinding
 import com.example.brewandbite.databinding.DialogTwoFieldsBinding
 import com.example.brewandbite.databinding.FragmentMypageBinding
 import com.example.brewandbite.databinding.ItemPaymentMethodBinding
@@ -41,6 +43,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *      📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
  *      💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
  *      🧾 주문 기록 / ♡ 찜한 메뉴 : 다음 단계
+ *      🔒 계정 보안 : [비밀번호 변경] (현재 비밀번호 확인 → 새 비밀번호)
  */
 class MyPageFragment : Fragment() {
 
@@ -87,7 +90,8 @@ class MyPageFragment : Fragment() {
             Section(binding.rowAddress, binding.contentAddress, binding.chevronAddress),
             Section(binding.rowPayment, binding.contentPayment, binding.chevronPayment),
             Section(binding.rowOrders, binding.contentOrders, binding.chevronOrders),
-            Section(binding.rowFavorites, binding.contentFavorites, binding.chevronFavorites)
+            Section(binding.rowFavorites, binding.contentFavorites, binding.chevronFavorites),
+            Section(binding.rowSecurity, binding.contentSecurity, binding.chevronSecurity)
         )
         sections.forEach { section -> section.row.setOnClickListener { toggle(section) } }
 
@@ -95,6 +99,7 @@ class MyPageFragment : Fragment() {
         binding.buttonEditPhone.setOnClickListener { showEditPhoneDialog() }
         binding.buttonEditAddress.setOnClickListener { addressLauncher.launch(Unit) }
         binding.buttonAddPayment.setOnClickListener { showAddPaymentDialog() }
+        binding.buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
     }
 
     override fun onStart() {
@@ -154,11 +159,23 @@ class MyPageFragment : Fragment() {
 
         b.textOrdersSummary.text = getString(R.string.my_menu_soon)
         b.textFavoritesSummary.text = getString(R.string.my_menu_soon)
+        // Google 로만 가입한 계정은 비밀번호가 없어서 변경 버튼을 숨김
+        val hasPassword = AuthManager.hasPassword()
+        b.textSecuritySummary.text =
+            getString(if (hasPassword) R.string.my_change_password else R.string.my_security_google_summary)
+        b.textSecurityDesc.setText(if (hasPassword) R.string.my_security_desc else R.string.my_security_google)
+        b.buttonChangePassword.visibility = if (hasPassword) View.VISIBLE else View.GONE
     }
 
     private fun showProfile(loaded: UserProfile?) {
         val b = _binding ?: return
         profile = loaded
+        // 예전에 가입한 계정도 휴대폰 번호로 로그인할 수 있게 목록에 등록 (이미 있으면 그대로)
+        val uid = AuthManager.currentUid()
+        val myEmail = AuthManager.currentEmail()
+        if (loaded != null && loaded.phone.isNotBlank() && uid != null && myEmail != null) {
+            PhoneIndex.claim(loaded.phone, uid, myEmail)
+        }
         val empty = getString(R.string.my_empty_value)
         val email = loaded?.email?.takeIf { it.isNotBlank() } ?: AuthManager.currentEmail().orEmpty()
         val name = loaded?.name?.takeIf { it.isNotBlank() } ?: email.substringBefore("@")
@@ -314,15 +331,36 @@ class MyPageFragment : Fragment() {
         verifier = PhoneVerifier(
             activity = requireActivity(),
             v = v,
-            onVerified = { phone ->
-                UserRepository.updateMyFields(mapOf("phone" to phone)) { ok ->
-                    toast(if (ok) R.string.my_saved else R.string.my_save_failed)
-                    dialog.dismiss()
-                    if (ok) UserRepository.loadMyProfile { showProfile(it) }
-                }
-            }
+            onVerified = { phone -> saveNewPhone(phone) { dialog.dismiss() } }
         )
         dialog.show()
+    }
+
+    /**
+     * 새 휴대폰 번호 저장. 번호가 로그인 아이디이기도 해서
+     * 다른 회원이 쓰는 번호인지 확인 → 회원 정보 저장 → 로그인용 목록(phoneIndex)도 새 번호로 바꾼다
+     */
+    private fun saveNewPhone(phone: String, onFinished: () -> Unit) {
+        val uid = AuthManager.currentUid() ?: return onFinished()
+        val email = AuthManager.currentEmail().orEmpty()
+        val oldPhone = profile?.phone.orEmpty()
+
+        PhoneIndex.lookup(phone) { existing, failed ->
+            if (failed || (existing != null && existing.uid != uid)) {
+                toast(if (failed) R.string.my_save_failed else R.string.my_phone_taken)
+                onFinished()
+                return@lookup
+            }
+            UserRepository.updateMyFields(mapOf("phone" to phone)) { ok ->
+                if (ok) {
+                    if (PhoneIndex.key(oldPhone) != PhoneIndex.key(phone)) PhoneIndex.release(oldPhone)
+                    PhoneIndex.claim(phone, uid, email)
+                    UserRepository.loadMyProfile { showProfile(it) }
+                }
+                toast(if (ok) R.string.my_saved else R.string.my_save_failed)
+                onFinished()
+            }
+        }
     }
 
     /** 주소 검색 결과 + 상세 주소 입력 → 저장 */
@@ -362,6 +400,49 @@ class MyPageFragment : Fragment() {
                 }
             }
             .show()
+    }
+
+    // ───────── 🔒 비밀번호 변경 ─────────
+
+    private fun showChangePasswordDialog() {
+        val d = DialogChangePasswordBinding.inflate(layoutInflater)
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.my_change_password)
+            .setView(d.root)
+            .setNegativeButton(R.string.cart_cancel, null)
+            .setPositiveButton(R.string.pw_change, null)   // 아래에서 직접 처리 (틀리면 창이 안 닫히게)
+            .show()
+
+        val changeButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+        changeButton.setOnClickListener {
+            val current = d.editCurrentPassword.text?.toString().orEmpty()
+            val newPw = d.editNewPassword.text?.toString().orEmpty()
+            val confirm = d.editNewPasswordConfirm.text?.toString().orEmpty()
+
+            d.layoutCurrentPassword.error = null
+            d.layoutNewPassword.error = null
+            d.layoutNewPasswordConfirm.error = null
+            when {
+                current.isEmpty() -> d.layoutCurrentPassword.error = getString(R.string.auth_err_required)
+                newPw.length < 6 -> d.layoutNewPassword.error = getString(R.string.auth_err_password)
+                newPw == current -> d.layoutNewPassword.error = getString(R.string.pw_err_same)
+                confirm != newPw -> d.layoutNewPasswordConfirm.error = getString(R.string.auth_err_password_match)
+                else -> {
+                    changeButton.isEnabled = false
+                    AuthManager.changePassword(current, newPw) { error ->
+                        changeButton.isEnabled = true
+                        if (error == null) {
+                            dialog.dismiss()
+                            toast(R.string.pw_changed)
+                        } else if (error.contains("현재 비밀번호")) {
+                            d.layoutCurrentPassword.error = error
+                        } else {
+                            d.layoutNewPassword.error = error
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // ───────── 기타 ─────────

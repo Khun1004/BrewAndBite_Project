@@ -13,7 +13,20 @@
           "package_name": "com.example.brewandbite"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "472557613578-c6dg0p5gmckgoerg6fcagscauqt322bi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.brewandbite",
+            "certificate_hash": "c97a93e51ab0e6faf99add6ea2a875bb3f295f46"
+          }
+        },
+        {
+          "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,12 @@
           "package_name": "com.example.coffeeonlineshop"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
@@ -40,7 +63,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -51,7 +79,12 @@
           "package_name": "com.example.mycoffeeonlineshopapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDvBhspIaJCVMWorvm0egHCRf-3REl7YCg"
@@ -59,7 +92,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "472557613578-7hd6rhc6a7nb4a7t5iadsf5r1ocq6r3n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
