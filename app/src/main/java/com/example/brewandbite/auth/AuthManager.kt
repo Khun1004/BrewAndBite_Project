@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 
 /**
  * 로그인 / 회원가입 / 로그아웃 (Firebase Authentication, 이메일 + 비밀번호).
+ * 휴대폰 인증은 앱 안에서 처리 (PhoneVerifier.kt) 하고, 인증된 번호만 회원 정보에 저장한다.
  *
  * ───────── 팀원용 사용법 ─────────
  *  로그인 했는지      AuthManager.isLoggedIn()

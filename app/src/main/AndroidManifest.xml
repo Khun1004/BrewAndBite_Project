@@ -40,6 +40,11 @@
             android:name=".auth.SignUpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- 주소 검색 (카카오 우편번호 서비스) -->
+        <activity
+            android:name=".address.AddressSearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

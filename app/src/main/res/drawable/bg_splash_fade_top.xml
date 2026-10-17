@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 스플래시: 사진 위쪽을 검은 배경과 자연스럽게 이어 주는 그라데이션 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="270"
+        android:endColor="#00000000"
+        android:startColor="#FF000000" />
+</shape>

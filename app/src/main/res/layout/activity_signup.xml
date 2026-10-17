@@ -241,29 +241,13 @@
                     android:textSize="13sp"
                     android:textStyle="bold" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layoutPhone"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                <!-- 휴대폰 번호 + 인증번호 (layout_phone_verify.xml) -->
+                <include
+                    android:id="@+id/phoneVerify"
+                    layout="@layout/layout_phone_verify"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="@string/auth_phone"
-                    app:boxCornerRadiusBottomEnd="14dp"
-                    app:boxCornerRadiusBottomStart="14dp"
-                    app:boxCornerRadiusTopEnd="14dp"
-                    app:boxCornerRadiusTopStart="14dp"
-                    app:boxStrokeColor="@color/bb_brown"
-                    app:hintTextColor="@color/bb_brown">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editPhone"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="phone"
-                        android:maxLines="1"
-                        android:textColor="@color/bb_espresso"
-                        android:textSize="15sp" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="12dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/layoutAddress"
@@ -272,6 +256,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:hint="@string/auth_address"
+                    app:endIconDrawable="@drawable/ic_search"
+                    app:endIconMode="custom"
+                    app:endIconTint="@color/bb_brown"
+                    app:placeholderText="@string/addr_tap_to_search"
                     app:boxCornerRadiusBottomEnd="14dp"
                     app:boxCornerRadiusBottomStart="14dp"
                     app:boxCornerRadiusTopEnd="14dp"
@@ -283,8 +271,10 @@
                         android:id="@+id/editAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPostalAddress"
-                        android:maxLines="1"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:inputType="none"
+                        android:maxLines="2"
                         android:textColor="@color/bb_espresso"
                         android:textSize="15sp" />
                 </com.google.android.material.textfield.TextInputLayout>

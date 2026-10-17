@@ -296,17 +296,37 @@
                                 tools:text="010-1234-5678" />
                         </LinearLayout>
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonEditInfo"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="46dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:backgroundTint="@color/bb_beige_light"
-                            android:text="@string/my_edit_info"
-                            android:textColor="@color/bb_brown"
-                            android:textStyle="bold"
-                            app:cornerRadius="14dp" />
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/buttonEditName"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="0dp"
+                                android:layout_height="46dp"
+                                android:layout_weight="1"
+                                android:backgroundTint="@color/bb_beige_light"
+                                android:text="@string/my_edit_name"
+                                android:textColor="@color/bb_brown"
+                                android:textStyle="bold"
+                                app:cornerRadius="14dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/buttonEditPhone"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="0dp"
+                                android:layout_height="46dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:backgroundTint="@color/bb_beige_light"
+                                android:text="@string/my_edit_phone"
+                                android:textColor="@color/bb_brown"
+                                android:textStyle="bold"
+                                app:cornerRadius="14dp" />
+                        </LinearLayout>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -448,7 +468,7 @@
                             android:layout_height="46dp"
                             android:layout_marginTop="4dp"
                             android:backgroundTint="@color/bb_beige_light"
-                            android:text="@string/my_edit_address"
+                            android:text="@string/my_search_address"
                             android:textColor="@color/bb_brown"
                             android:textStyle="bold"
                             app:cornerRadius="14dp" />

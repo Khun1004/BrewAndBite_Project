@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- '휴대폰 인증 완료' 초록 꼬리표 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/bb_open_bg" />
+    <corners android:radius="10dp" />
+</shape>

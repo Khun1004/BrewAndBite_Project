@@ -9,15 +9,19 @@ import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.brewandbite.R
+import com.example.brewandbite.address.AddressResult
+import com.example.brewandbite.address.AddressSearchActivity
 import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.auth.LoginActivity
 import com.example.brewandbite.auth.PaymentMethod
 import com.example.brewandbite.auth.PaymentRepository
+import com.example.brewandbite.auth.PhoneVerifier
 import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
@@ -25,6 +29,7 @@ import com.example.brewandbite.databinding.DialogAddPaymentBinding
 import com.example.brewandbite.databinding.DialogTwoFieldsBinding
 import com.example.brewandbite.databinding.FragmentMypageBinding
 import com.example.brewandbite.databinding.ItemPaymentMethodBinding
+import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -32,8 +37,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - 로그인 전: 로그인 안내 카드 + [로그인 / 회원가입]
  *  - 로그인 후: 프로필 카드 + 목록 (왼쪽 아이콘 · 가운데 글 · 오른쪽 >)
  *      > 를 누르면 아래로 내용이 펼쳐진다 (한 번 더 누르면 접힘)
- *      👤 내 정보   : 이름·이메일·연락처 + [정보 수정]
- *      📍 배달 주소 : 주소·상세 주소 + [주소 변경]
+ *      👤 내 정보   : 이름·이메일·연락처 + [이름 수정] [휴대폰 번호 변경(인증번호 확인)]
+ *      📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
  *      💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
  *      🧾 주문 기록 / ♡ 찜한 메뉴 : 다음 단계
  */
@@ -49,6 +54,11 @@ class MyPageFragment : Fragment() {
     private data class Section(val row: View, val content: View, val chevron: ImageView)
 
     private lateinit var sections: List<Section>
+
+    /** 주소 검색 화면에서 주소를 고르면 → 상세 주소 입력 창 */
+    private val addressLauncher = registerForActivityResult(AddressSearchActivity.Contract()) { result ->
+        if (result != null) showAddressDetailDialog(result)
+    }
 
     /** 로그인 화면에서 돌아오면 다시 그리기 */
     private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -81,8 +91,9 @@ class MyPageFragment : Fragment() {
         )
         sections.forEach { section -> section.row.setOnClickListener { toggle(section) } }
 
-        binding.buttonEditInfo.setOnClickListener { showEditInfoDialog() }
-        binding.buttonEditAddress.setOnClickListener { showEditAddressDialog() }
+        binding.buttonEditName.setOnClickListener { showEditNameDialog() }
+        binding.buttonEditPhone.setOnClickListener { showEditPhoneDialog() }
+        binding.buttonEditAddress.setOnClickListener { addressLauncher.launch(Unit) }
         binding.buttonAddPayment.setOnClickListener { showAddPaymentDialog() }
     }
 
@@ -170,7 +181,8 @@ class MyPageFragment : Fragment() {
         // 📍 배달 주소
         val fullAddress = "${loaded?.address.orEmpty()} ${loaded?.addressDetail.orEmpty()}".trim()
         b.textAddressSummary.text = fullAddress.ifBlank { empty }
-        b.textInfoAddress.text = address
+        val zip = loaded?.zipCode.orEmpty()
+        b.textInfoAddress.text = if (zip.isNotBlank() && address != empty) "[$zip] $address" else address
         b.textInfoAddressDetail.text = detail
     }
 
@@ -270,31 +282,64 @@ class MyPageFragment : Fragment() {
 
     // ───────── 👤 내 정보 / 📍 주소 수정 ─────────
 
-    private fun showEditInfoDialog() {
+    /** 이름 수정 (입력 칸 1개만 사용) */
+    private fun showEditNameDialog() {
         val d = DialogTwoFieldsBinding.inflate(layoutInflater)
         d.layoutFirst.hint = getString(R.string.my_label_name)
         d.editFirst.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PERSON_NAME
         d.editFirst.setText(profile?.name.orEmpty())
-        d.layoutSecond.hint = getString(R.string.my_label_phone)
-        d.editSecond.inputType = InputType.TYPE_CLASS_PHONE
-        d.editSecond.setText(profile?.phone.orEmpty())
+        d.layoutSecond.visibility = View.GONE
 
-        showTwoFieldDialog(R.string.my_edit_info, d) { first, second ->
-            mapOf("name" to first, "phone" to second)
-        }
+        showTwoFieldDialog(R.string.my_edit_name, d) { first, _ -> mapOf("name" to first) }
     }
 
-    private fun showEditAddressDialog() {
+    /** 휴대폰 번호 변경: 새 번호로 문자 인증을 마치면 저장하고 창이 닫힌다 */
+    private fun showEditPhoneDialog() {
+        val v = LayoutPhoneVerifyBinding.inflate(layoutInflater)
+        val pad = (24 * resources.displayMetrics.density).toInt()
+        val container = FrameLayout(requireContext()).apply {
+            setPadding(pad, pad / 3, pad, 0)
+            addView(v.root)
+        }
+
+        lateinit var verifier: PhoneVerifier
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.my_edit_phone)
+            .setMessage(R.string.my_edit_phone_desc)
+            .setView(container)
+            .setNegativeButton(R.string.auth_close, null)
+            .setOnDismissListener { verifier.release() }
+            .create()
+
+        verifier = PhoneVerifier(
+            activity = requireActivity(),
+            v = v,
+            onVerified = { phone ->
+                UserRepository.updateMyFields(mapOf("phone" to phone)) { ok ->
+                    toast(if (ok) R.string.my_saved else R.string.my_save_failed)
+                    dialog.dismiss()
+                    if (ok) UserRepository.loadMyProfile { showProfile(it) }
+                }
+            }
+        )
+        dialog.show()
+    }
+
+    /** 주소 검색 결과 + 상세 주소 입력 → 저장 */
+    private fun showAddressDetailDialog(result: AddressResult) {
         val d = DialogTwoFieldsBinding.inflate(layoutInflater)
-        d.layoutFirst.hint = getString(R.string.my_label_address)
-        d.editFirst.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_POSTAL_ADDRESS
-        d.editFirst.setText(profile?.address.orEmpty())
+        d.layoutFirst.hint = getString(R.string.addr_zip, result.zipCode)
+        d.editFirst.setText(result.address)
+        d.editFirst.isEnabled = false          // 검색한 주소는 그대로
+        d.editFirst.maxLines = 3
         d.layoutSecond.hint = getString(R.string.my_label_address_detail)
         d.editSecond.inputType = InputType.TYPE_CLASS_TEXT
-        d.editSecond.setText(profile?.addressDetail.orEmpty())
+        // 같은 주소를 다시 고른 경우에만 예전 상세 주소 채워 두기
+        if (profile?.address == result.address) d.editSecond.setText(profile?.addressDetail.orEmpty())
+        d.editSecond.requestFocus()
 
-        showTwoFieldDialog(R.string.my_edit_address, d) { first, second ->
-            mapOf("address" to first, "addressDetail" to second)
+        showTwoFieldDialog(R.string.my_edit_address, d) { _, second ->
+            mapOf("zipCode" to result.zipCode, "address" to result.address, "addressDetail" to second)
         }
     }
 

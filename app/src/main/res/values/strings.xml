@@ -7,6 +7,16 @@
     <string name="brand_name">BREW &amp; BITE</string>
     <string name="brand_tagline">Coffee, Food &amp; Good Moments.</string>
     <string name="brand_slogan">Sip. Bite. Enjoy.</string>
+
+    <!-- 스플래시 -->
+    <string name="splash_eyebrow">SINCE 2026 · DAEGU</string>
+    <string name="splash_chip_coffee">☕ 스페셜티 커피</string>
+    <string name="splash_chip_bakery">🥐 매일 굽는 빵</string>
+    <string name="splash_chip_delivery">🛵 빠른 배달</string>
+    <string name="splash_slogan">SIP · BITE · ENJOY</string>
+    <string name="splash_start">시작하기</string>
+    <string name="splash_go_order">주문하러 가기</string>
+    <string name="splash_welcome_back">%1$s님, 다시 오셨네요 ☕</string>
     <string name="search_hint">커피, 디저트, 음식 검색</string>
     <string name="section_category">카테고리</string>
     <string name="section_popular">인기 메뉴</string>
@@ -165,6 +175,39 @@
     <string name="pay_last4_help">보안을 위해 끝 4자리만 저장해요</string>
     <string name="pay_make_default">기본 결제 수단으로 설정</string>
     <string name="pay_err_last4">숫자 4자리를 입력해 주세요</string>
+
+    <string name="my_edit_name">이름 수정</string>
+    <string name="my_edit_phone">휴대폰 번호 변경</string>
+    <string name="my_edit_phone_desc">새 번호로 받은 인증번호를 입력하면 바로 바뀌어요</string>
+    <string name="my_search_address">🔍 주소 검색으로 변경</string>
+
+    <!-- 주소 검색 -->
+    <string name="addr_title">주소 검색</string>
+    <string name="addr_desc">도로명, 건물명, 지번으로 검색해 주세요</string>
+    <string name="addr_error">주소 검색을 불러오지 못했어요\n인터넷 연결을 확인해 주세요</string>
+    <string name="addr_retry">다시 시도</string>
+    <string name="addr_tap_to_search">눌러서 주소 검색</string>
+    <string name="addr_zip">우편번호 %1$s</string>
+    <string name="addr_err_required">주소 검색으로 주소를 선택해 주세요</string>
+
+    <!-- 휴대폰 인증 (앱 안에서 인증번호를 만들어 보여 줌) -->
+    <string name="phone_hint">휴대폰 번호</string>
+    <string name="phone_send">인증번호 받기</string>
+    <string name="phone_resend">재전송</string>
+    <string name="phone_code_hint">인증번호 6자리</string>
+    <string name="phone_confirm">확인</string>
+    <string name="phone_verified">✓ 휴대폰 인증 완료</string>
+    <string name="phone_time_left">남은 시간 %1$d:%2$02d</string>
+    <string name="phone_err_format">휴대폰 번호를 확인해 주세요 (예: 010-1234-5678)</string>
+    <string name="phone_err_send_first">먼저 인증번호를 받아 주세요</string>
+    <string name="phone_err_expired">시간이 지났어요. 재전송을 눌러 주세요</string>
+    <string name="phone_err_changed">번호가 바뀌었어요. 인증번호를 다시 받아 주세요</string>
+    <string name="phone_err_code">인증번호 6자리를 입력해 주세요</string>
+    <string name="phone_sms_message">📩 [Brew &amp; Bite] 인증번호 [%1$s] 를 2분 안에 입력해 주세요</string>
+    <string name="phone_sms_fill">입력</string>
+    <string name="phone_err_wrong">인증번호가 맞지 않아요 (남은 기회 %1$d번)</string>
+    <string name="phone_err_too_many_wrong">5번 틀렸어요. 재전송을 눌러 새 인증번호를 받아 주세요</string>
+    <string name="phone_err_need_verify">휴대폰 인증을 완료해 주세요</string>
 
     <!-- 준비 중인 탭 -->
     <string name="store_title">매장 정보</string>

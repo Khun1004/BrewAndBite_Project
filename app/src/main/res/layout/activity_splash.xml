@@ -1,43 +1,238 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    스플래시 (첫 화면)
+    ┌ SINCE 2026 · DAEGU ┐
+    │  Brew  &  Bite      │  ← 로고 + 은은한 빛
+    │  Coffee, Food & ... │
+    │ [☕ 커피][🥐 빵][🛵 배달]
+    │      (커피 사진)      │
+    │  SIP · BITE · ENJOY  │
+    │ [   시작하기  >   ]   │
+    └ 이미 회원이신가요? 로그인 ┘
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".splash.SplashActivity">
 
+    <!-- 커피 사진 (화면 너비에 맞추고, 아래 버튼 영역 바로 위에 붙임) -->
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:id="@+id/imageHero"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_pic"
+        app:layout_constraintBottom_toTopOf="@+id/bottomPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 사진 위/아래 경계를 부드럽게 -->
+    <View
+        android:id="@+id/fadeTop"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
+        android:background="@drawable/bg_splash_fade_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageHero" />
+
+    <View
+        android:id="@+id/fadeBottom"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:background="@drawable/bg_splash_fade_bottom"
+        app:layout_constraintBottom_toBottomOf="@+id/imageHero"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 로고 뒤의 빛 -->
+    <View
+        android:id="@+id/glow"
+        android:layout_width="340dp"
+        android:layout_height="340dp"
+        android:background="@drawable/bg_splash_glow"
+        app:layout_constraintBottom_toBottomOf="@+id/textBrand"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textBrand" />
+
+    <!-- ── 위쪽: 로고 영역 ── -->
+    <LinearLayout
+        android:id="@+id/topContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- ─── SINCE 2026 · DAEGU ─── -->
+        <LinearLayout
+            android:id="@+id/eyebrowRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="1dp"
+                android:background="@color/bb_beige"
+                android:alpha="0.6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:letterSpacing="0.3"
+                android:text="@string/splash_eyebrow"
+                android:textColor="@color/bb_beige"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="28dp"
+                android:layout_height="1dp"
+                android:background="@color/bb_beige"
+                android:alpha="0.6" />
+        </LinearLayout>
+
+        <!-- Brew & Bite (& 글자 크기/색은 코드에서) -->
+        <TextView
+            android:id="@+id/textBrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/stash"
+            android:gravity="center"
+            android:lineSpacingMultiplier="0.82"
+            android:shadowColor="#80000000"
+            android:shadowDy="6"
+            android:shadowRadius="18"
+            android:text="Brew\n&amp;\nBite"
+            android:textColor="@color/lightBrown"
+            android:textSize="92sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/textTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:letterSpacing="0.06"
+            android:text="@string/brand_tagline"
+            android:textColor="@color/bb_cream"
+            android:alpha="0.8"
+            android:textSize="14sp"
+            android:textStyle="italic" />
+
+        <!-- 특징 3개 -->
+        <LinearLayout
+            android:id="@+id/chipRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/chipCoffee"
+                style="@style/SplashChip"
+                android:text="@string/splash_chip_coffee" />
+
+            <TextView
+                android:id="@+id/chipBakery"
+                style="@style/SplashChip"
+                android:layout_marginStart="8dp"
+                android:text="@string/splash_chip_bakery" />
+
+            <TextView
+                android:id="@+id/chipDelivery"
+                style="@style/SplashChip"
+                android:layout_marginStart="8dp"
+                android:text="@string/splash_chip_delivery" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ── 아래쪽: 시작 버튼 영역 ── -->
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/splash_pic" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Brew \nAnd \nBite"
-        android:textColor="@color/lightBrown"
-        android:textStyle="bold"
-        android:textSize="110sp"
-        android:fontFamily="@font/stash"
-        android:textAlignment="center"
-        android:lineSpacingExtra="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/textSlogan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.35"
+            android:text="@string/splash_slogan"
+            android:textColor="@color/bb_beige"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/startBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:srcCompat="@drawable/start_btn" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonStart"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="14dp"
+            android:backgroundTint="@color/lightBrown"
+            android:elevation="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/splash_start"
+            android:textColor="@color/bb_espresso"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:cornerRadius="30dp"
+            app:icon="@drawable/ic_chevron_right"
+            app:iconGravity="textEnd"
+            app:iconPadding="6dp"
+            app:iconTint="@color/bb_espresso" />
+
+        <!-- 로그인 안 했을 때: 이미 회원이신가요? 로그인 / 로그인했을 때: ○○님, 다시 오셨네요 -->
+        <LinearLayout
+            android:id="@+id/loginRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textLoginHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_have_account"
+                android:textColor="@color/bb_nav_inactive"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/textLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:padding="6dp"
+                android:text="@string/auth_go_login"
+                android:textColor="@color/lightBrown"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

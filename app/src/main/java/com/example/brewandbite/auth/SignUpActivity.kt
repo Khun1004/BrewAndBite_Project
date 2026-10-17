@@ -11,17 +11,31 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.brewandbite.R
+import com.example.brewandbite.address.AddressSearchActivity
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.databinding.ActivitySignupBinding
 import com.google.android.material.textfield.TextInputLayout
 
 /**
- * 회원가입 화면: 이름 · 이메일 · 비밀번호 · 연락처 · 배달 주소.
+ * 회원가입 화면: 이름 · 이메일 · 비밀번호 · 휴대폰(인증번호 확인) · 배달 주소(주소 검색).
  * 가입에 성공하면 자동으로 로그인된 상태가 되고, RESULT_OK 로 닫힌다.
  */
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
+    private lateinit var phoneVerifier: PhoneVerifier
+
+    private var zipCode = ""          // 주소 검색에서 받은 우편번호
+
+    /** 주소 검색 화면에서 주소를 고르면 칸에 채우고, 상세 주소 칸으로 이동 */
+    private val addressLauncher = registerForActivityResult(AddressSearchActivity.Contract()) { result ->
+        if (result == null) return@registerForActivityResult
+        zipCode = result.zipCode
+        binding.editAddress.setText(result.address)
+        binding.layoutAddress.error = null
+        binding.layoutAddress.helperText = getString(R.string.addr_zip, result.zipCode)
+        binding.editAddressDetail.requestFocus()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +53,23 @@ class SignUpActivity : AppCompatActivity() {
         binding.buttonClose.setOnClickListener { finish() }
         binding.textSwitch.setOnClickListener { finish() }   // 이미 회원 → 로그인 화면으로 돌아가기
         binding.buttonSubmit.setOnClickListener { submit() }
+
+        // 휴대폰 인증 (인증번호 받기 → 입력 → 확인)
+        phoneVerifier = PhoneVerifier(
+            activity = this,
+            v = binding.phoneVerify,
+            onVerified = { Toast.makeText(this, R.string.phone_verified, Toast.LENGTH_SHORT).show() }
+        )
+
+        // 배달 주소: 칸이나 돋보기를 누르면 주소 검색 화면
+        val openSearch = View.OnClickListener { addressLauncher.launch(Unit) }
+        binding.editAddress.setOnClickListener(openSearch)
+        binding.layoutAddress.setEndIconOnClickListener(openSearch)
+    }
+
+    override fun onDestroy() {
+        phoneVerifier.release()
+        super.onDestroy()
     }
 
     private fun text(layout: TextInputLayout): String = layout.editText?.text?.toString()?.trim().orEmpty()
@@ -48,14 +79,13 @@ class SignUpActivity : AppCompatActivity() {
         val email = text(binding.layoutEmail)
         val password = binding.editPassword.text?.toString().orEmpty()
         val confirm = binding.editPasswordConfirm.text?.toString().orEmpty()
-        val phone = text(binding.layoutPhone)
         val address = text(binding.layoutAddress)
         val addressDetail = text(binding.layoutAddressDetail)
 
         // 입력 확인 (틀린 칸에 빨간 안내 문구)
         val fields = listOf(
             binding.layoutName, binding.layoutEmail, binding.layoutPassword,
-            binding.layoutPasswordConfirm, binding.layoutPhone, binding.layoutAddress
+            binding.layoutPasswordConfirm, binding.layoutAddress
         )
         fields.forEach { it.error = null }
         var ok = true
@@ -67,13 +97,17 @@ class SignUpActivity : AppCompatActivity() {
         if (confirm != password) {
             binding.layoutPasswordConfirm.error = getString(R.string.auth_err_password_match); ok = false
         }
-        if (phone.filter { it.isDigit() }.length < 9) {
-            binding.layoutPhone.error = getString(R.string.auth_err_phone); ok = false
+        val phone = phoneVerifier.verifiedPhone
+        if (phone == null) {
+            binding.phoneVerify.layoutPhone.error = getString(R.string.phone_err_need_verify); ok = false
         }
-        if (address.isEmpty()) { binding.layoutAddress.error = getString(R.string.auth_err_required); ok = false }
-        if (!ok) return
+        if (address.isEmpty()) { binding.layoutAddress.error = getString(R.string.addr_err_required); ok = false }
+        if (!ok || phone == null) return
 
-        val profile = UserProfile(name = name, phone = phone, address = address, addressDetail = addressDetail)
+        val profile = UserProfile(
+            name = name, phone = phone, zipCode = zipCode,
+            address = address, addressDetail = addressDetail
+        )
 
         setLoading(true)
         AuthManager.signUp(email, password, profile) { error ->
