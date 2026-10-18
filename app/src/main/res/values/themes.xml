@@ -28,4 +28,10 @@
         <item name="android:textColor">@color/bb_cream</item>
         <item name="android:textSize">12sp</item>
     </style>
+
+    <!-- 동그란 이미지 (프로필 사진) -->
+    <style name="ShapeCircle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · 👤 내 정보: 이름 · 이메일 · 연락처 + [이름 수정] [휴대폰 번호 변경] (MyDetailActivity 가 카드 안에 넣음) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="@string/my_label_name"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textInfoName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="쿤산웨이" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="@string/my_label_email"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textInfoEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="khun@example.com" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="@string/my_label_phone"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textInfoPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="010-1234-5678" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonEditName"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/bb_beige_light"
+            android:text="@string/my_edit_name"
+            android:textColor="@color/bb_brown"
+            android:textStyle="bold"
+            app:cornerRadius="14dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonEditPhone"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/bb_beige_light"
+            android:text="@string/my_edit_phone"
+            android:textColor="@color/bb_brown"
+            android:textStyle="bold"
+            app:cornerRadius="14dp" />
+    </LinearLayout>
+</LinearLayout>

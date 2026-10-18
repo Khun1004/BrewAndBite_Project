@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- My Page 탭: 로그인 전에는 로그인 안내, 로그인 후에는 프로필 + 펼치는 목록(내 정보·주소·결제 수단·주문 기록·찜) + 로그아웃 -->
+<!-- My Page 탭: 로그인 전에는 로그인 안내, 로그인 후에는 프로필 + 메뉴 목록(누르면 상세 화면) + 로그아웃 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -105,16 +105,49 @@
                     android:orientation="horizontal"
                     android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/textAvatar"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/bg_avatar"
-                        android:gravity="center"
-                        android:textColor="@color/bb_cream"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        tools:text="쿤" />
+                    <!-- 프로필 사진 (누르면 사진 고르기). 사진이 없으면 이름 첫 글자 -->
+                    <FrameLayout
+                        android:id="@+id/avatarBox"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:contentDescription="@string/photo_change"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/textAvatar"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:background="@drawable/bg_avatar"
+                            android:gravity="center"
+                            android:textColor="@color/bb_cream"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="쿤" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imageAvatar"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:importantForAccessibility="no"
+                            android:padding="2dp"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            app:shapeAppearanceOverlay="@style/ShapeCircle"
+                            app:strokeColor="@color/bb_nav_active"
+                            app:strokeWidth="3dp" />
+
+                        <TextView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_camera_badge"
+                            android:gravity="center"
+                            android:importantForAccessibility="no"
+                            android:text="📷"
+                            android:textSize="11sp" />
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -143,14 +176,15 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- ── 👤 내 정보 ── -->
+                <!-- 메뉴 목록: 왼쪽 아이콘 · 가운데 글 · 오른쪽 >  (누르면 상세 화면 MyDetailActivity 로 이동) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingVertical="4dp">
 
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- 👤 -->
                     <LinearLayout
                         android:id="@+id/rowInfo"
                         android:layout_width="match_parent"
@@ -198,7 +232,6 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronInfo"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -207,139 +240,13 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentInfo"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:background="@color/bb_divider" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="72dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/my_label_name"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/textInfoName"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/bb_espresso"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="쿤산웨이" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="72dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/my_label_email"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/textInfoEmail"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/bb_espresso"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="khun@example.com" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="72dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/my_label_phone"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/textInfoPhone"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/bb_espresso"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="010-1234-5678" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:orientation="horizontal">
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/buttonEditName"
-                                style="@style/Widget.Material3.Button.TonalButton"
-                                android:layout_width="0dp"
-                                android:layout_height="46dp"
-                                android:layout_weight="1"
-                                android:backgroundTint="@color/bb_beige_light"
-                                android:text="@string/my_edit_name"
-                                android:textColor="@color/bb_brown"
-                                android:textStyle="bold"
-                                app:cornerRadius="14dp" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/buttonEditPhone"
-                                style="@style/Widget.Material3.Button.TonalButton"
-                                android:layout_width="0dp"
-                                android:layout_height="46dp"
-                                android:layout_weight="1"
-                                android:layout_marginStart="8dp"
-                                android:backgroundTint="@color/bb_beige_light"
-                                android:text="@string/my_edit_phone"
-                                android:textColor="@color/bb_brown"
-                                android:textStyle="bold"
-                                app:cornerRadius="14dp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ── 📍 배달 주소 ── -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
-
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- 📍 -->
                     <LinearLayout
                         android:id="@+id/rowAddress"
                         android:layout_width="match_parent"
@@ -387,7 +294,6 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronAddress"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -396,95 +302,13 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentAddress"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:background="@color/bb_divider" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="72dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/my_label_address"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/textInfoAddress"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/bb_espresso"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="대구광역시 북구 복현로 35" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:layout_width="72dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/my_label_address_detail"
-                                android:textColor="@color/bb_muted"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/textInfoAddressDetail"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textColor="@color/bb_espresso"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                tools:text="101호" />
-                        </LinearLayout>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonEditAddress"
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="46dp"
-                            android:layout_marginTop="4dp"
-                            android:backgroundTint="@color/bb_beige_light"
-                            android:text="@string/my_search_address"
-                            android:textColor="@color/bb_brown"
-                            android:textStyle="bold"
-                            app:cornerRadius="14dp" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ── 💳 결제 수단 ── -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
-
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- 💳 -->
                     <LinearLayout
                         android:id="@+id/rowPayment"
                         android:layout_width="match_parent"
@@ -532,7 +356,6 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronPayment"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -541,74 +364,13 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentPayment"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:background="@color/bb_divider" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <TextView
-                            android:id="@+id/textPaymentTip"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/my_payment_tip"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="11sp" />
-
-                        <!-- 결제 수단 목록 (item_payment_method 를 코드에서 넣음) -->
-                        <LinearLayout
-                            android:id="@+id/paymentList"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical" />
-
-                        <TextView
-                            android:id="@+id/textNoPayment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:lineSpacingExtra="2dp"
-                            android:paddingVertical="10dp"
-                            android:text="@string/my_no_payment"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="13sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonAddPayment"
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="46dp"
-                            android:layout_marginTop="4dp"
-                            android:backgroundTint="@color/bb_beige_light"
-                            android:text="@string/my_add_payment"
-                            android:textColor="@color/bb_brown"
-                            android:textStyle="bold"
-                            app:cornerRadius="14dp" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ── 🧾 주문 기록 ── -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
-
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- 🧾 -->
                     <LinearLayout
                         android:id="@+id/rowOrders"
                         android:layout_width="match_parent"
@@ -652,11 +414,10 @@
                                 android:maxLines="1"
                                 android:textColor="@color/bb_muted"
                                 android:textSize="12sp"
-                                tools:text="0건" />
+                                tools:text="곧 추가돼요" />
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronOrders"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -665,45 +426,13 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentOrders"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:background="@color/bb_divider" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:lineSpacingExtra="2dp"
-                            android:paddingVertical="10dp"
-                            android:text="@string/my_orders_empty"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ── ♡ 찜한 메뉴 ── -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
-
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- ♡ -->
                     <LinearLayout
                         android:id="@+id/rowFavorites"
                         android:layout_width="match_parent"
@@ -751,7 +480,6 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronFavorites"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -760,45 +488,13 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentFavorites"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:background="@color/bb_divider" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:lineSpacingExtra="2dp"
-                            android:paddingVertical="10dp"
-                            android:text="@string/my_favorites_empty"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ── 🔒 계정 보안 ── -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical">
-
-                    <!-- 왼쪽 아이콘 · 가운데 글 · 오른쪽 > (누르면 아래 내용이 펼쳐짐) -->
+                    <!-- 🔒 -->
                     <LinearLayout
                         android:id="@+id/rowSecurity"
                         android:layout_width="match_parent"
@@ -846,7 +542,6 @@
                         </LinearLayout>
 
                         <ImageView
-                            android:id="@+id/chevronSecurity"
                             android:layout_width="22dp"
                             android:layout_height="22dp"
                             android:layout_marginStart="8dp"
@@ -855,45 +550,6 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <!-- 펼쳐지는 내용 -->
-                    <LinearLayout
-                        android:id="@+id/contentSecurity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginBottom="12dp"
-                            android:background="@color/bb_divider" />
-
-                        <TextView
-                            android:id="@+id/textSecurityDesc"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:lineSpacingExtra="2dp"
-                            android:text="@string/my_security_desc"
-                            android:textColor="@color/bb_muted"
-                            android:textSize="13sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/buttonChangePassword"
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="46dp"
-                            android:backgroundTint="@color/bb_beige_light"
-                            android:text="@string/my_change_password"
-                            android:textColor="@color/bb_brown"
-                            android:textStyle="bold"
-                            app:cornerRadius="14dp" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · ♡ 찜한 메뉴 (다음 단계) (MyDetailActivity 가 카드 안에 넣음) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:paddingVertical="10dp"
+        android:text="@string/my_favorites_empty"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp" />
+</LinearLayout>

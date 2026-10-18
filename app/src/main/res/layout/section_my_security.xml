@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · 🔒 계정 보안: [비밀번호 변경] (MyDetailActivity 가 카드 안에 넣음) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textSecurityDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/my_security_desc"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonChangePassword"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:backgroundTint="@color/bb_beige_light"
+        android:text="@string/my_change_password"
+        android:textColor="@color/bb_brown"
+        android:textStyle="bold"
+        app:cornerRadius="14dp" />
+</LinearLayout>

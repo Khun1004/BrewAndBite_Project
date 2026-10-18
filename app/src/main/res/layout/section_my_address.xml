@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · 📍 배달 주소: 주소 · 상세 주소 + [주소 검색으로 변경] (MyDetailActivity 가 카드 안에 넣음) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="@string/my_label_address"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textInfoAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="대구광역시 북구 복현로 35" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:text="@string/my_label_address_detail"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textInfoAddressDetail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="101호" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonEditAddress"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/bb_beige_light"
+        android:text="@string/my_search_address"
+        android:textColor="@color/bb_brown"
+        android:textStyle="bold"
+        app:cornerRadius="14dp" />
+</LinearLayout>

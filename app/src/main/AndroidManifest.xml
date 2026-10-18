@@ -40,6 +40,10 @@
             android:name=".auth.SignUpActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- My Page 상세 화면 (내 정보 / 주소 / 결제 수단 / 보안 …) -->
+        <activity
+            android:name=".mypage.MyDetailActivity"
+            android:exported="false" />
         <!-- 주소 검색 (카카오 우편번호 서비스) -->
         <activity
             android:name=".address.AddressSearchActivity"

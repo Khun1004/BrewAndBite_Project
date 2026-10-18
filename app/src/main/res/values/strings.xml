@@ -177,6 +177,14 @@
     <string name="my_orders_empty">아직 주문 기록이 없어요\n주문하면 여기에 표시돼요</string>
     <string name="my_favorites_empty">곧 추가돼요 · 메뉴의 ♡를 누르면 여기에 모여요</string>
     <string name="my_saved">저장했어요</string>
+    <string name="photo_change">프로필 사진 변경</string>
+    <string name="photo_pick">🖼 앨범에서 선택</string>
+    <string name="photo_file">📁 파일에서 선택 (다운로드 폴더)</string>
+    <string name="photo_remove">🗑 기본 이미지로</string>
+    <string name="photo_saving">사진을 저장하는 중…</string>
+    <string name="photo_saved">프로필 사진을 바꿨어요</string>
+    <string name="photo_removed">기본 이미지로 바꿨어요</string>
+    <string name="photo_failed">사진을 불러오지 못했어요. 다른 사진으로 시도해 주세요</string>
     <string name="my_section_security">계정 보안</string>
     <string name="my_security_desc">로그인할 때 쓰는 비밀번호를 바꿀 수 있어요. 비밀번호를 잊었다면 로그아웃 후 로그인 화면의 \'비밀번호를 잊으셨나요?\'를 이용해 주세요.</string>
     <string name="my_change_password">🔒 비밀번호 변경</string>

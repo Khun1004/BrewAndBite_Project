@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    My Page 상세 화면 (내 정보 / 배달 주소 / 결제 수단 / 주문 기록 / 찜한 메뉴 / 계정 보안)
+    헤더(뒤로가기 + 제목) 아래 카드 안에 section_my_*.xml 을 코드에서 넣는다
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bb_cream"
+    tools:context=".mypage.MyDetailActivity">
+
+    <!-- 헤더 (상태바 아래까지 이어짐) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_home_header"
+        android:elevation="4dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="22dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/decoRings"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:importantForAccessibility="no"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@drawable/bg_header_rings"
+            android:translationX="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/buttonBack"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="@string/back"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/bb_cream" />
+
+        <TextView
+            android:id="@+id/textEyebrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:letterSpacing="0.25"
+            android:text="@string/header_my_eyebrow"
+            android:textColor="@color/bb_beige"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonBack" />
+
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textColor="@color/bb_cream"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/textEmoji"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textEyebrow"
+            tools:text="내 정보" />
+
+        <TextView
+            android:id="@+id/textEmoji"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_header_button"
+            android:gravity="center"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toBottomOf="@+id/textTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="👤" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerBox">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="32dp">
+
+            <!-- 섹션 내용이 들어가는 카드 -->
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_info_card"
+                android:padding="18dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

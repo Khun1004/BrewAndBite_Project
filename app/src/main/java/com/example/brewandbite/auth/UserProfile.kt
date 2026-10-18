@@ -12,5 +12,6 @@ data class UserProfile(
     var zipCode: String = "",        // 우편번호 (주소 검색에서 자동 입력)
     var address: String = "",
     var addressDetail: String = "",
+    var photo: String = "",          // 프로필 사진 (작게 줄인 JPEG 를 Base64 글자로 저장)
     var createdAt: Long = 0L
 )

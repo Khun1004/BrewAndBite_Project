@@ -1,49 +1,33 @@
 package com.example.brewandbite.mypage
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.os.Bundle
-import android.text.InputType
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.brewandbite.R
-import com.example.brewandbite.address.AddressResult
-import com.example.brewandbite.address.AddressSearchActivity
 import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.auth.LoginActivity
-import com.example.brewandbite.auth.PaymentMethod
 import com.example.brewandbite.auth.PaymentRepository
 import com.example.brewandbite.auth.PhoneIndex
-import com.example.brewandbite.auth.PhoneVerifier
 import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
-import com.example.brewandbite.databinding.DialogAddPaymentBinding
-import com.example.brewandbite.databinding.DialogChangePasswordBinding
-import com.example.brewandbite.databinding.DialogTwoFieldsBinding
 import com.example.brewandbite.databinding.FragmentMypageBinding
-import com.example.brewandbite.databinding.ItemPaymentMethodBinding
-import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * My Page 탭
+ *  - 프로필 사진: 동그라미를 누르면 앨범에서 선택 / 파일에서 선택 / 기본 이미지로 (ProfilePhoto.kt)
  *  - 로그인 전: 로그인 안내 카드 + [로그인 / 회원가입]
- *  - 로그인 후: 프로필 카드 + 목록 (왼쪽 아이콘 · 가운데 글 · 오른쪽 >)
- *      > 를 누르면 아래로 내용이 펼쳐진다 (한 번 더 누르면 접힘)
- *      👤 내 정보   : 이름·이메일·연락처 + [이름 수정] [휴대폰 번호 변경(인증번호 확인)]
- *      📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
- *      💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
- *      🧾 주문 기록 / ♡ 찜한 메뉴 : 다음 단계
- *      🔒 계정 보안 : [비밀번호 변경] (현재 비밀번호 확인 → 새 비밀번호)
+ *  - 로그인 후: 프로필 카드 + 메뉴 목록 (왼쪽 아이콘 · 가운데 글(요약) · 오른쪽 >)
+ *      줄을 누르면 상세 화면(MyDetailActivity)이 새로 열린다
+ *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ♡ 찜한 메뉴 · 🔒 계정 보안
  */
 class MyPageFragment : Fragment() {
 
@@ -53,14 +37,14 @@ class MyPageFragment : Fragment() {
     /** 마지막으로 불러온 회원 정보 (수정 창에 미리 채워 넣기용) */
     private var profile: UserProfile? = null
 
-    /** 펼치는 목록 한 칸: 누르는 줄, 펼쳐지는 내용, > 화살표 */
-    private data class Section(val row: View, val content: View, val chevron: ImageView)
+    /** 앨범에서 사진 고르기 (권한 필요 없는 안드로이드 사진 선택기) */
+    private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) savePhoto(uri)
+    }
 
-    private lateinit var sections: List<Section>
-
-    /** 주소 검색 화면에서 주소를 고르면 → 상세 주소 입력 창 */
-    private val addressLauncher = registerForActivityResult(AddressSearchActivity.Contract()) { result ->
-        if (result != null) showAddressDetailDialog(result)
+    /** 파일에서 고르기 (다운로드 폴더 등 — 컴퓨터에서 에뮬레이터로 끌어다 놓은 사진이 여기에 있음) */
+    private val filePicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) savePhoto(uri)
     }
 
     /** 로그인 화면에서 돌아오면 다시 그리기 */
@@ -84,22 +68,20 @@ class MyPageFragment : Fragment() {
         binding.buttonLogin.setOnClickListener { loginLauncher.launch(LoginActivity.intent(requireContext())) }
         binding.buttonLogout.setOnClickListener { confirmLogout() }
 
-        // 펼치는 목록
-        sections = listOf(
-            Section(binding.rowInfo, binding.contentInfo, binding.chevronInfo),
-            Section(binding.rowAddress, binding.contentAddress, binding.chevronAddress),
-            Section(binding.rowPayment, binding.contentPayment, binding.chevronPayment),
-            Section(binding.rowOrders, binding.contentOrders, binding.chevronOrders),
-            Section(binding.rowFavorites, binding.contentFavorites, binding.chevronFavorites),
-            Section(binding.rowSecurity, binding.contentSecurity, binding.chevronSecurity)
+        // 메뉴 목록: 줄을 누르면 상세 화면으로
+        val rows = mapOf(
+            binding.rowInfo to MyDetailActivity.Section.INFO,
+            binding.rowAddress to MyDetailActivity.Section.ADDRESS,
+            binding.rowPayment to MyDetailActivity.Section.PAYMENT,
+            binding.rowOrders to MyDetailActivity.Section.ORDERS,
+            binding.rowFavorites to MyDetailActivity.Section.FAVORITES,
+            binding.rowSecurity to MyDetailActivity.Section.SECURITY
         )
-        sections.forEach { section -> section.row.setOnClickListener { toggle(section) } }
+        rows.forEach { (row, section) ->
+            row.setOnClickListener { startActivity(MyDetailActivity.intent(requireContext(), section)) }
+        }
 
-        binding.buttonEditName.setOnClickListener { showEditNameDialog() }
-        binding.buttonEditPhone.setOnClickListener { showEditPhoneDialog() }
-        binding.buttonEditAddress.setOnClickListener { addressLauncher.launch(Unit) }
-        binding.buttonAddPayment.setOnClickListener { showAddPaymentDialog() }
-        binding.buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
+        binding.avatarBox.setOnClickListener { showPhotoMenu() }
     }
 
     override fun onStart() {
@@ -117,24 +99,6 @@ class MyPageFragment : Fragment() {
         _binding = null
     }
 
-    // ───────── 펼치기 / 접기 ─────────
-
-    /** > 를 누르면 내용이 부드럽게 펼쳐지고, 화살표가 아래(⌄)로 돌아간다 */
-    private fun toggle(section: Section) {
-        val expand = section.content.visibility != View.VISIBLE
-        TransitionManager.beginDelayedTransition(binding.loggedInView, AutoTransition().setDuration(200))
-        section.content.visibility = if (expand) View.VISIBLE else View.GONE
-        section.chevron.animate().rotation(if (expand) 90f else 0f).setDuration(200).start()
-    }
-
-    /** 로그아웃할 때 모두 접어 두기 */
-    private fun collapseAll() {
-        sections.forEach {
-            it.content.visibility = View.GONE
-            it.chevron.rotation = 0f
-        }
-    }
-
     // ───────── 화면 그리기 ─────────
 
     /** 로그인 상태에 맞게 화면을 그린다 */
@@ -146,7 +110,6 @@ class MyPageFragment : Fragment() {
 
         if (!loggedIn) {
             profile = null
-            collapseAll()
             b.pageHeader.textSubtitle.setText(R.string.header_my_subtitle)
             return
         }
@@ -155,16 +118,20 @@ class MyPageFragment : Fragment() {
         if (profile == null) b.textName.setText(R.string.my_loading)
         b.textEmail.text = AuthManager.currentEmail().orEmpty()
         UserRepository.loadMyProfile { showProfile(it) }
-        loadPayments()
+        // 결제 수단 요약 (예: 2개 · 기본: 카카오페이)
+        PaymentRepository.loadMyPayments { list ->
+            val bb = _binding ?: return@loadMyPayments
+            val default = list.firstOrNull { it.defaultMethod } ?: list.firstOrNull()
+            bb.textPaymentSummary.text =
+                if (default == null) getString(R.string.my_no_payment)
+                else getString(R.string.my_payment_count, list.size, default.displayName())
+        }
 
         b.textOrdersSummary.text = getString(R.string.my_menu_soon)
         b.textFavoritesSummary.text = getString(R.string.my_menu_soon)
-        // Google 로만 가입한 계정은 비밀번호가 없어서 변경 버튼을 숨김
-        val hasPassword = AuthManager.hasPassword()
-        b.textSecuritySummary.text =
-            getString(if (hasPassword) R.string.my_change_password else R.string.my_security_google_summary)
-        b.textSecurityDesc.setText(if (hasPassword) R.string.my_security_desc else R.string.my_security_google)
-        b.buttonChangePassword.visibility = if (hasPassword) View.VISIBLE else View.GONE
+        b.textSecuritySummary.text = getString(
+            if (AuthManager.hasPassword()) R.string.my_change_password else R.string.my_security_google_summary
+        )
     }
 
     private fun showProfile(loaded: UserProfile?) {
@@ -180,268 +147,83 @@ class MyPageFragment : Fragment() {
         val email = loaded?.email?.takeIf { it.isNotBlank() } ?: AuthManager.currentEmail().orEmpty()
         val name = loaded?.name?.takeIf { it.isNotBlank() } ?: email.substringBefore("@")
         val phone = loaded?.phone?.takeIf { it.isNotBlank() } ?: empty
-        val address = loaded?.address?.takeIf { it.isNotBlank() } ?: empty
-        val detail = loaded?.addressDetail?.takeIf { it.isNotBlank() } ?: empty
 
         // 프로필 카드
         b.textAvatar.text = name.take(1).uppercase()
+        showAvatar(loaded?.photo.orEmpty())
         b.textName.text = name
         b.textEmail.text = email
         b.pageHeader.textSubtitle.text = getString(R.string.my_hello, name)
 
-        // 👤 내 정보
+        // 목록 요약
         b.textInfoSummary.text = phone
-        b.textInfoName.text = name
-        b.textInfoEmail.text = email
-        b.textInfoPhone.text = phone
-
-        // 📍 배달 주소
         val fullAddress = "${loaded?.address.orEmpty()} ${loaded?.addressDetail.orEmpty()}".trim()
         b.textAddressSummary.text = fullAddress.ifBlank { empty }
-        val zip = loaded?.zipCode.orEmpty()
-        b.textInfoAddress.text = if (zip.isNotBlank() && address != empty) "[$zip] $address" else address
-        b.textInfoAddressDetail.text = detail
     }
 
-    // ───────── 💳 결제 수단 ─────────
-
-    private fun loadPayments() {
-        PaymentRepository.loadMyPayments { showPayments(it) }
-    }
-
-    private fun showPayments(list: List<PaymentMethod>) {
-        val b = _binding ?: return
-        b.paymentList.removeAllViews()
-
-        val default = list.firstOrNull { it.defaultMethod } ?: list.firstOrNull()
-        b.textPaymentSummary.text =
-            if (default == null) getString(R.string.my_no_payment)
-            else getString(R.string.my_payment_count, list.size, default.displayName())
-        b.textNoPayment.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
-        b.textPaymentTip.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
-
-        list.forEach { method ->
-            val item = ItemPaymentMethodBinding.inflate(layoutInflater, b.paymentList, false)
-            item.textPayEmoji.text = method.emoji()
-            item.textPayName.text = method.displayName()
-            item.textPayDefault.visibility = if (method.defaultMethod) View.VISIBLE else View.GONE
-            // 줄을 누르면 기본 결제 수단으로
-            item.root.setOnClickListener {
-                if (method.defaultMethod) return@setOnClickListener
-                PaymentRepository.setDefault(method.id) { ok ->
-                    toast(if (ok) R.string.my_payment_set_default else R.string.my_save_failed)
-                    if (ok) loadPayments()
-                }
-            }
-            item.buttonPayDelete.setOnClickListener { confirmDeletePayment(method) }
-            b.paymentList.addView(item.root)
-        }
-    }
-
-    private fun confirmDeletePayment(method: PaymentMethod) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.my_payment_delete_title)
-            .setMessage(method.displayName())
-            .setNegativeButton(R.string.cart_cancel, null)
-            .setPositiveButton(R.string.my_delete) { _, _ ->
-                PaymentRepository.remove(method.id) { ok ->
-                    toast(if (ok) R.string.my_payment_deleted else R.string.my_save_failed)
-                    if (ok) loadPayments()
-                }
-            }
-            .show()
-    }
-
-    /** 결제 수단 추가 창: 종류 고르기 → (카드면) 카드사·끝 4자리 → 기본 설정 여부 */
-    private fun showAddPaymentDialog() {
-        val d = DialogAddPaymentBinding.inflate(layoutInflater)
-        d.chipGroupType.setOnCheckedStateChangeListener { _, _ ->
-            d.cardFields.visibility = if (d.chipCard.isChecked) View.VISIBLE else View.GONE
-        }
-
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.pay_dialog_title)
-            .setView(d.root)
-            .setNegativeButton(R.string.cart_cancel, null)
-            .setPositiveButton(R.string.my_save, null)   // 아래에서 직접 처리 (입력이 틀리면 창이 안 닫히게)
-            .show()
-
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            val type = when (d.chipGroupType.checkedChipId) {
-                R.id.chipKakao -> PaymentMethod.TYPE_KAKAO
-                R.id.chipNaver -> PaymentMethod.TYPE_NAVER
-                R.id.chipToss -> PaymentMethod.TYPE_TOSS
-                R.id.chipCash -> PaymentMethod.TYPE_CASH
-                else -> PaymentMethod.TYPE_CARD
-            }
-            var company = ""
-            var last4 = ""
-            if (type == PaymentMethod.TYPE_CARD) {
-                company = d.editCardCompany.text?.toString()?.trim().orEmpty().ifBlank { "카드" }
-                last4 = d.editLast4.text?.toString()?.trim().orEmpty()
-                if (last4.length != 4 || !last4.all { it.isDigit() }) {
-                    d.layoutLast4.error = getString(R.string.pay_err_last4)
-                    return@setOnClickListener
-                }
-                d.layoutLast4.error = null
-            }
-
-            val method = PaymentMethod(type = type, cardCompany = company, last4 = last4)
-            PaymentRepository.add(method, d.checkDefault.isChecked) { ok ->
-                toast(if (ok) R.string.my_payment_added else R.string.my_save_failed)
-                if (ok) {
-                    dialog.dismiss()
-                    loadPayments()
-                }
-            }
-        }
-    }
-
-    // ───────── 👤 내 정보 / 📍 주소 수정 ─────────
-
-    /** 이름 수정 (입력 칸 1개만 사용) */
-    private fun showEditNameDialog() {
-        val d = DialogTwoFieldsBinding.inflate(layoutInflater)
-        d.layoutFirst.hint = getString(R.string.my_label_name)
-        d.editFirst.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        d.editFirst.setText(profile?.name.orEmpty())
-        d.layoutSecond.visibility = View.GONE
-
-        showTwoFieldDialog(R.string.my_edit_name, d) { first, _ -> mapOf("name" to first) }
-    }
-
-    /** 휴대폰 번호 변경: 새 번호로 문자 인증을 마치면 저장하고 창이 닫힌다 */
-    private fun showEditPhoneDialog() {
-        val v = LayoutPhoneVerifyBinding.inflate(layoutInflater)
-        val pad = (24 * resources.displayMetrics.density).toInt()
-        val container = FrameLayout(requireContext()).apply {
-            setPadding(pad, pad / 3, pad, 0)
-            addView(v.root)
-        }
-
-        lateinit var verifier: PhoneVerifier
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.my_edit_phone)
-            .setMessage(R.string.my_edit_phone_desc)
-            .setView(container)
-            .setNegativeButton(R.string.auth_close, null)
-            .setOnDismissListener { verifier.release() }
-            .create()
-
-        verifier = PhoneVerifier(
-            activity = requireActivity(),
-            v = v,
-            onVerified = { phone -> saveNewPhone(phone) { dialog.dismiss() } }
-        )
-        dialog.show()
-    }
+    // ───────── 📷 프로필 사진 ─────────
 
     /**
-     * 새 휴대폰 번호 저장. 번호가 로그인 아이디이기도 해서
-     * 다른 회원이 쓰는 번호인지 확인 → 회원 정보 저장 → 로그인용 목록(phoneIndex)도 새 번호로 바꾼다
+     * 사진 보여 주기: 저장한 사진 → (없으면) Google 계정 사진 → (없으면) 이름 첫 글자
      */
-    private fun saveNewPhone(phone: String, onFinished: () -> Unit) {
-        val uid = AuthManager.currentUid() ?: return onFinished()
-        val email = AuthManager.currentEmail().orEmpty()
-        val oldPhone = profile?.phone.orEmpty()
-
-        PhoneIndex.lookup(phone) { existing, failed ->
-            if (failed || (existing != null && existing.uid != uid)) {
-                toast(if (failed) R.string.my_save_failed else R.string.my_phone_taken)
-                onFinished()
-                return@lookup
+    private fun showAvatar(photo: String) {
+        val b = _binding ?: return
+        val bitmap = if (photo.isNotBlank()) ProfilePhoto.decode(photo) else null
+        val googlePhoto = AuthManager.currentPhotoUrl()
+        when {
+            bitmap != null -> {
+                b.imageAvatar.setImageBitmap(bitmap)
+                b.imageAvatar.visibility = View.VISIBLE
             }
-            UserRepository.updateMyFields(mapOf("phone" to phone)) { ok ->
-                if (ok) {
-                    if (PhoneIndex.key(oldPhone) != PhoneIndex.key(phone)) PhoneIndex.release(oldPhone)
-                    PhoneIndex.claim(phone, uid, email)
-                    UserRepository.loadMyProfile { showProfile(it) }
-                }
-                toast(if (ok) R.string.my_saved else R.string.my_save_failed)
-                onFinished()
+            googlePhoto != null -> {
+                Glide.with(this).load(googlePhoto).centerCrop().into(b.imageAvatar)
+                b.imageAvatar.visibility = View.VISIBLE
             }
+            else -> b.imageAvatar.visibility = View.GONE   // 첫 글자 동그라미가 보임
         }
     }
 
-    /** 주소 검색 결과 + 상세 주소 입력 → 저장 */
-    private fun showAddressDetailDialog(result: AddressResult) {
-        val d = DialogTwoFieldsBinding.inflate(layoutInflater)
-        d.layoutFirst.hint = getString(R.string.addr_zip, result.zipCode)
-        d.editFirst.setText(result.address)
-        d.editFirst.isEnabled = false          // 검색한 주소는 그대로
-        d.editFirst.maxLines = 3
-        d.layoutSecond.hint = getString(R.string.my_label_address_detail)
-        d.editSecond.inputType = InputType.TYPE_CLASS_TEXT
-        // 같은 주소를 다시 고른 경우에만 예전 상세 주소 채워 두기
-        if (profile?.address == result.address) d.editSecond.setText(profile?.addressDetail.orEmpty())
-        d.editSecond.requestFocus()
-
-        showTwoFieldDialog(R.string.my_edit_address, d) { _, second ->
-            mapOf("zipCode" to result.zipCode, "address" to result.address, "addressDetail" to second)
-        }
-    }
-
-    /** 입력 칸 2개짜리 창을 띄우고, [저장]을 누르면 Firebase users/{uid} 에 그 값만 저장 */
-    private fun showTwoFieldDialog(
-        title: Int,
-        d: DialogTwoFieldsBinding,
-        toFields: (first: String, second: String) -> Map<String, Any>
-    ) {
+    private fun showPhotoMenu() {
+        val hasPhoto = profile?.photo?.isNotBlank() == true
+        val items = mutableListOf(getString(R.string.photo_pick), getString(R.string.photo_file))
+        if (hasPhoto) items.add(getString(R.string.photo_remove))
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(title)
-            .setView(d.root)
-            .setNegativeButton(R.string.cart_cancel, null)
-            .setPositiveButton(R.string.my_save) { _, _ ->
-                val first = d.editFirst.text?.toString()?.trim().orEmpty()
-                val second = d.editSecond.text?.toString()?.trim().orEmpty()
-                UserRepository.updateMyFields(toFields(first, second)) { ok ->
-                    toast(if (ok) R.string.my_saved else R.string.my_save_failed)
-                    if (ok) UserRepository.loadMyProfile { showProfile(it) }
+            .setTitle(R.string.photo_change)
+            .setItems(items.toTypedArray()) { _, which ->
+                when (which) {
+                    0 -> photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    1 -> filePicker.launch("image/*")
+                    else -> removePhoto()
                 }
             }
             .show()
     }
 
-    // ───────── 🔒 비밀번호 변경 ─────────
-
-    private fun showChangePasswordDialog() {
-        val d = DialogChangePasswordBinding.inflate(layoutInflater)
-        val dialog = MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.my_change_password)
-            .setView(d.root)
-            .setNegativeButton(R.string.cart_cancel, null)
-            .setPositiveButton(R.string.pw_change, null)   // 아래에서 직접 처리 (틀리면 창이 안 닫히게)
-            .show()
-
-        val changeButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-        changeButton.setOnClickListener {
-            val current = d.editCurrentPassword.text?.toString().orEmpty()
-            val newPw = d.editNewPassword.text?.toString().orEmpty()
-            val confirm = d.editNewPasswordConfirm.text?.toString().orEmpty()
-
-            d.layoutCurrentPassword.error = null
-            d.layoutNewPassword.error = null
-            d.layoutNewPasswordConfirm.error = null
-            when {
-                current.isEmpty() -> d.layoutCurrentPassword.error = getString(R.string.auth_err_required)
-                newPw.length < 6 -> d.layoutNewPassword.error = getString(R.string.auth_err_password)
-                newPw == current -> d.layoutNewPassword.error = getString(R.string.pw_err_same)
-                confirm != newPw -> d.layoutNewPasswordConfirm.error = getString(R.string.auth_err_password_match)
-                else -> {
-                    changeButton.isEnabled = false
-                    AuthManager.changePassword(current, newPw) { error ->
-                        changeButton.isEnabled = true
-                        if (error == null) {
-                            dialog.dismiss()
-                            toast(R.string.pw_changed)
-                        } else if (error.contains("현재 비밀번호")) {
-                            d.layoutCurrentPassword.error = error
-                        } else {
-                            d.layoutNewPassword.error = error
-                        }
-                    }
-                }
+    /** 고른 사진을 줄여서 저장하고 바로 화면에 반영 */
+    private fun savePhoto(uri: android.net.Uri) {
+        toast(R.string.photo_saving)
+        ProfilePhoto.encode(requireContext(), uri) { base64 ->
+            if (base64 == null) {
+                toast(R.string.photo_failed)
+                return@encode
             }
+            UserRepository.updateMyFields(mapOf("photo" to base64)) { ok ->
+                if (ok) {
+                    profile?.photo = base64
+                    showAvatar(base64)
+                }
+                toast(if (ok) R.string.photo_saved else R.string.my_save_failed)
+            }
+        }
+    }
+
+    private fun removePhoto() {
+        UserRepository.updateMyFields(mapOf("photo" to "")) { ok ->
+            if (ok) {
+                profile?.photo = ""
+                showAvatar("")
+            }
+            toast(if (ok) R.string.photo_removed else R.string.my_save_failed)
         }
     }
 

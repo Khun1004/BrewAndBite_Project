@@ -35,6 +35,9 @@ object AuthManager {
 
     fun currentEmail(): String? = auth.currentUser?.email
 
+    /** Google 계정 사진 주소 (Google 로 로그인했을 때만, 없으면 null) */
+    fun currentPhotoUrl(): String? = auth.currentUser?.photoUrl?.toString()
+
     /** 비밀번호로 로그인하는 계정인지 (Google 로만 가입했으면 false → 비밀번호 변경 불가) */
     fun hasPassword(): Boolean =
         auth.currentUser?.providerData?.any { it.providerId == EmailAuthProvider.PROVIDER_ID } == true

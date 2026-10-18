@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · 💳 결제 수단: 목록 (눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가] (MyDetailActivity 가 카드 안에 넣음) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textPaymentTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/my_payment_tip"
+        android:textColor="@color/bb_muted"
+        android:textSize="11sp" />
+
+    <!-- 결제 수단 목록 (item_payment_method 를 코드에서 넣음) -->
+    <LinearLayout
+        android:id="@+id/paymentList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/textNoPayment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:paddingVertical="10dp"
+        android:text="@string/my_no_payment"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonAddPayment"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginTop="4dp"
+        android:backgroundTint="@color/bb_beige_light"
+        android:text="@string/my_add_payment"
+        android:textColor="@color/bb_brown"
+        android:textStyle="bold"
+        app:cornerRadius="14dp" />
+</LinearLayout>
