@@ -11,6 +11,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -61,14 +62,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  */
 class MyDetailActivity : AppCompatActivity() {
 
-    /** 상세 화면 종류: 제목 · 이모지 */
-    enum class Section(@StringRes val title: Int, val emoji: String) {
-        INFO(R.string.my_section_info, "👤"),
-        ADDRESS(R.string.my_section_address, "📍"),
-        PAYMENT(R.string.my_section_payment, "💳"),
-        ORDERS(R.string.my_section_orders, "🧾"),
-        FAVORITES(R.string.my_section_favorites, "♡"),
-        SECURITY(R.string.my_section_security, "🔒")
+    /** 상세 화면 종류: 제목 · 아이콘 (My Page 목록과 같은 아이콘) */
+    enum class Section(@StringRes val title: Int, @DrawableRes val icon: Int) {
+        INFO(R.string.my_section_info, R.drawable.ic_person),
+        ADDRESS(R.string.my_section_address, R.drawable.ic_location),
+        PAYMENT(R.string.my_section_payment, R.drawable.ic_card),
+        ORDERS(R.string.my_section_orders, R.drawable.ic_receipt),
+        FAVORITES(R.string.my_section_favorites, R.drawable.ic_heart_outline),
+        SECURITY(R.string.my_section_security, R.drawable.ic_lock)
     }
 
     private lateinit var binding: ActivityMyDetailBinding
@@ -107,7 +108,8 @@ class MyDetailActivity : AppCompatActivity() {
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
 
         section = Section.entries.getOrNull(intent.getIntExtra(EXTRA_SECTION, 0)) ?: Section.INFO
-        binding.textTitle.text = "${section.emoji} ${getString(section.title)}"
+        binding.textTitle.setText(section.title)
+        binding.imageTitleIcon.setImageResource(section.icon)
         binding.buttonBack.setOnClickListener { finish() }
         // ♡ → 찜한 메뉴 화면 (이미 찜한 메뉴 화면이면 그대로)
         binding.buttonFavorite.setOnClickListener {

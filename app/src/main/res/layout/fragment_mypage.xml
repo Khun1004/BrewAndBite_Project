@@ -48,13 +48,14 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <TextView
+                <ImageView
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:background="@drawable/bg_icon_circle"
-                    android:gravity="center"
-                    android:text="👋"
-                    android:textSize="34sp" />
+                    android:importantForAccessibility="no"
+                    android:padding="18dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/bb_brown" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -138,15 +139,15 @@
                             app:strokeColor="@color/bb_nav_active"
                             app:strokeWidth="3dp" />
 
-                        <TextView
+                        <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="bottom|end"
                             android:background="@drawable/bg_camera_badge"
-                            android:gravity="center"
                             android:importantForAccessibility="no"
-                            android:text="📷"
-                            android:textSize="11sp" />
+                            android:padding="5dp"
+                            android:src="@drawable/ic_camera"
+                            app:tint="@color/bb_espresso" />
                     </FrameLayout>
 
                     <LinearLayout
@@ -184,7 +185,7 @@
                     android:orientation="vertical"
                     android:paddingVertical="4dp">
 
-                    <!-- 👤 -->
+                    <!-- ic_person -->
                     <LinearLayout
                         android:id="@+id/rowInfo"
                         android:layout_width="match_parent"
@@ -196,13 +197,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="👤"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -246,7 +248,7 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bb_divider" />
 
-                    <!-- 📍 -->
+                    <!-- ic_location -->
                     <LinearLayout
                         android:id="@+id/rowAddress"
                         android:layout_width="match_parent"
@@ -258,13 +260,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="📍"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_location"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -308,7 +311,7 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bb_divider" />
 
-                    <!-- 💳 -->
+                    <!-- ic_card -->
                     <LinearLayout
                         android:id="@+id/rowPayment"
                         android:layout_width="match_parent"
@@ -320,13 +323,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="💳"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_card"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -370,7 +374,7 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bb_divider" />
 
-                    <!-- 🧾 -->
+                    <!-- ic_receipt -->
                     <LinearLayout
                         android:id="@+id/rowOrders"
                         android:layout_width="match_parent"
@@ -382,13 +386,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="🧾"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_receipt"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -432,7 +437,7 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bb_divider" />
 
-                    <!-- ♡ -->
+                    <!-- ic_heart_outline -->
                     <LinearLayout
                         android:id="@+id/rowFavorites"
                         android:layout_width="match_parent"
@@ -444,13 +449,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="♡"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_heart_outline"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -494,7 +500,7 @@
                         android:layout_marginStart="72dp"
                         android:background="@color/bb_divider" />
 
-                    <!-- 🔒 -->
+                    <!-- ic_lock -->
                     <LinearLayout
                         android:id="@+id/rowSecurity"
                         android:layout_width="match_parent"
@@ -506,13 +512,14 @@
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="42dp"
                             android:layout_height="42dp"
                             android:background="@drawable/bg_icon_circle"
-                            android:gravity="center"
-                            android:text="🔒"
-                            android:textSize="19sp" />
+                            android:importantForAccessibility="no"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_lock"
+                            app:tint="@color/bb_brown" />
 
                         <LinearLayout
                             android:layout_width="0dp"
