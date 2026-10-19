@@ -185,6 +185,7 @@
     <string name="fav_count">찜한 메뉴 %1$d개 · 최근에 찜한 순</string>
     <string name="fav_go_menu">메뉴 보러 가기</string>
     <string name="my_saved">저장했어요</string>
+    <string name="home_profile_login">로그인</string>
     <string name="my_notifications">알림</string>
     <string name="my_notifications_soon">알림 기능은 곧 추가돼요 🔔</string>
     <string name="photo_change">프로필 사진 변경</string>

@@ -73,7 +73,7 @@
         android:maxLines="1"
         android:textColor="@color/bb_cream"
         android:textSize="36sp"
-        app:layout_constraintEnd_toStartOf="@+id/textHeaderEmoji"
+        app:layout_constraintEnd_toStartOf="@+id/imageHeaderIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textEyebrow"
         tools:text="Cart" />
@@ -85,22 +85,23 @@
         android:layout_marginEnd="12dp"
         android:textColor="@color/bb_beige"
         android:textSize="13sp"
-        app:layout_constraintEnd_toStartOf="@+id/textHeaderEmoji"
+        app:layout_constraintEnd_toStartOf="@+id/imageHeaderIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textTitle"
         tools:text="3개 메뉴 · 24,500원" />
 
-    <!-- 화면 이모지 (유리 원 안) -->
-    <TextView
-        android:id="@+id/textHeaderEmoji"
+    <!-- 화면 아이콘 (유리 원 안, 벡터 아이콘) -->
+    <ImageView
+        android:id="@+id/imageHeaderIcon"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:background="@drawable/bg_header_button"
-        android:gravity="center"
-        android:textSize="26sp"
+        android:importantForAccessibility="no"
+        android:padding="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/textSubtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textTitle"
-        tools:text="🛒" />
+        app:tint="@color/bb_nav_active"
+        tools:src="@drawable/ic_cart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

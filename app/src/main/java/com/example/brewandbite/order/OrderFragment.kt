@@ -45,7 +45,7 @@ class OrderFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 공통 헤더 (Cart / Store / My Page와 같은 모양)
         binding.pageHeader.setup(
-            R.string.header_order_eyebrow, R.string.header_order_title, "🧾",
+            R.string.header_order_eyebrow, R.string.header_order_title, R.drawable.ic_receipt,
             getString(R.string.header_order_subtitle)
         )
 

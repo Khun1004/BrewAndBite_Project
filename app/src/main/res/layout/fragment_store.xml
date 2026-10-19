@@ -270,13 +270,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_icon_circle"
-                        android:gravity="center"
-                        android:text="📍"
-                        android:textSize="18sp" />
+                        android:importantForAccessibility="no"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_location"
+                        app:tint="@color/bb_brown" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -357,13 +358,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_icon_circle"
-                        android:gravity="center"
-                        android:text="📞"
-                        android:textSize="18sp" />
+                        android:importantForAccessibility="no"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_phone"
+                        app:tint="@color/bb_brown" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -447,13 +449,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_icon_circle"
-                        android:gravity="center"
-                        android:text="🛵"
-                        android:textSize="18sp" />
+                        android:importantForAccessibility="no"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_delivery"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:id="@+id/textDeliveryTitle"
@@ -627,11 +630,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🪑"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_dine_in"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -652,11 +656,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🥡"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_takeout"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -676,11 +681,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🛵"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_delivery"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -709,11 +715,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📶"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_wifi"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -734,11 +741,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🔌"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_power"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -758,11 +766,12 @@
                     android:orientation="vertical"
                     android:paddingVertical="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🅿️"
-                        android:textSize="22sp" />
+                    <ImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_parking"
+                        app:tint="@color/bb_brown" />
 
                     <TextView
                         android:layout_width="wrap_content"

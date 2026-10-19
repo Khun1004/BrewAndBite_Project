@@ -42,7 +42,7 @@ class StoreFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 공통 헤더 (Cart / Order / My Page와 같은 모양)
         binding.pageHeader.setup(
-            R.string.header_store_eyebrow, R.string.header_store_title, "🏪",
+            R.string.header_store_eyebrow, R.string.header_store_title, R.drawable.ic_store,
             getString(R.string.header_store_subtitle)
         )
 

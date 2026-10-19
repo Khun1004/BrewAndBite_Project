@@ -50,6 +50,24 @@
             app:strokeColor="@color/bb_nav_active"
             app:strokeWidth="2dp" />
 
+        <!-- 프로필 사진 밑 이름 (로그인 안 했으면 '로그인') -->
+        <TextView
+            android:id="@+id/textProfileName"
+            android:layout_width="wrap_content"
+            android:maxWidth="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/bb_cream"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/imageProfile"
+            app:layout_constraintStart_toStartOf="@+id/imageProfile"
+            app:layout_constraintTop_toBottomOf="@+id/imageProfile"
+            tools:text="쿤산웨이" />
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -111,14 +129,14 @@
             android:id="@+id/textEyebrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="14dp"
             android:letterSpacing="0.25"
             android:text="@string/header_eyebrow"
             android:textColor="@color/bb_nav_active"
             android:textSize="10sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageProfile" />
+            app:layout_constraintTop_toBottomOf="@+id/textProfileName" />
 
         <TextView
             android:id="@+id/textBrand"
@@ -128,7 +146,7 @@
             android:letterSpacing="0.03"
             android:text="@string/brand_name"
             android:textColor="@color/bb_cream"
-            android:textSize="40sp"
+            android:textSize="38sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textEyebrow" />
 

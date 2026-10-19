@@ -62,7 +62,7 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 공통 헤더 (부제는 refresh()에서 로그인 상태에 따라 바뀜)
         binding.pageHeader.setup(
-            R.string.header_my_eyebrow, R.string.header_my_title, "👤",
+            R.string.header_my_eyebrow, R.string.header_my_title, R.drawable.ic_person,
             getString(R.string.header_my_subtitle)
         )
 

@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
+import com.bumptech.glide.Glide
 import com.example.brewandbite.auth.AuthManager
+import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.cart.CartManager
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.data.Category
@@ -26,6 +28,7 @@ import com.example.brewandbite.databinding.FragmentHomeBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.menu.MenuListActivity
 import com.example.brewandbite.mypage.MyDetailActivity
+import com.example.brewandbite.mypage.ProfilePhoto
 import java.util.Calendar
 
 /** Home 탭: 고정 헤더 + 검색 / 스크롤: 오늘의 추천 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
@@ -48,6 +51,42 @@ class HomeFragment : Fragment() {
         super.onStart()
         FavoriteManager.addListener(favoriteListener)
         favoriteListener.onFavoritesChanged()
+        showProfile()
+    }
+
+    /** 다른 탭(My Page)에서 사진/이름을 바꾸고 돌아오면 다시 그리기 */
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) showProfile()
+    }
+
+    /**
+     * 헤더 왼쪽 프로필: My Page 와 같은 사진 + 밑에 이름
+     *  사진 순서: My Page 에서 고른 사진 → Google 계정 사진 → 기본 그림
+     */
+    private fun showProfile() {
+        if (!AuthManager.isLoggedIn()) {
+            val b = _binding ?: return
+            b.imageProfile.setImageResource(R.drawable.profile)
+            b.textProfileName.setText(R.string.home_profile_login)
+            return
+        }
+        // 불러오는 동안 이메일 앞부분이라도 먼저
+        _binding?.textProfileName?.text = AuthManager.currentEmail()?.substringBefore("@").orEmpty()
+        UserRepository.loadMyProfile { profile ->
+            val b = _binding ?: return@loadMyProfile
+            val name = profile?.name?.takeIf { it.isNotBlank() }
+                ?: AuthManager.currentEmail()?.substringBefore("@").orEmpty()
+            b.textProfileName.text = name
+
+            val photo = profile?.photo?.takeIf { it.isNotBlank() }?.let { ProfilePhoto.decode(it) }
+            val googlePhoto = AuthManager.currentPhotoUrl()
+            when {
+                photo != null -> b.imageProfile.setImageBitmap(photo)
+                googlePhoto != null -> Glide.with(this).load(googlePhoto).centerCrop().into(b.imageProfile)
+                else -> b.imageProfile.setImageResource(R.drawable.profile)
+            }
+        }
     }
 
     override fun onStop() {

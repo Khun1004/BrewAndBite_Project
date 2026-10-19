@@ -42,7 +42,7 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 공통 헤더: MY CART / Cart / 🛒  (부제는 refresh()에서 메뉴 수·총액으로)
-        binding.pageHeader.setup(R.string.cart_eyebrow, R.string.header_cart_title, "🛒")
+        binding.pageHeader.setup(R.string.cart_eyebrow, R.string.header_cart_title, R.drawable.ic_cart)
 
         cartAdapter = CartAdapter(
             onIncrease = { item -> CartManager.increase(item.menuId) },
