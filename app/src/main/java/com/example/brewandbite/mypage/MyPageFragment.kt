@@ -19,6 +19,7 @@ import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentMypageBinding
+import com.example.brewandbite.favorite.FavoriteManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -84,9 +85,25 @@ class MyPageFragment : Fragment() {
         binding.avatarBox.setOnClickListener { showPhotoMenu() }
     }
 
+    /** 찜이 바뀌면 '찜한 메뉴' 줄의 개수도 바로 바꾼다 */
+    private val favoriteListener = FavoriteManager.FavoriteListener { showFavoriteSummary() }
+
     override fun onStart() {
         super.onStart()
+        FavoriteManager.addListener(favoriteListener)
         refresh()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FavoriteManager.removeListener(favoriteListener)
+    }
+
+    private fun showFavoriteSummary() {
+        val b = _binding ?: return
+        val count = FavoriteManager.count()
+        b.textFavoritesSummary.text =
+            if (count > 0) getString(R.string.my_favorites_summary, count) else getString(R.string.my_favorites_none)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -128,7 +145,7 @@ class MyPageFragment : Fragment() {
         }
 
         b.textOrdersSummary.text = getString(R.string.my_menu_soon)
-        b.textFavoritesSummary.text = getString(R.string.my_menu_soon)
+        showFavoriteSummary()
         b.textSecuritySummary.text = getString(
             if (AuthManager.hasPassword()) R.string.my_change_password else R.string.my_security_google_summary
         )

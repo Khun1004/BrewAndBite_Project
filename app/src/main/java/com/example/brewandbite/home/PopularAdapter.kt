@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
+import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemPopularBinding
 
 /** 홈 화면 '인기 메뉴' 가로 카드 */
@@ -32,6 +33,7 @@ class PopularAdapter(
 
             root.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }
+            buttonFavorite.bindFavorite(item)   // ♡ 찜하기
         }
     }
 

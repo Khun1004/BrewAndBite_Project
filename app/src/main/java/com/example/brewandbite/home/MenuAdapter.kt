@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
+import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemMenuBinding
 
 /** 홈 화면 '추천 메뉴' 세로 리스트 (카테고리/검색 결과에 따라 바뀜) */
@@ -33,6 +34,7 @@ class MenuAdapter(
 
             root.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }
+            buttonFavorite.bindFavorite(item)   // ♡ 찜하기
         }
     }
 

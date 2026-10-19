@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
+import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemMenuGridBinding
 
 /** 메뉴 목록 화면의 2열 카드 */
@@ -33,6 +34,7 @@ class MenuGridAdapter(
 
             cardMenu.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }
+            buttonFavorite.bindFavorite(item)   // ♡ 찜하기
         }
     }
 

@@ -20,6 +20,7 @@ import com.example.brewandbite.data.Category
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.MenuRepository
 import com.example.brewandbite.databinding.ActivityMenuListBinding
+import com.example.brewandbite.favorite.FavoriteManager
 
 /** Menu 화면: 한 카테고리의 메뉴 전체를 2열 카드로 보여 준다 */
 class MenuListActivity : AppCompatActivity() {
@@ -29,6 +30,9 @@ class MenuListActivity : AppCompatActivity() {
 
     /** 장바구니가 바뀌면 헤더의 숫자 뱃지를 다시 그린다 */
     private val cartListener = CartManager.CartListener { updateCartBadge() }
+
+    /** 찜이 바뀌면 카드의 ♡ 를 다시 그린다 */
+    private val favoriteListener = FavoriteManager.FavoriteListener { gridAdapter.notifyDataSetChanged() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,11 +74,14 @@ class MenuListActivity : AppCompatActivity() {
         super.onStart()
         CartManager.addListener(cartListener)
         updateCartBadge()
+        FavoriteManager.addListener(favoriteListener)
+        gridAdapter.notifyDataSetChanged()
     }
 
     override fun onStop() {
         super.onStop()
         CartManager.removeListener(cartListener)
+        FavoriteManager.removeListener(favoriteListener)
     }
 
     /** 헤더의 장바구니 숫자 (0이면 숨김) */

@@ -111,6 +111,19 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- ♡ 찜 (카드 오른쪽 위) -->
+    <ImageView
+        android:id="@+id/buttonFavorite"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_fav_button"
+        android:elevation="3dp"
+        android:padding="7dp"
+        android:src="@drawable/ic_heart_outline" />
+
     <!-- 접시 (카드보다 나중에 그려져서 위에 보임) -->
     <FrameLayout
         android:layout_width="96dp"

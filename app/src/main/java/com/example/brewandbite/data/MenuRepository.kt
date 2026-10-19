@@ -85,6 +85,9 @@ object MenuRepository {
         }
     }
 
+    /** 메뉴 ID로 찾기 (찜한 메뉴 등에서 사용) */
+    fun findItem(menuId: String): MenuItem? = menuItems.firstOrNull { it.id == menuId }
+
     fun categoryName(categoryId: String): String =
         categories.firstOrNull { it.id == categoryId }?.nameKo ?: ""
 }

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
+import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.cart.CartManager
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.data.Category
@@ -22,7 +23,9 @@ import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.MenuRepository
 import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.FragmentHomeBinding
+import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.menu.MenuListActivity
+import com.example.brewandbite.mypage.MyDetailActivity
 import java.util.Calendar
 
 /** Home 탭: 고정 헤더 + 검색 / 스크롤: 오늘의 추천 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
@@ -33,6 +36,24 @@ class HomeFragment : Fragment() {
 
     private lateinit var menuAdapter: MenuAdapter
     private var selectedCategory: Category = MenuRepository.categories.first()
+
+    /** 찜이 바뀌면 (다른 화면에서 바꿔도) 카드의 ♡ 를 다시 그린다 */
+    private val favoriteListener = FavoriteManager.FavoriteListener {
+        val b = _binding ?: return@FavoriteListener
+        b.recyclerPopular.adapter?.notifyDataSetChanged()
+        b.recyclerMenu.adapter?.notifyDataSetChanged()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        FavoriteManager.addListener(favoriteListener)
+        favoriteListener.onFavoritesChanged()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FavoriteManager.removeListener(favoriteListener)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -96,8 +117,14 @@ class HomeFragment : Fragment() {
         binding.todayPick.setOnClickListener { MenuListActivity.start(requireContext(), today.categoryId) }
 
         binding.imageProfile.setOnClickListener { (requireActivity() as MainActivity).showTab(MainActivity.TAB_MY) }
-        // TODO: Favorite(찜한 메뉴) 화면을 만들면 여기서 이동
-        binding.buttonFavorite.setOnClickListener { showComingSoon(getString(R.string.nav_favorite)) }
+        // ♡ → 찜한 메뉴 화면 (로그인해야 볼 수 있음)
+        binding.buttonFavorite.setOnClickListener {
+            if (AuthManager.isLoggedIn()) {
+                startActivity(MyDetailActivity.intent(requireContext(), MyDetailActivity.Section.FAVORITES))
+            } else {
+                Toast.makeText(requireContext(), R.string.fav_login_needed, Toast.LENGTH_SHORT).show()
+            }
+        }
         binding.buttonBell.setOnClickListener { showComingSoon("알림") }
     }
 

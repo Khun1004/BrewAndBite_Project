@@ -5,15 +5,20 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
 import com.example.brewandbite.address.AddressResult
 import com.example.brewandbite.address.AddressSearchActivity
@@ -24,6 +29,7 @@ import com.example.brewandbite.auth.PhoneIndex
 import com.example.brewandbite.auth.PhoneVerifier
 import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
+import com.example.brewandbite.cart.CartManager
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.databinding.ActivityMyDetailBinding
 import com.example.brewandbite.databinding.DialogAddPaymentBinding
@@ -34,13 +40,16 @@ import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.example.brewandbite.databinding.SectionMyAddressBinding
 import com.example.brewandbite.databinding.SectionMyFavoritesBinding
 import com.example.brewandbite.databinding.SectionMyInfoBinding
-import com.example.brewandbite.databinding.SectionMyOrdersBinding
 import com.example.brewandbite.databinding.SectionMyPaymentBinding
 import com.example.brewandbite.databinding.SectionMySecurityBinding
+import com.example.brewandbite.favorite.FavoriteManager
+import com.example.brewandbite.home.MenuAdapter
+import com.example.brewandbite.menu.MenuListActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * My Page 상세 화면. My Page 목록에서 > 를 누르면 열린다.
+ * 헤더: [<] 뒤로 (왼쪽) · MY PAGE / 섹션 이름 (가운데) · [♡ 찜한 메뉴][🔔 알림] (오른쪽)
  *
  *  👤 내 정보   : 이름·이메일·연락처 + [이름 수정] [휴대폰 번호 변경(인증번호 확인)]
  *  📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
@@ -70,6 +79,11 @@ class MyDetailActivity : AppCompatActivity() {
     private var address: SectionMyAddressBinding? = null
     private var payment: SectionMyPaymentBinding? = null
     private var security: SectionMySecurityBinding? = null
+    private var favorites: SectionMyFavoritesBinding? = null
+    private var favoriteAdapter: MenuAdapter? = null
+
+    /** 찜이 바뀌면 (♡ 해제 등) 목록을 다시 그린다 */
+    private val favoriteListener = FavoriteManager.FavoriteListener { showFavorites() }
 
     /** 마지막으로 불러온 회원 정보 (수정 창에 미리 채워 넣기용) */
     private var profile: UserProfile? = null
@@ -93,9 +107,14 @@ class MyDetailActivity : AppCompatActivity() {
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
 
         section = Section.entries.getOrNull(intent.getIntExtra(EXTRA_SECTION, 0)) ?: Section.INFO
-        binding.textTitle.setText(section.title)
-        binding.textEmoji.text = section.emoji
+        binding.textTitle.text = "${section.emoji} ${getString(section.title)}"
         binding.buttonBack.setOnClickListener { finish() }
+        // ♡ → 찜한 메뉴 화면 (이미 찜한 메뉴 화면이면 그대로)
+        binding.buttonFavorite.setOnClickListener {
+            if (section != Section.FAVORITES) startActivity(MyDetailActivity.intent(this, Section.FAVORITES))
+        }
+        // 🔔 → 알림 (다음 단계)
+        binding.buttonBell.setOnClickListener { toast(R.string.my_notifications_soon) }
 
         // 섹션 내용을 카드 안에 넣기
         val parent = binding.container
@@ -110,8 +129,8 @@ class MyDetailActivity : AppCompatActivity() {
             Section.PAYMENT -> payment = SectionMyPaymentBinding.inflate(layoutInflater, parent, true).apply {
                 buttonAddPayment.setOnClickListener { showAddPaymentDialog() }
             }
-            Section.ORDERS -> SectionMyOrdersBinding.inflate(layoutInflater, parent, true)
-            Section.FAVORITES -> SectionMyFavoritesBinding.inflate(layoutInflater, parent, true)
+            Section.ORDERS -> addNote(R.string.my_orders_empty)
+            Section.FAVORITES -> setupFavorites()
             Section.SECURITY -> security = SectionMySecurityBinding.inflate(layoutInflater, parent, true).apply {
                 buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
             }
@@ -129,8 +148,63 @@ class MyDetailActivity : AppCompatActivity() {
             Section.INFO, Section.ADDRESS -> UserRepository.loadMyProfile { showProfile(it) }
             Section.PAYMENT -> loadPayments()
             Section.SECURITY -> showSecurity()
+            Section.FAVORITES -> {
+                FavoriteManager.addListener(favoriteListener)
+                showFavorites()
+            }
             else -> Unit
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        FavoriteManager.removeListener(favoriteListener)
+    }
+
+    /** 주문 기록 · 찜한 메뉴: 아직 준비 중이라 안내 글자만 (다음 단계에서 목록으로 바꿀 예정) */
+    private fun addNote(@StringRes text: Int) {
+        val note = TextView(this).apply {
+            setText(text)
+            gravity = Gravity.CENTER
+            textSize = 14f
+            setTextColor(ContextCompat.getColor(this@MyDetailActivity, R.color.bb_muted))
+            setLineSpacing(4f, 1f)
+            val pad = (24 * resources.displayMetrics.density).toInt()
+            setPadding(0, pad, 0, pad)
+        }
+        binding.container.addView(note)
+    }
+
+    // ───────── ♡ 찜한 메뉴 ─────────
+
+    private fun setupFavorites() {
+        val f = SectionMyFavoritesBinding.inflate(layoutInflater, binding.container, true)
+        favorites = f
+        favoriteAdapter = MenuAdapter(
+            onItemClick = { item -> MenuListActivity.start(this, item.categoryId) },   // 그 메뉴의 카테고리 목록으로
+            onAddClick = { item ->
+                CartManager.add(item)
+                Toast.makeText(
+                    this, getString(R.string.added_to_cart, item.name, CartManager.totalCount()), Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+        f.recyclerFavorites.layoutManager = LinearLayoutManager(this)
+        f.recyclerFavorites.adapter = favoriteAdapter
+        f.buttonGoMenu.setOnClickListener {
+            MainActivity.openTab(this, MainActivity.TAB_HOME)
+            finish()
+        }
+    }
+
+    private fun showFavorites() {
+        val f = favorites ?: return
+        val items = FavoriteManager.favoriteItems()
+        favoriteAdapter?.submitList(items)
+        favoriteAdapter?.notifyDataSetChanged()   // ♡ 모양도 새로
+        f.textFavCount.text = getString(R.string.fav_count, items.size)
+        f.textFavCount.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+        f.emptyFavorites.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
     }
 
     // ───────── 👤 내 정보 / 📍 배달 주소 ─────────
