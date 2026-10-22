@@ -20,13 +20,15 @@ import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentMypageBinding
 import com.example.brewandbite.favorite.FavoriteManager
+import com.example.brewandbite.reward.RewardManager
+import com.example.brewandbite.reward.StampCard
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * My Page 탭
  *  - 프로필 사진: 동그라미를 누르면 앨범에서 선택 / 파일에서 선택 / 기본 이미지로 (ProfilePhoto.kt)
  *  - 로그인 전: 로그인 안내 카드 + [로그인 / 회원가입]
- *  - 로그인 후: 프로필 카드 + 메뉴 목록 (왼쪽 아이콘 · 가운데 글(요약) · 오른쪽 >)
+ *  - 로그인 후: 프로필 카드 + 스탬프 카드(누르면 쿠폰함) + 메뉴 목록 (왼쪽 아이콘 · 가운데 글(요약) · 오른쪽 >)
  *      줄을 누르면 상세 화면(MyDetailActivity)이 새로 열린다
  *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ♡ 찜한 메뉴 · 🔒 계정 보안
  */
@@ -83,7 +85,28 @@ class MyPageFragment : Fragment() {
         }
 
         binding.avatarBox.setOnClickListener { showPhotoMenu() }
+
+        // 스탬프 카드: 누르면 스탬프·쿠폰 화면
+        binding.stampCard.root.setOnClickListener {
+            startActivity(MyDetailActivity.intent(requireContext(), MyDetailActivity.Section.COUPONS))
+        }
+        // [발표·테스트용] 길게 누르면 스탬프 +1 (주문 기능이 연결되면 지워도 됨)
+        binding.stampCard.root.setOnLongClickListener {
+            RewardManager.addStamps(1) { newCoupons, ok ->
+                toast(
+                    when {
+                        !ok -> R.string.my_save_failed
+                        newCoupons > 0 -> R.string.stamp_demo_coupon
+                        else -> R.string.stamp_demo_added
+                    }
+                )
+            }
+            true
+        }
     }
+
+    /** 스탬프·쿠폰이 바뀌면 카드를 다시 그린다 */
+    private val rewardListener = RewardManager.RewardListener { _binding?.let { StampCard.bind(it.stampCard) } }
 
     /** 찜이 바뀌면 '찜한 메뉴' 줄의 개수도 바로 바꾼다 */
     private val favoriteListener = FavoriteManager.FavoriteListener { showFavoriteSummary() }
@@ -91,12 +114,14 @@ class MyPageFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         FavoriteManager.addListener(favoriteListener)
+        RewardManager.addListener(rewardListener)
         refresh()
     }
 
     override fun onStop() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
+        RewardManager.removeListener(rewardListener)
     }
 
     private fun showFavoriteSummary() {
@@ -146,6 +171,7 @@ class MyPageFragment : Fragment() {
 
         b.textOrdersSummary.text = getString(R.string.my_menu_soon)
         showFavoriteSummary()
+        StampCard.bind(b.stampCard)
         b.textSecuritySummary.text = getString(
             if (AuthManager.hasPassword()) R.string.my_change_password else R.string.my_security_google_summary
         )

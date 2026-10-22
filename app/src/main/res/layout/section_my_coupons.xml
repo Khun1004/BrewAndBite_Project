@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- My Page 상세 화면 내용 · 🎟 스탬프 · 쿠폰: 스탬프 카드 + 쓸 수 있는 쿠폰 + 지난 쿠폰 + 안내 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/stampCard"
+        layout="@layout/layout_stamp_card" />
+
+    <TextView
+        android:id="@+id/textActiveTitle"
+        style="@style/MenuOptionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:layout_marginBottom="10dp"
+        tools:text="쓸 수 있는 쿠폰 2장" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerCoupons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never" />
+
+    <TextView
+        android:id="@+id/textCouponEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:paddingVertical="16dp"
+        android:text="@string/coupon_empty"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <!-- 이미 썼거나 기간이 지난 쿠폰 (흐리게) -->
+    <TextView
+        android:id="@+id/textPastTitle"
+        style="@style/MenuOptionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="10dp"
+        android:text="@string/coupon_past" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPastCoupons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never" />
+
+    <!-- 안내 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_coupon_dday"
+        android:lineSpacingExtra="3dp"
+        android:padding="14dp"
+        android:text="@string/coupon_guide"
+        android:textColor="@color/bb_brown"
+        android:textSize="12sp" />
+</LinearLayout>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 쿠폰 한 장: 왼쪽 금액 칸(진한 커피색) + 오른쪽 이름 · 조건 · 기간 -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardCoupon"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/bb_divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- 금액 -->
+        <LinearLayout
+            android:id="@+id/boxAmount"
+            android:layout_width="96dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_coupon_left"
+            android:gravity="center"
+            android:minHeight="92dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/imageCouponIcon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_coupon"
+                app:tint="@color/bb_nav_active" />
+
+            <TextView
+                android:id="@+id/textAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/bb_cream"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="2,000원" />
+
+            <TextView
+                android:id="@+id/textAmountLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bb_nav_active"
+                android:textSize="11sp"
+                tools:text="할인" />
+        </LinearLayout>
+
+        <!-- 이름 · 조건 · 기간 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textCouponTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="가입 축하 할인" />
+
+                <TextView
+                    android:id="@+id/textDday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_coupon_dday"
+                    android:paddingHorizontal="7dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="D-30" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textCondition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/bb_brown"
+                android:textSize="12sp"
+                tools:text="10,000원 이상 주문 시" />
+
+            <TextView
+                android:id="@+id/textExpiry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/bb_muted"
+                android:textSize="11sp"
+                tools:text="2026.11.21까지" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

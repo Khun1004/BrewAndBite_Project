@@ -39,6 +39,7 @@ import com.example.brewandbite.databinding.DialogTwoFieldsBinding
 import com.example.brewandbite.databinding.ItemPaymentMethodBinding
 import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.example.brewandbite.databinding.SectionMyAddressBinding
+import com.example.brewandbite.databinding.SectionMyCouponsBinding
 import com.example.brewandbite.databinding.SectionMyFavoritesBinding
 import com.example.brewandbite.databinding.SectionMyInfoBinding
 import com.example.brewandbite.databinding.SectionMyPaymentBinding
@@ -46,6 +47,9 @@ import com.example.brewandbite.databinding.SectionMySecurityBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.home.MenuAdapter
 import com.example.brewandbite.menu.MenuDetailActivity
+import com.example.brewandbite.reward.CouponAdapter
+import com.example.brewandbite.reward.RewardManager
+import com.example.brewandbite.reward.StampCard
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -57,6 +61,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
  *  🧾 주문 기록 / ♡ 찜한 메뉴 : 다음 단계
  *  🔒 계정 보안 : [비밀번호 변경] (현재 비밀번호 확인 → 새 비밀번호)
+ *  🎟 스탬프·쿠폰 : 스탬프 카드 + 쓸 수 있는 쿠폰 + 지난 쿠폰 (RewardManager)
  *
  * 여는 법: startActivity(MyDetailActivity.intent(context, MyDetailActivity.Section.INFO))
  */
@@ -69,7 +74,8 @@ class MyDetailActivity : AppCompatActivity() {
         PAYMENT(R.string.my_section_payment, R.drawable.ic_card),
         ORDERS(R.string.my_section_orders, R.drawable.ic_receipt),
         FAVORITES(R.string.my_section_favorites, R.drawable.ic_heart_outline),
-        SECURITY(R.string.my_section_security, R.drawable.ic_lock)
+        SECURITY(R.string.my_section_security, R.drawable.ic_lock),
+        COUPONS(R.string.my_section_coupons, R.drawable.ic_coupon)
     }
 
     private lateinit var binding: ActivityMyDetailBinding
@@ -82,6 +88,12 @@ class MyDetailActivity : AppCompatActivity() {
     private var security: SectionMySecurityBinding? = null
     private var favorites: SectionMyFavoritesBinding? = null
     private var favoriteAdapter: MenuAdapter? = null
+    private var coupons: SectionMyCouponsBinding? = null
+    private val activeCouponAdapter = CouponAdapter()
+    private val pastCouponAdapter = CouponAdapter()
+
+    /** 스탬프·쿠폰이 바뀌면 다시 그린다 */
+    private val rewardListener = RewardManager.RewardListener { showCoupons() }
 
     /** 찜이 바뀌면 (♡ 해제 등) 목록을 다시 그린다 */
     private val favoriteListener = FavoriteManager.FavoriteListener { showFavorites() }
@@ -136,6 +148,13 @@ class MyDetailActivity : AppCompatActivity() {
             Section.SECURITY -> security = SectionMySecurityBinding.inflate(layoutInflater, parent, true).apply {
                 buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
             }
+            Section.COUPONS -> coupons = SectionMyCouponsBinding.inflate(layoutInflater, parent, true).apply {
+                recyclerCoupons.layoutManager = LinearLayoutManager(this@MyDetailActivity)
+                recyclerCoupons.adapter = activeCouponAdapter
+                recyclerPastCoupons.layoutManager = LinearLayoutManager(this@MyDetailActivity)
+                recyclerPastCoupons.adapter = pastCouponAdapter
+                stampCard.textCouponCount.visibility = View.GONE   // 이미 쿠폰함 화면이라 숨김
+            }
         }
     }
 
@@ -154,6 +173,10 @@ class MyDetailActivity : AppCompatActivity() {
                 FavoriteManager.addListener(favoriteListener)
                 showFavorites()
             }
+            Section.COUPONS -> {
+                RewardManager.addListener(rewardListener)
+                showCoupons()
+            }
             else -> Unit
         }
     }
@@ -161,6 +184,23 @@ class MyDetailActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
+        RewardManager.removeListener(rewardListener)
+    }
+
+    // ───────── 🎟 스탬프 · 쿠폰 ─────────
+
+    private fun showCoupons() {
+        val c = coupons ?: return
+        StampCard.bind(c.stampCard)
+        c.stampCard.textCouponCount.visibility = View.GONE
+        val active = RewardManager.activeCoupons()
+        val past = RewardManager.pastCoupons()
+        c.textActiveTitle.text = getString(R.string.coupon_active_title, active.size)
+        activeCouponAdapter.submitList(active)
+        c.textCouponEmpty.visibility = if (active.isEmpty()) View.VISIBLE else View.GONE
+        pastCouponAdapter.submitList(past)
+        c.textPastTitle.visibility = if (past.isEmpty()) View.GONE else View.VISIBLE
+        c.recyclerPastCoupons.visibility = if (past.isEmpty()) View.GONE else View.VISIBLE
     }
 
     /** 주문 기록 · 찜한 메뉴: 아직 준비 중이라 안내 글자만 (다음 단계에서 목록으로 바꿀 예정) */

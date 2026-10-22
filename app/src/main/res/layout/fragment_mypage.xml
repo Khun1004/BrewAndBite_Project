@@ -177,6 +177,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- 스탬프 카드 (누르면 스탬프·쿠폰 화면) -->
+                <include
+                    android:id="@+id/stampCard"
+                    layout="@layout/layout_stamp_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" />
+
                 <!-- 메뉴 목록: 왼쪽 아이콘 · 가운데 글 · 오른쪽 >  (누르면 상세 화면 MyDetailActivity 로 이동) -->
                 <LinearLayout
                     android:layout_width="match_parent"

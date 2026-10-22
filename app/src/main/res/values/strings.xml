@@ -304,6 +304,8 @@
     <string name="cart_empty_desc">마음에 드는 메뉴를 담아 보세요</string>
     <string name="cart_go_menu">메뉴 보러 가기</string>
     <string name="cart_unit_price">개당 %1$s</string>
+    <string name="cart_opt_removed">빼기  %1$s</string>
+    <string name="cart_opt_extras">추가  %1$s</string>
     <string name="cart_total_count_label">총 수량</string>
     <string name="cart_count_value">%1$d개</string>
     <string name="cart_total_price_label">결제 예정 금액</string>
@@ -314,4 +316,29 @@
     <string name="cart_plus">수량 늘리기</string>
     <string name="nav_order">Order</string>
     <string name="nav_my">My Page</string>
+    <!-- 스탬프 · 쿠폰 (reward/) -->
+    <string name="my_section_coupons">스탬프 · 쿠폰</string>
+    <string name="stamp_eyebrow">STAMP CARD</string>
+    <string name="stamp_count">%1$d / %2$d</string>
+    <string name="stamp_hint">%1$d개 더 모으면 음료 1잔 무료!</string>
+    <string name="stamp_hint_last">1개만 더 모으면 음료 1잔 무료!</string>
+    <string name="stamp_rule">음료 1잔 = 스탬프 1개</string>
+    <string name="stamp_coupon_count">쿠폰 %1$d장  ›</string>
+    <string name="stamp_demo_added">스탬프 1개를 찍었어요 (테스트)</string>
+    <string name="stamp_demo_coupon">스탬프 10개 완성! 음료 1잔 무료 쿠폰이 생겼어요 🎉</string>
+    <string name="coupon_active_title">쓸 수 있는 쿠폰 %1$d장</string>
+    <string name="coupon_past">지난 쿠폰</string>
+    <string name="coupon_empty">지금 쓸 수 있는 쿠폰이 없어요\n스탬프 10개를 모으면 음료 쿠폰이 생겨요</string>
+    <string name="coupon_free">FREE</string>
+    <string name="coupon_free_label">음료 1잔</string>
+    <string name="coupon_discount_label">할인</string>
+    <string name="coupon_cond_free">음료 1잔 무료 (최대 %1$s)</string>
+    <string name="coupon_cond_min">%1$s 이상 주문 시</string>
+    <string name="coupon_cond_none">조건 없이 사용 가능</string>
+    <string name="coupon_until">%1$s까지</string>
+    <string name="coupon_dday">D-%1$d</string>
+    <string name="coupon_today">오늘까지</string>
+    <string name="coupon_used">사용 완료</string>
+    <string name="coupon_expired">기간 만료</string>
+    <string name="coupon_guide">• 커피 · 차 · 음료 1잔을 주문하면 스탬프 1개가 찍혀요\n• 스탬프 10개 = 음료 1잔 무료 쿠폰 (60일 동안 사용)\n• 처음 가입하면 2,000원 할인 쿠폰을 드려요 (10,000원 이상, 30일)\n• 쿠폰은 주문할 때 1장만 쓸 수 있어요</string>
 </resources>
