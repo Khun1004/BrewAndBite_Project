@@ -28,7 +28,7 @@ class CartFragment : Fragment() {
 
     /** 로그인 화면에서 로그인에 성공하고 돌아오면 바로 Order 탭으로 */
     private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == Activity.RESULT_OK) mainActivity().showTab(MainActivity.TAB_ORDER)
+        if (it.resultCode == Activity.RESULT_OK) showPayment()
     }
 
     /** 장바구니가 바뀌면 화면 전체를 다시 그린다 */
@@ -52,6 +52,10 @@ class CartFragment : Fragment() {
                 Toast.makeText(requireContext(), getString(R.string.cart_removed, item.name), Toast.LENGTH_SHORT).show()
             }
         )
+        // 결제 완료 후 시트가 닫히면 Home 탭으로 (Order 탭으로 보내려면 TAB_ORDER)
+        childFragmentManager.setFragmentResultListener(PaymentBottomSheet.RESULT_KEY, viewLifecycleOwner) { _, _ ->
+            mainActivity().showTab(MainActivity.TAB_HOME)
+        }
         binding.recyclerCart.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerCart.adapter = cartAdapter
 
@@ -60,9 +64,17 @@ class CartFragment : Fragment() {
         // 헤더 아래 줄의 전체 삭제 버튼
         binding.textClear.setOnClickListener { confirmClear() }
         // 주문하기 → (로그인 안 했으면 로그인 먼저) → Order 탭 (팀원이 작성)
+        binding.toggleFulfillment.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            CartManager.setFulfillment(
+                if (checkedId == R.id.buttonPickup) CartManager.Fulfillment.PICKUP
+                else CartManager.Fulfillment.DELIVERY
+            )
+        }
         binding.buttonOrder.setOnClickListener {
+            if (!CartManager.isMinOrderReached()) return@setOnClickListener
             if (AuthManager.isLoggedIn()) {
-                mainActivity().showTab(MainActivity.TAB_ORDER)
+                showPayment()
             } else {
                 loginLauncher.launch(LoginActivity.intent(requireContext()))
             }
@@ -102,16 +114,37 @@ class CartFragment : Fragment() {
         b.cartToolbar.visibility = if (isEmpty) View.GONE else View.VISIBLE
         b.textItemCount.text = getString(R.string.cart_item_count, items.size)
 
-        val totalPrice = CartManager.totalPrice().toWon()
+        val subtotal = CartManager.totalPrice().toWon()
         b.pageHeader.textSubtitle.text = if (isEmpty) {
             getString(R.string.cart_empty)
         } else {
-            getString(R.string.cart_header_summary, items.size, totalPrice)
+            getString(R.string.cart_header_summary, items.size, subtotal)
         }
         b.textTotalCount.text = getString(R.string.cart_count_value, CartManager.totalCount())
 
-        b.textTotalPrice.text = totalPrice
-        b.buttonOrder.text = getString(R.string.cart_order_button, totalPrice)
+// 수령 방법 토글 (이미 같은 상태면 건드리지 않음)
+        val targetId = if (CartManager.fulfillment == CartManager.Fulfillment.PICKUP)
+            R.id.buttonPickup else R.id.buttonDelivery
+        if (b.toggleFulfillment.checkedButtonId != targetId) b.toggleFulfillment.check(targetId)
+
+// 금액
+        val isDelivery = CartManager.fulfillment == CartManager.Fulfillment.DELIVERY
+        val payable = CartManager.payableTotal().toWon()
+        b.textSubtotal.text = subtotal
+        b.rowDeliveryFee.visibility = if (isDelivery) View.VISIBLE else View.GONE
+        b.textDeliveryFee.text = CartManager.deliveryFee().toWon()
+        b.textTotalPrice.text = payable
+
+// 최소 주문 금액 안내 + 결제하기 버튼 활성화
+        val reached = CartManager.isMinOrderReached()
+        b.textMinOrderHint.visibility = if (reached || isEmpty) View.GONE else View.VISIBLE
+        b.textMinOrderHint.text = getString(
+            R.string.cart_min_order_hint,
+            CartManager.MIN_ORDER_AMOUNT.toWon(),
+            CartManager.shortfall().toWon()
+        )
+        b.buttonOrder.isEnabled = reached
+        b.buttonOrder.text = getString(R.string.cart_pay_button, payable)
     }
 
     private fun confirmClear() {
@@ -121,5 +154,9 @@ class CartFragment : Fragment() {
             .setNegativeButton(R.string.cart_cancel, null)
             .setPositiveButton(R.string.cart_clear_ok) { _, _ -> CartManager.clear() }
             .show()
+    }
+    private fun showPayment() {
+        if (childFragmentManager.findFragmentByTag(PaymentBottomSheet.TAG) != null) return
+        PaymentBottomSheet().show(childFragmentManager, PaymentBottomSheet.TAG)
     }
 }

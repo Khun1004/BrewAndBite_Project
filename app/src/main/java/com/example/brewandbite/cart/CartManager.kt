@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.example.brewandbite.data.MenuItem
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlin.math.max
 
 /**
  * 장바구니 데이터를 관리하는 곳 (앱 전체에서 하나만 존재).
@@ -31,6 +32,18 @@ object CartManager {
     fun interface CartListener {
         fun onCartChanged()
     }
+    /** 수령 방법 */
+    enum class Fulfillment { DELIVERY, PICKUP }
+
+    /** 배달비 / 최소 주문 금액 (원) */
+    const val DELIVERY_FEE = 1000
+    const val MIN_ORDER_AMOUNT = 14000
+
+    private const val KEY_FULFILLMENT = "fulfillment"
+
+    /** 현재 선택된 수령 방법 (앱을 껐다 켜도 유지) */
+    var fulfillment: Fulfillment = Fulfillment.DELIVERY
+        private set
 
     private const val PREF_NAME = "brewbite_cart"
     private const val KEY_ITEMS = "cart_items"
@@ -44,12 +57,28 @@ object CartManager {
     fun init(context: Context) {
         if (::prefs.isInitialized) return
         prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        fulfillment = runCatching {
+            Fulfillment.valueOf(prefs.getString(KEY_FULFILLMENT, null) ?: "")
+        }.getOrDefault(Fulfillment.DELIVERY)
         load()
     }
 
     // ───────── 읽기 ─────────
 
     /** 담긴 메뉴 목록 (복사본이라 바깥에서 바꿔도 장바구니는 안전) */
+    /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
+    fun deliveryFee(): Int =
+        if (items.isEmpty() || fulfillment == Fulfillment.PICKUP) 0 else DELIVERY_FEE
+
+    /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
+    fun payableTotal(): Int = totalPrice() + deliveryFee()
+
+    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
+    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
+
+    /** 최소 주문 금액까지 남은 금액 */
+    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
+
     fun getItems(): List<CartItem> = items.map { it.copy() }
 
     fun totalCount(): Int = items.sumOf { it.quantity }
@@ -76,7 +105,11 @@ object CartManager {
         }
         saveAndNotify()
     }
-
+    fun setFulfillment(value: Fulfillment) {
+        if (fulfillment == value) return
+        fulfillment = value
+        saveAndNotify()
+    }
     fun increase(key: String) {
         val item = items.find { it.key == key } ?: return
         item.quantity += 1
@@ -119,7 +152,10 @@ object CartManager {
     // ───────── 저장 / 불러오기 ─────────
 
     private fun saveAndNotify() {
-        prefs.edit().putString(KEY_ITEMS, gson.toJson(items)).apply()
+        prefs.edit()
+            .putString(KEY_ITEMS, gson.toJson(items))
+            .putString(KEY_FULFILLMENT, fulfillment.name)
+            .apply()
         listeners.toList().forEach { it.onCartChanged() }
     }
 

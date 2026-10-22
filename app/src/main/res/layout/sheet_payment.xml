@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- ① 결제 수단 선택 -->
+        <LinearLayout
+            android:id="@+id/layoutSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="결제 수단 선택"
+                android:textColor="@color/bb_espresso"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="테스트 결제입니다. 실제 금액은 청구되지 않아요."
+                android:textColor="@color/bb_muted"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="결제 금액"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/textAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    tools:text="25,500원" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="14dp"
+                android:background="@color/bb_divider" />
+
+            <RadioGroup
+                android:id="@+id/groupMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rbCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:checked="true"
+                    android:text="  💳  신용 · 체크카드"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    app:buttonTint="@color/bb_brown" />
+
+                <RadioButton
+                    android:id="@+id/rbKakao"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="  💛  카카오페이"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    app:buttonTint="@color/bb_brown" />
+
+                <RadioButton
+                    android:id="@+id/rbNaver"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="  💚  네이버페이"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    app:buttonTint="@color/bb_brown" />
+
+                <RadioButton
+                    android:id="@+id/rbToss"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="  💙  토스페이"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    app:buttonTint="@color/bb_brown" />
+            </RadioGroup>
+
+            <!-- 카드 입력 폼 (카드 선택 시만 표시) -->
+            <LinearLayout
+                android:id="@+id/layoutCardForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputCardNumberLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="카드 번호 (16자리)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editCardNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="19" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputExpiryLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:hint="유효기간 (MM/YY)">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editExpiry"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="5" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/inputCvcLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:hint="CVC (3자리)"
+                        app:endIconMode="password_toggle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editCvc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberPassword"
+                            android:maxLength="3" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonPay"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/bb_espresso"
+                android:textColor="@color/bb_nav_active"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="18dp"
+                tools:text="25,500원 결제하기" />
+        </LinearLayout>
+
+        <!-- ② 결제 처리 중 -->
+        <LinearLayout
+            android:id="@+id/layoutProcessing"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@color/bb_brown" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="결제 진행 중…"
+                android:textColor="@color/bb_espresso"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="잠시만 기다려 주세요"
+                android:textColor="@color/bb_muted"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- ③ 결제 완료 -->
+        <LinearLayout
+            android:id="@+id/layoutSuccess"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="✅"
+                android:textSize="56sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="결제가 완료되었어요"
+                android:textColor="@color/bb_espresso"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textPaidAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/bb_brown"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="25,500원" />
+
+            <TextView
+                android:id="@+id/textOrderNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/bb_muted"
+                android:textSize="13sp"
+                tools:text="주문번호 BB-20261022-4821" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonDone"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="28dp"
+                android:backgroundTint="@color/bb_espresso"
+                android:text="확인"
+                android:textColor="@color/bb_nav_active"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="18dp" />
+        </LinearLayout>
+    </FrameLayout>
+</androidx.core.widget.NestedScrollView>
