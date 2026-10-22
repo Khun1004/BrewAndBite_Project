@@ -32,6 +32,10 @@
         <activity
             android:name=".menu.MenuListActivity"
             android:exported="false" />
+        <!-- 메뉴 상세 (옵션 고르고 담기) -->
+        <activity
+            android:name=".menu.MenuDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".auth.LoginActivity"
             android:exported="false"

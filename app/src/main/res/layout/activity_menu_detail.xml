@@ -156,168 +156,172 @@
                     android:layout_marginTop="18dp"
                     android:background="@color/bb_divider" />
 
-            <!-- 온도: HOT / ICE -->
-            <LinearLayout
-                android:id="@+id/groupTemperature"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MenuOptionTitle"
-                    android:text="@string/opt_temperature" />
-
+                <!-- 온도: HOT / ICE -->
                 <LinearLayout
+                    android:id="@+id/groupTemperature"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/optionHot"
-                    style="@style/MenuOption"
-                    tools:text="HOT" />
-
-                <TextView
-                    android:id="@+id/optionIce"
-                    style="@style/MenuOption"
-                    android:layout_marginStart="8dp"
-                    tools:text="ICE" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 사이즈: Regular / Large / Grande -->
-            <LinearLayout
-                android:id="@+id/groupSize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MenuOptionTitle"
-                    android:text="@string/opt_size" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/optionRegular"
-                    style="@style/MenuOption"
-                    tools:text="Regular\n+0원" />
-
-                <TextView
-                    android:id="@+id/optionLarge"
-                    style="@style/MenuOption"
-                    android:layout_marginStart="8dp"
-                    tools:text="Large\n+500원" />
-
-                <TextView
-                    android:id="@+id/optionGrande"
-                    style="@style/MenuOption"
-                    android:layout_marginStart="8dp"
-                    tools:text="Grande\n+1,000원" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- 샷 추가 0~3 -->
-            <LinearLayout
-                android:id="@+id/groupShot"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MenuOptionTitle"
-                    android:text="@string/opt_shot" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_option"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="14dp">
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textShotDesc"
-                        android:layout_width="0dp"
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_temperature" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/bb_espresso"
-                        android:textSize="14sp"
-                        tools:text="에스프레소 샷 +1 (+500원)" />
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/buttonShotMinus"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/bg_circle_button"
-                        android:contentDescription="@string/cart_minus"
-                        android:padding="7dp"
-                        android:src="@drawable/ic_minus"
-                        app:tint="@color/bb_espresso" />
+                        <TextView
+                            android:id="@+id/optionHot"
+                            style="@style/MenuOption"
+                            android:text="@string/opt_hot"
+                            tools:text="HOT" />
 
-                    <TextView
-                        android:id="@+id/textShotCount"
-                        android:layout_width="32dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/bb_espresso"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="1" />
+                        <TextView
+                            android:id="@+id/optionIce"
+                            style="@style/MenuOption"
+                            android:text="@string/opt_ice"
+                            android:layout_marginStart="8dp"
+                            tools:text="ICE" />
 
-                    <ImageView
-                        android:id="@+id/buttonShotPlus"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/bg_add_button"
-                        android:contentDescription="@string/cart_plus"
-                        android:padding="7dp"
-                        android:src="@drawable/ic_add_white" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
 
-            <!-- 디저트/베이커리: 데우기 -->
-            <LinearLayout
-                android:id="@+id/groupWarm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/MenuOptionTitle"
-                    android:text="@string/opt_warm" />
-
+                <!-- 사이즈: Regular / Large / Grande -->
                 <LinearLayout
+                    android:id="@+id/groupSize"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/optionAsIs"
-                    style="@style/MenuOption"
-                    tools:text="그대로" />
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_size" />
 
-                <TextView
-                    android:id="@+id/optionWarm"
-                    style="@style/MenuOption"
-                    android:layout_marginStart="8dp"
-                    tools:text="따뜻하게 데우기" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:id="@+id/optionRegular"
+                            style="@style/MenuOption"
+                            tools:text="Regular\n+0원" />
+
+                        <TextView
+                            android:id="@+id/optionLarge"
+                            style="@style/MenuOption"
+                            android:layout_marginStart="8dp"
+                            tools:text="Large\n+500원" />
+
+                        <TextView
+                            android:id="@+id/optionGrande"
+                            style="@style/MenuOption"
+                            android:layout_marginStart="8dp"
+                            tools:text="Grande\n+1,000원" />
+
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
+
+                <!-- 샷 추가 0~3 -->
+                <LinearLayout
+                    android:id="@+id/groupShot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_shot" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_option"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp">
+
+                        <TextView
+                            android:id="@+id/textShotDesc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/bb_espresso"
+                            android:textSize="14sp"
+                            tools:text="에스프레소 샷 +1 (+500원)" />
+
+                        <ImageView
+                            android:id="@+id/buttonShotMinus"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/bg_circle_button"
+                            android:contentDescription="@string/cart_minus"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_minus"
+                            app:tint="@color/bb_espresso" />
+
+                        <TextView
+                            android:id="@+id/textShotCount"
+                            android:layout_width="32dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/bb_espresso"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="1" />
+
+                        <ImageView
+                            android:id="@+id/buttonShotPlus"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/bg_add_button"
+                            android:contentDescription="@string/cart_plus"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_add_white" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 디저트/베이커리: 데우기 -->
+                <LinearLayout
+                    android:id="@+id/groupWarm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_warm" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/optionAsIs"
+                            style="@style/MenuOption"
+                            android:text="@string/opt_as_is"
+                            tools:text="그대로" />
+
+                        <TextView
+                            android:id="@+id/optionWarm"
+                            style="@style/MenuOption"
+                            android:text="@string/opt_warm_up"
+                            android:layout_marginStart="8dp"
+                            tools:text="따뜻하게 데우기" />
+
+                    </LinearLayout>
+                </LinearLayout>
 
                 <!-- 옵션이 없는 메뉴 (식사) -->
                 <TextView
