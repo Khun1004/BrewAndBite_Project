@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    스탬프 카드 (My Page · 쿠폰함 화면에서 같이 사용).
+    동그라미 10개는 StampCard.bind() 가 코드로 채운다 (위 5개 · 아래 5개, 10번째는 선물).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stampCardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_brand_card"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_coffee"
+            app:tint="@color/bb_nav_active" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:letterSpacing="0.15"
+            android:text="@string/stamp_eyebrow"
+            android:textColor="@color/bb_nav_active"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textStampCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/bb_cream"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="7 / 10" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textStampHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/bb_cream"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="3개 더 모으면 음료 1잔 무료!" />
+
+    <LinearLayout
+        android:id="@+id/stampRow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/stampRow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/stamp_rule"
+            android:textColor="@color/bb_nav_inactive"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/textCouponCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pill_glass"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:textColor="@color/bb_cream"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:drawableStartCompat="@drawable/ic_coupon"
+            app:drawableTint="@color/bb_nav_active"
+            tools:text="쿠폰 2장  ›" />
+    </LinearLayout>
+</LinearLayout>

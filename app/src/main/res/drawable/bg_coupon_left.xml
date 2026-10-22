@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 쿠폰 왼쪽 금액 칸: 진한 커피색 (왼쪽 모서리만 둥글게) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:endColor="@color/bb_header_end"
+        android:startColor="@color/bb_header_start" />
+    <corners
+        android:bottomLeftRadius="18dp"
+        android:topLeftRadius="18dp" />
+</shape>

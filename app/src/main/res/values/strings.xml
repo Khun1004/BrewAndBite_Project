@@ -314,12 +314,4 @@
     <string name="cart_plus">수량 늘리기</string>
     <string name="nav_order">Order</string>
     <string name="nav_my">My Page</string>
-
-
-    <string name="cart_mode_delivery">🛵 배달</string>
-    <string name="cart_mode_pickup">🛍️ 포장</string>
-    <string name="cart_subtotal_label">주문 금액</string>
-    <string name="cart_delivery_fee_label">배달비</string>
-    <string name="cart_min_order_hint">최소 주문 금액 %1$s · %2$s 더 담아주세요</string>
-    <string name="cart_pay_button">%1$s 결제하기</string>
 </resources>
