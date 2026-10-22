@@ -40,7 +40,9 @@ class CartAdapter(
         with(holder.binding) {
             textEmoji.text = item.emoji
             textName.text = item.name
-            textUnitPrice.text = context.getString(R.string.cart_unit_price, item.price.toWon())
+            // 옵션이 있으면 같이 표시. 예) "ICE · Large · 개당 5,500원"
+            val unit = context.getString(R.string.cart_unit_price, item.price.toWon())
+            textUnitPrice.text = if (item.options.isBlank()) unit else "${item.options} · $unit"
             textQuantity.text = item.quantity.toString()
             textLineTotal.text = item.totalPrice.toWon()
 
@@ -65,7 +67,7 @@ class CartAdapter(
         private const val PAYLOAD_SIDE = "side"
 
         private val DIFF = object : DiffUtil.ItemCallback<CartItem>() {
-            override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem) = oldItem.menuId == newItem.menuId
+            override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem) = oldItem.key == newItem.key
             override fun areContentsTheSame(oldItem: CartItem, newItem: CartItem) = oldItem == newItem
         }
     }

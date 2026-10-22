@@ -100,9 +100,9 @@ class MenuListActivity : AppCompatActivity() {
         binding.textEmpty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
     }
 
-    // TODO: 메뉴 상세 화면을 만들면 Intent로 이동
+    /** 메뉴 카드를 누르면 → 메뉴 상세 화면 */
     private fun openDetail(item: MenuItem) {
-        Toast.makeText(this, "${item.name} · ${MenuRepository.categoryName(item.categoryId)}", Toast.LENGTH_SHORT).show()
+        MenuDetailActivity.start(this, item.id)
     }
 
     /** + 버튼: 장바구니에 담기 */

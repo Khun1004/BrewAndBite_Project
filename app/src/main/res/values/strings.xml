@@ -135,7 +135,8 @@
     <string name="auth_forgot_desc">가입한 휴대폰 번호를 입력하면, 가입할 때 쓴 이메일로 비밀번호를 새로 만들 수 있는 링크를 보내 드려요</string>
     <string name="auth_forgot_send">메일 보내기</string>
     <string name="auth_forgot_sent_title">메일을 보냈어요 📧</string>
-    <string name="auth_forgot_sent">%1$s 로 비밀번호 재설정 메일을 보냈어요.\n\n메일의 링크를 눌러 새 비밀번호를 정한 뒤 다시 로그인해 주세요.\n메일이 안 보이면 스팸함도 확인해 주세요.</string>
+    <string name="auth_forgot_sent">%1$s 로 비밀번호 재설정 메일을 보냈어요.\n\n메일의 링크를 눌러 새 비밀번호를 정한 뒤 다시 로그인해
+        주세요.\n메일이 안 보이면 스팸함도 확인해 주세요.</string>
     <string name="auth_ok">확인</string>
 
     <!-- My Page -->
@@ -185,6 +186,18 @@
     <string name="fav_count">찜한 메뉴 %1$d개 · 최근에 찜한 순</string>
     <string name="fav_go_menu">메뉴 보러 가기</string>
     <string name="my_saved">저장했어요</string>
+    <!-- 메뉴 상세 -->
+    <string name="opt_temperature">온도</string>
+    <string name="opt_size">사이즈</string>
+    <string name="opt_shot">샷 추가</string>
+    <string name="opt_warm">데우기</string>
+    <string name="opt_none">이 메뉴는 고를 옵션이 없어요</string>
+    <string name="opt_shot_none">기본 샷 (추가 없음)</string>
+    <string name="opt_shot_desc">에스프레소 샷 +%1$d (+%2$s)</string>
+    <string name="opt_add_cart">담기 · %1$s</string>
+    <string name="opt_added">%1$s %2$d개를 담았어요</string>
+    <string name="opt_view_cart">장바구니 보기</string>
+    <string name="opt_size_label">%1$s\n%2$s · %3$s</string>
     <string name="home_profile_login">로그인</string>
     <string name="my_notifications">알림</string>
     <string name="my_notifications_soon">알림 기능은 곧 추가돼요 🔔</string>
@@ -197,7 +210,8 @@
     <string name="photo_removed">기본 이미지로 바꿨어요</string>
     <string name="photo_failed">사진을 불러오지 못했어요. 다른 사진으로 시도해 주세요</string>
     <string name="my_section_security">계정 보안</string>
-    <string name="my_security_desc">로그인할 때 쓰는 비밀번호를 바꿀 수 있어요. 비밀번호를 잊었다면 로그아웃 후 로그인 화면의 \'비밀번호를 잊으셨나요?\'를 이용해 주세요.</string>
+    <string name="my_security_desc">로그인할 때 쓰는 비밀번호를 바꿀 수 있어요. 비밀번호를 잊었다면 로그아웃 후 로그인 화면의 \'비밀번호를
+        잊으셨나요?\'를 이용해 주세요.</string>
     <string name="my_change_password">🔒 비밀번호 변경</string>
     <string name="pw_current">현재 비밀번호</string>
     <string name="pw_new">새 비밀번호</string>

@@ -45,10 +45,10 @@ class CartFragment : Fragment() {
         binding.pageHeader.setup(R.string.cart_eyebrow, R.string.header_cart_title, R.drawable.ic_cart)
 
         cartAdapter = CartAdapter(
-            onIncrease = { item -> CartManager.increase(item.menuId) },
-            onDecrease = { item -> CartManager.decrease(item.menuId) },   // 1개에서 줄이면 삭제됨
+            onIncrease = { item -> CartManager.increase(item.key) },
+            onDecrease = { item -> CartManager.decrease(item.key) },   // 1개에서 줄이면 삭제됨
             onRemove = { item ->
-                CartManager.remove(item.menuId)
+                CartManager.remove(item.key)
                 Toast.makeText(requireContext(), getString(R.string.cart_removed, item.name), Toast.LENGTH_SHORT).show()
             }
         )

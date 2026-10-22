@@ -14,9 +14,11 @@ import com.google.gson.reflect.TypeToken
  *  (Cart 화면의 주문하기 버튼은 이미 order/OrderActivity 로 연결되어 있음)
  *  목록 가져오기      CartManager.getItems()          → List<CartItem>
  *  총 수량 / 총 금액   CartManager.totalCount() / CartManager.totalPrice()
- *  수량 +1 / -1       CartManager.increase(menuId) / CartManager.decrease(menuId)
- *  수량 직접 바꾸기    CartManager.setQuantity(menuId, 3)
- *  한 줄 삭제         CartManager.remove(menuId)
+ *  수량 +1 / -1       CartManager.increase(item.key) / CartManager.decrease(item.key)
+ *  수량 직접 바꾸기    CartManager.setQuantity(item.key, 3)
+ *  한 줄 삭제         CartManager.remove(item.key)
+ *  (item.key = 메뉴 ID + 옵션. 같은 메뉴라도 옵션이 다르면 다른 줄)
+ *  옵션 표시          item.options  예) "ICE · Large · 샷 +1"
  *  전부 비우기        CartManager.clear()             (주문 완료 후 호출)
  *  변경 알림 받기      CartManager.addListener(listener) / removeListener(listener)
  *                    → 화면의 onStart에서 add, onStop에서 remove 하면 된다.
@@ -58,40 +60,45 @@ object CartManager {
 
     // ───────── 바꾸기 ─────────
 
-    /** 메뉴 담기. 이미 있으면 수량만 늘어난다. */
-    fun add(menu: MenuItem, quantity: Int = 1) {
+    /**
+     * 메뉴 담기. 같은 메뉴 + 같은 옵션이 이미 있으면 수량만 늘어난다.
+     * @param options   고른 옵션 설명 (메뉴 상세 화면에서). 목록의 + 버튼은 기본 옵션("")
+     * @param unitPrice 옵션 추가 금액을 더한 1개 가격
+     */
+    fun add(menu: MenuItem, quantity: Int = 1, options: String = "", unitPrice: Int = menu.price) {
         if (quantity <= 0) return
-        val existing = items.find { it.menuId == menu.id }
+        val newItem = CartItem(menu.id, menu.name, unitPrice, menu.emoji, quantity, options)
+        val existing = items.find { it.key == newItem.key }
         if (existing != null) {
             existing.quantity += quantity
         } else {
-            items.add(CartItem(menu.id, menu.name, menu.price, menu.emoji, quantity))
+            items.add(newItem)
         }
         saveAndNotify()
     }
 
-    fun increase(menuId: String) {
-        val item = items.find { it.menuId == menuId } ?: return
+    fun increase(key: String) {
+        val item = items.find { it.key == key } ?: return
         item.quantity += 1
         saveAndNotify()
     }
 
     /** 수량 -1. 1개에서 줄이면 장바구니에서 빠진다. */
-    fun decrease(menuId: String) {
-        val item = items.find { it.menuId == menuId } ?: return
+    fun decrease(key: String) {
+        val item = items.find { it.key == key } ?: return
         if (item.quantity <= 1) items.remove(item) else item.quantity -= 1
         saveAndNotify()
     }
 
     /** 수량을 직접 정한다. 0 이하면 삭제. */
-    fun setQuantity(menuId: String, quantity: Int) {
-        val item = items.find { it.menuId == menuId } ?: return
+    fun setQuantity(key: String, quantity: Int) {
+        val item = items.find { it.key == key } ?: return
         if (quantity <= 0) items.remove(item) else item.quantity = quantity
         saveAndNotify()
     }
 
-    fun remove(menuId: String) {
-        if (items.removeAll { it.menuId == menuId }) saveAndNotify()
+    fun remove(key: String) {
+        if (items.removeAll { it.key == key }) saveAndNotify()
     }
 
     fun clear() {

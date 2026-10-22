@@ -18,7 +18,7 @@ import com.example.brewandbite.databinding.FragmentOrderBinding
  *  - Cart 화면의 '주문하기' 버튼 → 이 화면
  *
  * 쓸 수 있는 장바구니 데이터 (cart/CartManager.kt):
- *  - CartManager.getItems()    담긴 메뉴 목록
+ *  - CartManager.getItems()    담긴 메뉴 목록 (item.options = 고른 옵션 예: "ICE · Large · 샷 +1")
  *  - CartManager.totalPrice()  총 금액  (금액 표시: totalPrice().toWon())
  *  - CartManager.clear()       주문 완료 후 장바구니 비우기
  *

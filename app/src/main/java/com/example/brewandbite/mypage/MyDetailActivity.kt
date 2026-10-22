@@ -45,7 +45,7 @@ import com.example.brewandbite.databinding.SectionMyPaymentBinding
 import com.example.brewandbite.databinding.SectionMySecurityBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.home.MenuAdapter
-import com.example.brewandbite.menu.MenuListActivity
+import com.example.brewandbite.menu.MenuDetailActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -183,7 +183,7 @@ class MyDetailActivity : AppCompatActivity() {
         val f = SectionMyFavoritesBinding.inflate(layoutInflater, binding.container, true)
         favorites = f
         favoriteAdapter = MenuAdapter(
-            onItemClick = { item -> MenuListActivity.start(this, item.categoryId) },   // 그 메뉴의 카테고리 목록으로
+            onItemClick = { item -> MenuDetailActivity.start(this, item.id) },   // 메뉴 상세 화면으로
             onAddClick = { item ->
                 CartManager.add(item)
                 Toast.makeText(

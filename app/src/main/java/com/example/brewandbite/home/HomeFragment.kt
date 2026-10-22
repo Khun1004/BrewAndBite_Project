@@ -26,6 +26,7 @@ import com.example.brewandbite.data.MenuRepository
 import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.FragmentHomeBinding
 import com.example.brewandbite.favorite.FavoriteManager
+import com.example.brewandbite.menu.MenuDetailActivity
 import com.example.brewandbite.menu.MenuListActivity
 import com.example.brewandbite.mypage.MyDetailActivity
 import com.example.brewandbite.mypage.ProfilePhoto
@@ -153,7 +154,7 @@ class HomeFragment : Fragment() {
         binding.textTodayEmoji.text = today.emoji
         binding.textTodayName.text = today.name
         binding.textTodayPrice.text = today.price.toWon()
-        binding.todayPick.setOnClickListener { MenuListActivity.start(requireContext(), today.categoryId) }
+        binding.todayPick.setOnClickListener { MenuDetailActivity.start(requireContext(), today.id) }
 
         binding.imageProfile.setOnClickListener { (requireActivity() as MainActivity).showTab(MainActivity.TAB_MY) }
         // ♡ → 찜한 메뉴 화면 (로그인해야 볼 수 있음)
@@ -232,9 +233,9 @@ class HomeFragment : Fragment() {
 
     // ───────── 메뉴 동작 ─────────
 
-    // TODO: 메뉴 상세 화면을 만들면 Intent로 이동
+    /** 메뉴 카드를 누르면 → 메뉴 상세 화면 (옵션 고르고 담기) */
     private fun openDetail(item: MenuItem) {
-        Toast.makeText(requireContext(), "${item.name} · ${MenuRepository.categoryName(item.categoryId)}", Toast.LENGTH_SHORT).show()
+        MenuDetailActivity.start(requireContext(), item.id)
     }
 
     /** + 버튼: 장바구니에 담기 (탭 바의 뱃지는 자동으로 갱신) */

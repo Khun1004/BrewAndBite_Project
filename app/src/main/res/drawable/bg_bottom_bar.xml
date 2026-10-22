@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 메뉴 상세 아래 고정 바 (위쪽만 둥근 흰 바탕) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/white" />
+    <corners android:topLeftRadius="26dp" android:topRightRadius="26dp" />
+</shape>

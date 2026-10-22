@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    메뉴 상세 화면
+    [<]                 [♡][🛒]   ← 사진 위에 떠 있는 버튼
+          ( 큰 접시 + 메뉴 )
+    ┌ 카테고리 · ★4.7 ─────────┐
+    │ 메뉴 이름 / 설명 / 가격      │
+    │ 온도 · 사이즈 · 샷 · 데우기   │  ← 카테고리마다 보이는 옵션이 다름
+    └──────────────────────┘
+    [ - 1 + ]  [ 담기 · 5,500원 ]  ← 아래 고정
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".menu.MenuDetailActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 위쪽: 어두운 배경 + 큰 접시 -->
+            <FrameLayout
+                android:id="@+id/hero"
+                android:layout_width="match_parent"
+                android:layout_height="340dp"
+                android:background="@drawable/bg_home_header">
+
+                <ImageView
+                    android:layout_width="360dp"
+                    android:layout_height="360dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.7"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/bg_header_rings" />
+
+                <FrameLayout
+                    android:id="@+id/plate"
+                    android:layout_width="210dp"
+                    android:layout_height="210dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_plate"
+                    android:elevation="10dp">
+
+                    <TextView
+                        android:id="@+id/textEmoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="104sp"
+                        tools:text="☕" />
+                </FrameLayout>
+            </FrameLayout>
+
+            <!-- 내용 카드 (사진 위로 살짝 겹침) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-28dp"
+                android:background="@drawable/bg_bottom_bar"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:paddingHorizontal="22dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="28dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_chip"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="5dp"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="☕ 커피" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/star"
+                        app:tint="#F2A93B" />
+
+                    <TextView
+                        android:id="@+id/textRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="4.7" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    tools:text="Caffè Latte" />
+
+                <TextView
+                    android:id="@+id/textDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="3dp"
+                    android:textColor="@color/bb_muted"
+                    android:textSize="14sp"
+                    tools:text="부드러운 우유와 에스프레소의 조화" />
+
+                <TextView
+                    android:id="@+id/textBasePrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    tools:text="5,000원" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@color/bb_divider" />
+
+            <!-- 온도: HOT / ICE -->
+            <LinearLayout
+                android:id="@+id/groupTemperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MenuOptionTitle"
+                    android:text="@string/opt_temperature" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/optionHot"
+                    style="@style/MenuOption"
+                    tools:text="HOT" />
+
+                <TextView
+                    android:id="@+id/optionIce"
+                    style="@style/MenuOption"
+                    android:layout_marginStart="8dp"
+                    tools:text="ICE" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 사이즈: Regular / Large / Grande -->
+            <LinearLayout
+                android:id="@+id/groupSize"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MenuOptionTitle"
+                    android:text="@string/opt_size" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/optionRegular"
+                    style="@style/MenuOption"
+                    tools:text="Regular\n+0원" />
+
+                <TextView
+                    android:id="@+id/optionLarge"
+                    style="@style/MenuOption"
+                    android:layout_marginStart="8dp"
+                    tools:text="Large\n+500원" />
+
+                <TextView
+                    android:id="@+id/optionGrande"
+                    style="@style/MenuOption"
+                    android:layout_marginStart="8dp"
+                    tools:text="Grande\n+1,000원" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 샷 추가 0~3 -->
+            <LinearLayout
+                android:id="@+id/groupShot"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MenuOptionTitle"
+                    android:text="@string/opt_shot" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_option"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <TextView
+                        android:id="@+id/textShotDesc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="14sp"
+                        tools:text="에스프레소 샷 +1 (+500원)" />
+
+                    <ImageView
+                        android:id="@+id/buttonShotMinus"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_circle_button"
+                        android:contentDescription="@string/cart_minus"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_minus"
+                        app:tint="@color/bb_espresso" />
+
+                    <TextView
+                        android:id="@+id/textShotCount"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="1" />
+
+                    <ImageView
+                        android:id="@+id/buttonShotPlus"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_add_button"
+                        android:contentDescription="@string/cart_plus"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_add_white" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 디저트/베이커리: 데우기 -->
+            <LinearLayout
+                android:id="@+id/groupWarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/MenuOptionTitle"
+                    android:text="@string/opt_warm" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/optionAsIs"
+                    style="@style/MenuOption"
+                    tools:text="그대로" />
+
+                <TextView
+                    android:id="@+id/optionWarm"
+                    style="@style/MenuOption"
+                    android:layout_marginStart="8dp"
+                    tools:text="따뜻하게 데우기" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+                <!-- 옵션이 없는 메뉴 (식사) -->
+                <TextView
+                    android:id="@+id/textNoOption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:gravity="center"
+                    android:text="@string/opt_none"
+                    android:textColor="@color/bb_muted"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 사진 위에 떠 있는 버튼: [<] 왼쪽 · [♡][🛒] 오른쪽 -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/buttonBack"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_header_button"
+            android:contentDescription="@string/back"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back"
+            app:tint="@color/bb_cream" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/buttonFavorite"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_fav_button"
+            android:padding="10dp"
+            android:src="@drawable/ic_heart_outline" />
+
+        <FrameLayout
+            android:id="@+id/buttonCart"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:clickable="true"
+            android:contentDescription="@string/nav_cart"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_gravity="bottom|start"
+                android:background="@drawable/bg_header_button"
+                android:importantForAccessibility="no"
+                android:padding="10dp"
+                android:src="@drawable/ic_cart"
+                app:tint="@color/bb_cream" />
+
+            <TextView
+                android:id="@+id/badgeCart"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_badge"
+                android:gravity="center"
+                android:minWidth="18dp"
+                android:paddingHorizontal="4dp"
+                android:textColor="@color/bb_espresso"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="3"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- 아래 고정: 수량 + 담기 -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_bar"
+        android:elevation="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="54dp"
+            android:background="@drawable/bg_qty"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp">
+
+            <ImageView
+                android:id="@+id/buttonMinus"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_circle_button"
+                android:contentDescription="@string/cart_minus"
+                android:padding="8dp"
+                android:src="@drawable/ic_minus"
+                app:tint="@color/bb_espresso" />
+
+            <TextView
+                android:id="@+id/textQuantity"
+                android:layout_width="36dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/bb_espresso"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                tools:text="1" />
+
+            <ImageView
+                android:id="@+id/buttonPlus"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_add_button"
+                android:contentDescription="@string/cart_plus"
+                android:padding="8dp"
+                android:src="@drawable/ic_add_white" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonAddCart"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/bb_espresso"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textColor="@color/bb_nav_active"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="18dp"
+            tools:text="담기 · 5,500원" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
