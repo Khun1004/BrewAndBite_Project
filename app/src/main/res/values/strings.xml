@@ -194,6 +194,15 @@
     <string name="opt_ice">ICE</string>
     <string name="opt_as_is">그대로</string>
     <string name="opt_warm_up">따뜻하게 데우기</string>
+    <string name="opt_remove">재료 빼기</string>
+    <string name="opt_remove_desc">빼고 싶은 재료를 눌러 주세요 (무료)</string>
+    <string name="opt_remove_chip">%1$s 빼기</string>
+    <string name="opt_extra">재료 추가</string>
+    <string name="opt_extra_desc">더 넣고 싶은 재료를 골라 주세요</string>
+    <string name="opt_extra_chip">%1$s %2$s</string>
+    <string name="opt_extra_free">무료</string>
+    <string name="opt_request">사장님께 요청사항</string>
+    <string name="opt_request_hint">예) 소스는 따로 주세요, 덜 맵게 해 주세요</string>
     <string name="opt_none">이 메뉴는 고를 옵션이 없어요</string>
     <string name="opt_shot_none">기본 샷 (추가 없음)</string>
     <string name="opt_shot_desc">에스프레소 샷 +%1$d (+%2$s)</string>

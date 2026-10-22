@@ -2,6 +2,7 @@ package com.example.brewandbite.menu
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -21,10 +22,12 @@ import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.ActivityMenuDetailBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.favorite.bindFavorite
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 수량 → [담기]
+ * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 재료 빼기/추가 · 요청사항 · 수량 → [담기]
  * 옵션 종류와 가격은 MenuOptions.kt 에서 정한다.
  *
  * 여는 법: MenuDetailActivity.start(context, item.id)
@@ -54,10 +57,10 @@ class MenuDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
         binding.topBar.applyStatusBarPadding()
-        // 아래 바가 내비게이션 바(제스처 바)에 가리지 않게
+        // 아래 바가 내비게이션 바(제스처 바)·키보드에 가리지 않게 (요청사항 입력할 때 키보드 위로 올라감)
         val bottomPad = binding.bottomBar.paddingBottom
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { _, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime())
             binding.bottomBar.setPadding(
                 binding.bottomBar.paddingLeft, binding.bottomBar.paddingTop,
                 binding.bottomBar.paddingRight, bottomPad + bars.bottom
@@ -116,9 +119,25 @@ class MenuDetailActivity : AppCompatActivity() {
         b.groupSize.visibility = visibleIf(MenuOptions.hasSize(item))
         b.groupShot.visibility = visibleIf(MenuOptions.hasShot(item))
         b.groupWarm.visibility = visibleIf(MenuOptions.canWarm(item))
-        val noOption = !MenuOptions.hasTemperature(item) && !MenuOptions.hasSize(item) &&
-            !MenuOptions.hasShot(item) && !MenuOptions.canWarm(item)
-        b.textNoOption.visibility = visibleIf(noOption)
+        // 재료 빼기 / 추가 칩 (메뉴마다 다름)
+        val ingredients = MenuOptions.ingredients(item)
+        b.groupRemove.visibility = visibleIf(ingredients.removable.isNotEmpty())
+        b.groupExtra.visibility = visibleIf(ingredients.extras.isNotEmpty())
+        ingredients.removable.forEach { name ->
+            addChip(b.chipsRemove, getString(R.string.opt_remove_chip, name)) { checked ->
+                selection = selection.copy(removed = if (checked) selection.removed + name else selection.removed - name)
+                updateTotal()
+            }
+        }
+        ingredients.extras.forEach { extra ->
+            val price = if (extra.price == 0) getString(R.string.opt_extra_free) else "+${extra.price.toWon()}"
+            addChip(b.chipsExtra, getString(R.string.opt_extra_chip, extra.name, price)) { checked ->
+                selection = selection.copy(extras = if (checked) selection.extras + extra.name else selection.extras - extra.name)
+                updateTotal()
+            }
+        }
+        // 요청사항은 모든 메뉴에 있으므로 '옵션 없음' 안내는 쓰지 않음
+        b.textNoOption.visibility = View.GONE
 
         // 온도
         b.optionHot.setOnClickListener { update(selection.copy(iced = false)) }
@@ -179,6 +198,25 @@ class MenuDetailActivity : AppCompatActivity() {
 
     private fun visibleIf(show: Boolean) = if (show) View.VISIBLE else View.GONE
 
+    /** 누르면 켜졌다 꺼지는 칩 (켜지면 에스프레소 바탕 + 크림 글자) */
+    private fun addChip(group: ChipGroup, label: String, onChange: (Boolean) -> Unit) {
+        val checkedStates = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+        fun colors(on: Int, off: Int) = ColorStateList(
+            checkedStates, intArrayOf(ContextCompat.getColor(this, on), ContextCompat.getColor(this, off))
+        )
+        val chip = Chip(this).apply {
+            text = label
+            isCheckable = true
+            isCheckedIconVisible = false
+            chipBackgroundColor = colors(R.color.bb_espresso, R.color.white)
+            setTextColor(colors(R.color.bb_cream, R.color.bb_espresso))
+            chipStrokeColor = colors(R.color.bb_nav_active, R.color.bb_beige)
+            chipStrokeWidth = resources.displayMetrics.density * 1.5f
+            setOnCheckedChangeListener { _, checked -> onChange(checked) }
+        }
+        group.addView(chip)
+    }
+
     // ───────── 수량 / 담기 ─────────
 
     private fun setupBottomBar() {
@@ -208,7 +246,7 @@ class MenuDetailActivity : AppCompatActivity() {
         CartManager.add(
             menu = item,
             quantity = quantity,
-            options = MenuOptions.describe(item, selection),
+            options = MenuOptions.describe(item, selectionWithRequest()),
             unitPrice = MenuOptions.unitPrice(item, selection)
         )
         Snackbar.make(binding.root, getString(R.string.opt_added, item.name, quantity), Snackbar.LENGTH_LONG)
@@ -219,6 +257,10 @@ class MenuDetailActivity : AppCompatActivity() {
         quantity = 1
         updateTotal()
     }
+
+    /** 요청사항 칸의 글자를 옵션에 넣기 */
+    private fun selectionWithRequest(): MenuOptions.Selection =
+        selection.copy(request = binding.editRequest.text?.toString()?.trim().orEmpty().take(MenuOptions.MAX_REQUEST_LENGTH))
 
     private fun updateCartBadge() {
         val count = CartManager.totalCount()

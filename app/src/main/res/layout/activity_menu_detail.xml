@@ -323,6 +323,104 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <!-- 재료 빼기 (무료) : 칩을 누르면 '양파 빼기' 처럼 선택 -->
+                <LinearLayout
+                    android:id="@+id/groupRemove"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_remove" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/opt_remove_desc"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipsRemove"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="4dp" />
+                </LinearLayout>
+
+                <!-- 재료 추가 (유료) -->
+                <LinearLayout
+                    android:id="@+id/groupExtra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_extra" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/opt_extra_desc"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipsExtra"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="4dp" />
+                </LinearLayout>
+
+                <!-- 사장님께 요청사항 -->
+                <LinearLayout
+                    android:id="@+id/groupRequest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/MenuOptionTitle"
+                        android:text="@string/opt_request" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutRequest"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="@string/opt_request_hint"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxStrokeColor="@color/bb_brown"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="60"
+                        app:hintTextColor="@color/bb_brown">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editRequest"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:maxLength="60"
+                            android:maxLines="3"
+                            android:textColor="@color/bb_espresso"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
                 <!-- 옵션이 없는 메뉴 (식사) -->
                 <TextView
                     android:id="@+id/textNoOption"

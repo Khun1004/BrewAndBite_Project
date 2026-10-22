@@ -1,5 +1,8 @@
 package com.example.brewandbite.auth
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -26,24 +29,49 @@ data class PhoneEntry(
  */
 object PhoneIndex {
 
+    private const val TAG = "PhoneIndex"
+
     private val ref get() = FirebaseDatabase.getInstance().getReference("phoneIndex")
 
     fun key(phone: String): String = phone.filter { it.isDigit() }
 
-    /** 번호로 계정 찾기. 없으면 entry = null, 서버 오류면 failed = true */
+    /** 서버가 이 시간 안에 답하지 않으면 실패로 처리 (인터넷이 끊기면 Firebase 는 끝없이 기다리기 때문) */
+    private const val TIMEOUT_MS = 10_000L
+    private val main = Handler(Looper.getMainLooper())
+
+    /** 번호로 계정 찾기. 없으면 entry = null, 서버 오류·시간 초과면 failed = true */
     fun lookup(phone: String, onResult: (entry: PhoneEntry?, failed: Boolean) -> Unit) {
         val k = key(phone)
         if (k.isEmpty()) return onResult(null, false)
-        ref.child(k).addListenerForSingleValueEvent(object : ValueEventListener {
+        val query = ref.child(k)
+        var finished = false
+        lateinit var listener: ValueEventListener
+        val timeout = Runnable {
+            if (finished) return@Runnable
+            finished = true
+            query.removeEventListener(listener)
+            Log.w(TAG, "phoneIndex 응답 없음 (${TIMEOUT_MS / 1000}초) — 인터넷 연결 또는 database URL 확인")
+            onResult(null, true)
+        }
+        listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if (finished) return
+                finished = true
+                main.removeCallbacks(timeout)
                 val entry = snapshot.getValue(PhoneEntry::class.java)
                 onResult(entry?.takeIf { it.email.isNotBlank() }, false)
             }
 
             override fun onCancelled(error: DatabaseError) {
+                if (finished) return
+                finished = true
+                main.removeCallbacks(timeout)
+                Log.w(TAG, "phoneIndex 읽기 실패: ${error.message}")
                 onResult(null, true)
             }
-        })
+        }
+        main.postDelayed(timeout, TIMEOUT_MS)
+        query.addListenerForSingleValueEvent(listener)
     }
 
     /** 이 번호를 내 계정으로 등록 (회원가입 직후, 번호 변경, 예전 계정 보정). 가입 방법은 자동으로 기록 */

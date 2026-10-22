@@ -42,6 +42,8 @@ object AuthManager {
     fun hasPassword(): Boolean =
         auth.currentUser?.providerData?.any { it.providerId == EmailAuthProvider.PROVIDER_ID } == true
 
+    private const val DB_FAILED_MSG = "서버에 연결하지 못했어요. 인터넷 연결을 확인하고 다시 시도해 주세요"
+
     private const val GOOGLE_ACCOUNT_MSG = "Google 계정으로 가입한 번호예요. 'Google 계정으로 계속하기'를 눌러 주세요"
 
     /** 로그인. 실패하면 화면에 보여 줄 한국어 메시지를 돌려준다. */
@@ -55,7 +57,7 @@ object AuthManager {
     fun signInWithPhone(phone: String, password: String, onResult: (errorMessage: String?) -> Unit) {
         PhoneIndex.lookup(phone) { entry, failed ->
             when {
-                failed -> onResult("잠시 후 다시 시도해 주세요 (데이터베이스 규칙을 확인해 주세요)")
+                failed -> onResult(DB_FAILED_MSG)
                 entry == null -> onResult("가입되지 않은 휴대폰 번호예요")
                 entry.provider == PhoneEntry.PROVIDER_GOOGLE -> onResult(GOOGLE_ACCOUNT_MSG)
                 else -> auth.signInWithEmailAndPassword(entry.email, password)
@@ -83,7 +85,7 @@ object AuthManager {
     ) {
         // 같은 휴대폰 번호로 이미 가입했는지 먼저 확인
         PhoneIndex.lookup(profile.phone) { existing, failed ->
-            if (failed) return@lookup onResult("잠시 후 다시 시도해 주세요 (데이터베이스 규칙을 확인해 주세요)")
+            if (failed) return@lookup onResult(DB_FAILED_MSG)
             if (existing != null) return@lookup onResult("이미 가입된 휴대폰 번호예요. 로그인해 주세요")
 
             auth.createUserWithEmailAndPassword(email, password)
@@ -130,7 +132,7 @@ object AuthManager {
         val user = auth.currentUser ?: return onResult("로그인이 필요해요")
         val email = user.email.orEmpty()
         PhoneIndex.lookup(profile.phone) { existing, failed ->
-            if (failed) return@lookup onResult("잠시 후 다시 시도해 주세요 (데이터베이스 규칙을 확인해 주세요)")
+            if (failed) return@lookup onResult(DB_FAILED_MSG)
             if (existing != null && existing.uid != user.uid) return@lookup onResult("이미 가입된 휴대폰 번호예요")
 
             val saved = profile.copy(uid = user.uid, email = email, createdAt = System.currentTimeMillis())
