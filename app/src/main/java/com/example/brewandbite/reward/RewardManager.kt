@@ -3,6 +3,9 @@ package com.example.brewandbite.reward
 import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.cart.CartItem
 import com.example.brewandbite.data.MenuRepository
+import com.example.brewandbite.data.toWon
+import com.example.brewandbite.notice.Notice
+import com.example.brewandbite.notice.NoticeManager
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -111,7 +114,19 @@ object RewardManager {
             updates["coupons/${coupon.id}"] = coupon
         }
         r.updateChildren(updates)
-            .addOnSuccessListener { onDone(rewards, true) }
+            .addOnSuccessListener {
+                // 🔔 알림: 스탬프 적립 / 무료 음료 쿠폰
+                val left = total % STAMPS_PER_COUPON
+                NoticeManager.add(
+                    Notice.TYPE_STAMP, "스탬프 ${count}개를 모았어요 ☕",
+                    "지금 $left / $STAMPS_PER_COUPON · ${STAMPS_PER_COUPON - left}개 더 모으면 음료 1잔 무료!"
+                )
+                if (rewards > 0) NoticeManager.add(
+                    Notice.TYPE_COUPON, "음료 1잔 무료 쿠폰이 도착했어요 🎉",
+                    "스탬프 ${STAMPS_PER_COUPON}개를 채웠어요. 60일 안에 결제 화면에서 쿠폰을 골라 주세요."
+                )
+                onDone(rewards, true)
+            }
             .addOnFailureListener { onDone(0, false) }
     }
 
@@ -168,6 +183,12 @@ object RewardManager {
             source = Coupon.SOURCE_WELCOME, validFor = WELCOME_DAYS
         )
         r.updateChildren(mapOf("welcomeGiven" to true, "coupons/${coupon.id}" to coupon))
+            .addOnSuccessListener {
+                NoticeManager.add(
+                    Notice.TYPE_COUPON, "가입 축하 쿠폰이 도착했어요 🎟",
+                    "${WELCOME_MIN_ORDER.toWon()} 이상 주문하면 ${WELCOME_AMOUNT.toWon()} 할인돼요. 30일 동안 쓸 수 있어요."
+                )
+            }
     }
 
     private fun newCoupon(r: DatabaseReference, title: String, amount: Int, minOrder: Int, source: String, validFor: Long): Coupon {

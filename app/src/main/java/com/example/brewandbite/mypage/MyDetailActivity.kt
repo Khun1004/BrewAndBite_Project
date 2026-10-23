@@ -47,6 +47,9 @@ import com.example.brewandbite.databinding.SectionMySecurityBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.home.MenuAdapter
 import com.example.brewandbite.menu.MenuDetailActivity
+import com.example.brewandbite.notice.NoticeActivity
+import com.example.brewandbite.notice.NoticeManager
+import com.example.brewandbite.notice.bindNoticeDot
 import com.example.brewandbite.reward.CouponAdapter
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
@@ -54,7 +57,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * My Page 상세 화면. My Page 목록에서 > 를 누르면 열린다.
- * 헤더: [<] 뒤로 (왼쪽) · MY PAGE / 섹션 이름 (가운데) · [♡ 찜한 메뉴][🔔 알림] (오른쪽)
+ * 헤더: [<] 뒤로 (왼쪽) · MY PAGE / 섹션 이름 (가운데) · [♡ 찜한 메뉴][🔔 알림함] (오른쪽)
  *
  *  👤 내 정보   : 이름·이메일·연락처 + [이름 수정] [휴대폰 번호 변경(인증번호 확인)]
  *  📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
@@ -95,6 +98,9 @@ class MyDetailActivity : AppCompatActivity() {
     /** 스탬프·쿠폰이 바뀌면 다시 그린다 */
     private val rewardListener = RewardManager.RewardListener { showCoupons() }
 
+    /** 새 알림이 오면 🔔 빨간 점 다시 그리기 */
+    private val noticeListener = NoticeManager.NoticeListener { binding.dotBell.bindNoticeDot() }
+
     /** 찜이 바뀌면 (♡ 해제 등) 목록을 다시 그린다 */
     private val favoriteListener = FavoriteManager.FavoriteListener { showFavorites() }
 
@@ -127,8 +133,8 @@ class MyDetailActivity : AppCompatActivity() {
         binding.buttonFavorite.setOnClickListener {
             if (section != Section.FAVORITES) startActivity(MyDetailActivity.intent(this, Section.FAVORITES))
         }
-        // 🔔 → 알림 (다음 단계)
-        binding.buttonBell.setOnClickListener { toast(R.string.my_notifications_soon) }
+        // 🔔 → 알림함
+        binding.buttonBell.setOnClickListener { NoticeActivity.start(this) }
 
         // 섹션 내용을 카드 안에 넣기
         val parent = binding.container
@@ -165,6 +171,8 @@ class MyDetailActivity : AppCompatActivity() {
             finish()
             return
         }
+        NoticeManager.addListener(noticeListener)
+        binding.dotBell.bindNoticeDot()
         when (section) {
             Section.INFO, Section.ADDRESS -> UserRepository.loadMyProfile { showProfile(it) }
             Section.PAYMENT -> loadPayments()
@@ -185,6 +193,7 @@ class MyDetailActivity : AppCompatActivity() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
         RewardManager.removeListener(rewardListener)
+        NoticeManager.removeListener(noticeListener)
     }
 
     // ───────── 🎟 스탬프 · 쿠폰 ─────────

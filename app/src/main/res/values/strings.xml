@@ -363,4 +363,13 @@
     <string name="pay_order_no">주문번호 %1$s</string>
     <string name="pay_stamp_earned">☕ 스탬프 %1$d개 적립! (%2$d / %3$d)</string>
     <string name="pay_stamp_coupon">☕ 스탬프 %1$d개 적립! 10개를 채워서 음료 1잔 무료 쿠폰이 생겼어요 🎉</string>
+    <!-- 🔔 알림함 (notice/) -->
+    <string name="notice_eyebrow">NOTIFICATIONS</string>
+    <string name="notice_unread">안 읽은 알림 %1$d개</string>
+    <string name="notice_all_read">모든 알림을 읽었어요</string>
+    <string name="notice_read_all">모두 읽음</string>
+    <string name="notice_empty">아직 알림이 없어요</string>
+    <string name="notice_empty_desc">쿠폰 · 스탬프 · 주문 소식이 여기에 모여요</string>
+    <string name="notice_login_needed">로그인하면 알림을 받을 수 있어요</string>
+    <string name="notice_delete_title">이 알림을 삭제할까요?</string>
 </resources>

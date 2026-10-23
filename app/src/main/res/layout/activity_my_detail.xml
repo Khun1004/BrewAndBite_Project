@@ -135,6 +135,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/buttonBack"
             app:tint="@color/bb_cream" />
+
+        <!-- 🔔 안 읽은 알림 빨간 점 -->
+        <View
+            android:id="@+id/dotBell"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="9dp"
+            android:background="@drawable/bg_unread_dot"
+            android:elevation="2dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/buttonBell"
+            app:layout_constraintTop_toTopOf="@+id/buttonBell"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView

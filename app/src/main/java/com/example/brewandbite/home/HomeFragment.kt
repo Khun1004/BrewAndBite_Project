@@ -30,6 +30,9 @@ import com.example.brewandbite.menu.MenuDetailActivity
 import com.example.brewandbite.menu.MenuListActivity
 import com.example.brewandbite.mypage.MyDetailActivity
 import com.example.brewandbite.mypage.ProfilePhoto
+import com.example.brewandbite.notice.NoticeActivity
+import com.example.brewandbite.notice.NoticeManager
+import com.example.brewandbite.notice.bindNoticeDot
 import java.util.Calendar
 
 /** Home 탭: 고정 헤더 + 검색 / 스크롤: 오늘의 추천 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
@@ -48,8 +51,13 @@ class HomeFragment : Fragment() {
         b.recyclerMenu.adapter?.notifyDataSetChanged()
     }
 
+    /** 새 알림이 오면 🔔 빨간 점 다시 그리기 */
+    private val noticeListener = NoticeManager.NoticeListener { _binding?.dotBell?.bindNoticeDot() }
+
     override fun onStart() {
         super.onStart()
+        NoticeManager.addListener(noticeListener)
+        binding.dotBell.bindNoticeDot()
         FavoriteManager.addListener(favoriteListener)
         favoriteListener.onFavoritesChanged()
         showProfile()
@@ -92,6 +100,7 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+        NoticeManager.removeListener(noticeListener)
         FavoriteManager.removeListener(favoriteListener)
     }
 
@@ -165,7 +174,8 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), R.string.fav_login_needed, Toast.LENGTH_SHORT).show()
             }
         }
-        binding.buttonBell.setOnClickListener { showComingSoon("알림") }
+        // 🔔 → 알림함
+        binding.buttonBell.setOnClickListener { NoticeActivity.start(requireContext()) }
     }
 
     // ───────── 카테고리 / 인기 / 추천 / 검색 ─────────
