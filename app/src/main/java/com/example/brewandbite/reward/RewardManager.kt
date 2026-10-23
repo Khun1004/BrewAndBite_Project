@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit
  *  - 처음 로그인하면 '가입 축하 2,000원 할인' 쿠폰을 1번 준다.
  *  - 로그인하면 자동으로 불러오고(BrewBiteApp), 서버 값이 바뀌면 바로 화면에 반영된다.
  *
- * ───────── 팀원용 사용법 (Order 화면) ─────────
+ * ───────── 사용하는 곳: cart/PaymentBottomSheet.kt (결제 화면) ─────────
  *  결제 화면에서 쓸 수 있는 쿠폰   RewardManager.usableCoupons(orderTotal)
- *  쿠폰 할인 금액                RewardManager.discount(coupon, orderTotal)
+ *  쿠폰 할인 금액                RewardManager.discount(coupon, orderTotal, cartItems)
  *  주문 완료 후 쿠폰 사용 처리      RewardManager.useCoupon(coupon.id)
  *  주문 완료 후 스탬프 적립         RewardManager.addStampsFor(cartItems) { newCoupons -> }
  * ───────────────────────────────────────────
@@ -68,9 +68,20 @@ object RewardManager {
     /** 이 주문 금액에 쓸 수 있는 쿠폰 */
     fun usableCoupons(orderTotal: Int): List<Coupon> = activeCoupons().filter { orderTotal >= it.minOrder }
 
-    /** 이 쿠폰으로 얼마나 할인되는지 (조건이 안 맞으면 0) */
-    fun discount(coupon: Coupon, orderTotal: Int): Int =
-        if (!coupon.usable || orderTotal < coupon.minOrder) 0 else minOf(coupon.amount, orderTotal)
+    /**
+     * 이 쿠폰으로 얼마나 할인되는지 (조건이 안 맞으면 0).
+     * 음료 무료 쿠폰은 items 를 주면 '장바구니에서 가장 비싼 음료 1잔 값'까지만 (최대 5,000원).
+     */
+    fun discount(coupon: Coupon, orderTotal: Int, items: List<CartItem>? = null): Int {
+        if (!coupon.usable || orderTotal < coupon.minOrder) return 0
+        var amount = coupon.amount
+        if (coupon.source == Coupon.SOURCE_STAMP && items != null) {
+            val drink = items.filter { MenuRepository.findItem(it.menuId)?.categoryId in STAMP_CATEGORIES }
+                .maxOfOrNull { it.price } ?: 0
+            amount = minOf(amount, drink)
+        }
+        return minOf(amount, orderTotal)
+    }
 
     /** 장바구니에서 음료가 몇 잔인지 = 받을 스탬프 수 */
     fun stampsFor(items: List<CartItem>): Int = items.sumOf { line ->

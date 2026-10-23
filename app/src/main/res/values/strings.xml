@@ -341,4 +341,26 @@
     <string name="coupon_used">사용 완료</string>
     <string name="coupon_expired">기간 만료</string>
     <string name="coupon_guide">• 커피 · 차 · 음료 1잔을 주문하면 스탬프 1개가 찍혀요\n• 스탬프 10개 = 음료 1잔 무료 쿠폰 (60일 동안 사용)\n• 처음 가입하면 2,000원 할인 쿠폰을 드려요 (10,000원 이상, 30일)\n• 쿠폰은 주문할 때 1장만 쓸 수 있어요</string>
+    <!-- Cart: 배달 / 포장 · 최소 주문 (팀원) -->
+    <string name="cart_mode_delivery">🛵 배달</string>
+    <string name="cart_mode_pickup">🛍️ 포장</string>
+    <string name="cart_subtotal_label">주문 금액</string>
+    <string name="cart_delivery_fee_label">배달비</string>
+    <string name="cart_min_order_hint">최소 주문 금액 %1$s · %2$s 더 담아주세요</string>
+    <string name="cart_pay_button">%1$s 결제하기</string>
+
+    <!-- 결제 화면: 쿠폰 · 스탬프 -->
+    <string name="pay_coupon">쿠폰</string>
+    <string name="pay_coupon_title">쿠폰 선택</string>
+    <string name="pay_coupon_choose">사용 가능 %1$d장</string>
+    <string name="pay_coupon_none">사용 가능한 쿠폰 없음</string>
+    <string name="pay_coupon_not_use">쿠폰 사용 안 함</string>
+    <string name="pay_coupon_applied">%1$s −%2$s</string>
+    <string name="pay_coupon_item">%1$s  −%2$s\n%3$s까지</string>
+    <string name="pay_detail_subtotal">주문 %1$s</string>
+    <string name="pay_detail_fee">배달비 %1$s</string>
+    <string name="pay_detail_coupon">쿠폰 −%1$s</string>
+    <string name="pay_order_no">주문번호 %1$s</string>
+    <string name="pay_stamp_earned">☕ 스탬프 %1$d개 적립! (%2$d / %3$d)</string>
+    <string name="pay_stamp_coupon">☕ 스탬프 %1$d개 적립! 10개를 채워서 음료 1잔 무료 쿠폰이 생겼어요 🎉</string>
 </resources>

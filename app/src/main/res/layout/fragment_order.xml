@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Order 탭 화면 (헤더 아래는 빈 화면 · 팀원 작업 공간) -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/orderRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bb_cream"
     tools:context=".order.OrderFragment">
 
-    <!-- 공통 헤더 (Cart / Store / Order / My Page 동일) -->
     <include
         android:id="@+id/pageHeader"
         layout="@layout/layout_page_header"
@@ -19,7 +16,197 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- TODO (팀원): 헤더 아래에 Order 화면 내용을 작성하세요 -->
-    <!-- 예) app:layout_constraintTop_toBottomOf="@+id/pageHeader" 로 헤더 아래에 붙이기 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 주문이 없을 때 -->
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🧾"
+                    android:textSize="48sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="진행 중인 주문이 없어요"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="메뉴를 담고 결제하면 여기서 확인할 수 있어요"
+                    android:textColor="@color/bb_muted"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- 주문이 있을 때 -->
+            <LinearLayout
+                android:id="@+id/contentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- 현재 상태 카드 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_order_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/textOrderNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="12sp"
+                        tools:text="주문번호 BB-20261022-4821" />
+
+                    <TextView
+                        android:id="@+id/textStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="배달 중이에요 🛵" />
+
+                    <TextView
+                        android:id="@+id/textEta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="예상 도착 오후 3:45 · 약 12분 남음" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progressOrder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:max="1000"
+                        app:indicatorColor="@color/bb_brown"
+                        app:trackColor="@color/bb_divider"
+                        app:trackCornerRadius="4dp"
+                        app:trackThickness="8dp"
+                        tools:progress="500" />
+                </LinearLayout>
+
+                <!-- 진행 타임라인 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_order_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
+
+                    <include android:id="@+id/step0" layout="@layout/item_order_step" />
+                    <include android:id="@+id/step1" layout="@layout/item_order_step" />
+                    <include android:id="@+id/step2" layout="@layout/item_order_step" />
+                    <include android:id="@+id/step3" layout="@layout/item_order_step" />
+                </LinearLayout>
+
+                <!-- 주문 내역 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_order_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="주문 내역"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="14sp"
+                        tools:text="• Americano (ICE · Large) × 2\n• Cheesecake × 1" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="@color/bb_divider" />
+
+                    <TextView
+                        android:id="@+id/textPayInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="13sp"
+                        tools:text="주문 금액 24,500원\n배달비 1,000원" />
+
+                    <TextView
+                        android:id="@+id/textPayTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="end"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="총 결제 25,500원" />
+                </LinearLayout>
+
+                <!-- 완료 후에만 표시 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonNewOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/bb_espresso"
+                    android:text="새 주문하기"
+                    android:textColor="@color/bb_nav_active"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="18dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
