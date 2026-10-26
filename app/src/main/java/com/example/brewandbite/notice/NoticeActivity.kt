@@ -2,10 +2,12 @@ package com.example.brewandbite.notice
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,11 +21,14 @@ import com.example.brewandbite.data.MenuRepository
 import com.example.brewandbite.databinding.ActivityNoticeBinding
 import com.example.brewandbite.menu.MenuDetailActivity
 import com.example.brewandbite.mypage.MyDetailActivity
+import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * 🔔 알림함 화면. Home / My Page 상세 헤더의 🔔 를 누르면 열린다.
  *  헤더: [<] 뒤로 · 알림 (가운데) · [모두 읽음] (오른쪽)
+ *  - 위쪽 필터 칩: 전체 · 혜택(쿠폰·스탬프) · 주문 · 소식(추천·이벤트)
+ *  - 목록은 날짜별(오늘 / 어제 / 이번 주 / 이전)로 묶어서 카드로 보여 줌
  *  - 알림을 누르면 읽음 처리 + 해당 화면으로 (쿠폰·스탬프 → 쿠폰함, 주문 → Order 탭, 메뉴 → 메뉴 상세)
  *  - 길게 누르면 삭제
  *  - 로그인 안 했으면 로그인 안내
@@ -35,6 +40,9 @@ class NoticeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNoticeBinding
     private val adapter = NoticeAdapter(onClick = ::open, onLongClick = ::confirmDelete)
     private val listener = NoticeManager.NoticeListener { render() }
+
+    /** 지금 고른 필터 (null = 전체) */
+    private var filter: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +63,40 @@ class NoticeActivity : AppCompatActivity() {
 
         binding.recyclerNotice.layoutManager = LinearLayoutManager(this)
         binding.recyclerNotice.adapter = adapter
+        setupFilters()
+    }
+
+    /** 전체 · 🎟 혜택 · 🧾 주문 · ✨ 소식 (고른 칩은 에스프레소 바탕) */
+    private fun setupFilters() {
+        val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+        fun colors(on: Int, off: Int) = ColorStateList(
+            states, intArrayOf(ContextCompat.getColor(this, on), ContextCompat.getColor(this, off))
+        )
+        val filters = listOf(
+            R.string.notice_filter_all to null,
+            R.string.notice_filter_benefit to Notice.GROUP_BENEFIT,
+            R.string.notice_filter_order to Notice.GROUP_ORDER,
+            R.string.notice_filter_news to Notice.GROUP_NEWS
+        )
+        filters.forEach { (label, group) ->
+            val chip = Chip(this).apply {
+                setText(label)
+                isCheckable = true
+                isCheckedIconVisible = false
+                isChecked = group == filter
+                chipBackgroundColor = colors(R.color.bb_espresso, R.color.white)
+                setTextColor(colors(R.color.bb_cream, R.color.bb_brown))
+                chipStrokeColor = colors(R.color.bb_espresso, R.color.bb_divider)
+                chipStrokeWidth = resources.displayMetrics.density
+                setOnCheckedChangeListener { _, checked ->
+                    if (checked) {
+                        filter = group
+                        render()
+                    }
+                }
+            }
+            binding.chipsFilter.addView(chip)
+        }
     }
 
     override fun onStart() {
@@ -70,17 +112,19 @@ class NoticeActivity : AppCompatActivity() {
 
     private fun render() {
         val loggedIn = AuthManager.isLoggedIn()
-        val list = NoticeManager.all()
+        val list = NoticeManager.all().filter { filter == null || it.group == filter }
         val unread = NoticeManager.unreadCount()
 
         binding.loggedOutView.visibility = if (loggedIn) View.GONE else View.VISIBLE
+        binding.filterBar.visibility = if (loggedIn) View.VISIBLE else View.GONE
         binding.emptyView.visibility = if (loggedIn && list.isEmpty()) View.VISIBLE else View.GONE
+        binding.textEmptyTitle.setText(if (filter == null) R.string.notice_empty else R.string.notice_empty_filter)
         binding.recyclerNotice.visibility = if (loggedIn && list.isNotEmpty()) View.VISIBLE else View.GONE
 
         binding.textSubtitle.text =
             if (unread > 0) getString(R.string.notice_unread, unread) else getString(R.string.notice_all_read)
         binding.buttonReadAll.visibility = if (unread > 0) View.VISIBLE else View.INVISIBLE
-        adapter.submitList(list)
+        adapter.submitNotices(list)
     }
 
     /** 알림 누르기: 읽음 처리 → 알맞은 화면으로 */

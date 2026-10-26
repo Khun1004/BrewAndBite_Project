@@ -22,12 +22,14 @@ import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.ActivityMenuDetailBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewManager
+import com.example.brewandbite.review.ReviewSection
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 재료 빼기/추가 · 요청사항 · 수량 → [담기]
+ * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 재료 빼기/추가 · 요청사항 · ⭐ 리뷰 · 수량 → [담기]
  * 옵션 종류와 가격은 MenuOptions.kt 에서 정한다.
  *
  * 여는 법: MenuDetailActivity.start(context, item.id)
@@ -36,6 +38,9 @@ class MenuDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMenuDetailBinding
     private lateinit var item: MenuItem
+
+    /** 아래쪽 ⭐ 리뷰 영역 */
+    private lateinit var reviews: ReviewSection
 
     private var selection = MenuOptions.Selection()
     private var quantity = 1
@@ -69,6 +74,9 @@ class MenuDetailActivity : AppCompatActivity() {
         }
 
         showMenu()
+        reviews = ReviewSection(this, binding.reviewSection, item) {
+            binding.textRating.text = ReviewManager.ratingText(item)   // 위쪽 별점도 실제 평균으로
+        }
         setupOptions()
         setupBottomBar()
 
@@ -91,12 +99,14 @@ class MenuDetailActivity : AppCompatActivity() {
         FavoriteManager.addListener(favoriteListener)
         updateCartBadge()
         binding.buttonFavorite.bindFavorite(item)
+        reviews.start()
     }
 
     override fun onStop() {
         super.onStop()
         CartManager.removeListener(cartListener)
         FavoriteManager.removeListener(favoriteListener)
+        if (::reviews.isInitialized) reviews.stop()
     }
 
     // ───────── 메뉴 정보 ─────────
@@ -105,7 +115,7 @@ class MenuDetailActivity : AppCompatActivity() {
         val category = MenuRepository.findCategory(item.categoryId)
         binding.textEmoji.text = item.emoji
         binding.textCategory.text = "${category.emoji} ${category.nameKo}"
-        binding.textRating.text = item.rating.toString()
+        binding.textRating.text = ReviewManager.ratingText(item)
         binding.textName.text = item.name
         binding.textDescription.text = item.description
         binding.textBasePrice.text = item.price.toWon()

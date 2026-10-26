@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
-import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemPopularBinding
+import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewManager
 
 /** 홈 화면 '인기 메뉴' 가로 카드 */
 class PopularAdapter(
@@ -29,7 +30,7 @@ class PopularAdapter(
             textName.text = item.name
             textCategory.text = item.description
             textPrice.text = item.price.toWon()
-            textRating.text = item.rating.toString()
+            textRating.text = ReviewManager.ratingText(item)   // 리뷰 평균 (없으면 원래 별점)
 
             root.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }

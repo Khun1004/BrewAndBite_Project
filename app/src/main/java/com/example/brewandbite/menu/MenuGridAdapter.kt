@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
-import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemMenuGridBinding
+import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewManager
 
 /** 메뉴 목록 화면의 2열 카드 */
 class MenuGridAdapter(
@@ -30,7 +31,7 @@ class MenuGridAdapter(
             textName.text = item.name
             textDescription.text = item.description
             textPrice.text = item.price.toWon()
-            textRating.text = item.rating.toString()
+            textRating.text = ReviewManager.ratingText(item)   // 리뷰 평균 (없으면 원래 별점)
 
             cardMenu.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }
