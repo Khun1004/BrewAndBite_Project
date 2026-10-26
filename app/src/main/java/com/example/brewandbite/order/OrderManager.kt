@@ -3,12 +3,18 @@ package com.example.brewandbite.order
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.brewandbite.cart.CartItem
+import com.example.brewandbite.data.toWon
+import com.example.brewandbite.notice.Notice
+import com.example.brewandbite.notice.NoticeManager
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-/** 가장 최근 주문 1건을 휴대폰에 저장하고, 시간에 따른 진행 단계를 계산한다 */
+/**
+ * 가장 최근 주문 1건을 휴대폰에 저장하고, 시간에 따른 진행 단계를 계산한다.
+ * 결제가 끝나면 Firebase 주문 기록(OrderHistory)에도 저장하고 🔔 알림을 보낸다.
+ */
 object OrderManager {
 
     /** 시연용 배속. 1 = 실제 시간, 6 = 6배 빠르게 (25분 배달이 약 4분) */
@@ -74,6 +80,12 @@ object OrderManager {
         )
         current = order
         prefs.edit().putString(KEY_ORDER, gson.toJson(order)).apply()
+        // 주문 기록 (My Page → 주문 기록 · 리뷰 쓰기 자격) + 🔔 알림
+        OrderHistory.save(order)
+        NoticeManager.add(
+            Notice.TYPE_ORDER, "주문이 접수됐어요 🧾",
+            "주문번호 ${order.orderNo} · ${order.total.toWon()} · ${if (isDelivery) "배달" else "포장"}"
+        )
         return order
     }
 

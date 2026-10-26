@@ -20,6 +20,8 @@ import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentMypageBinding
 import com.example.brewandbite.favorite.FavoriteManager
+import com.example.brewandbite.order.OrderHistory
+import com.example.brewandbite.review.ReviewManager
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -105,6 +107,22 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    /** 주문 기록이 바뀌면 '주문 기록' 줄 요약 다시 그리기 */
+    private val historyListener = OrderHistory.HistoryListener { showOrdersSummary() }
+
+    /** 예) "3건 · 리뷰 쓸 메뉴 2개" */
+    private fun showOrdersSummary() {
+        val b = _binding ?: return
+        val list = OrderHistory.all()
+        val toReview = list.filter { it.finished }.flatMap { o -> o.items.filter { !o.isReviewed(it.menuId) }.map { it.menuId } }
+            .distinct().count { ReviewManager.myReview(it) == null }
+        b.textOrdersSummary.text = when {
+            list.isEmpty() -> getString(R.string.my_orders_none)
+            toReview > 0 -> getString(R.string.my_orders_summary_review, list.size, toReview)
+            else -> getString(R.string.my_orders_summary, list.size)
+        }
+    }
+
     /** 스탬프·쿠폰이 바뀌면 카드를 다시 그린다 */
     private val rewardListener = RewardManager.RewardListener { _binding?.let { StampCard.bind(it.stampCard) } }
 
@@ -115,6 +133,7 @@ class MyPageFragment : Fragment() {
         super.onStart()
         FavoriteManager.addListener(favoriteListener)
         RewardManager.addListener(rewardListener)
+        OrderHistory.addListener(historyListener)
         refresh()
     }
 
@@ -122,6 +141,7 @@ class MyPageFragment : Fragment() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
         RewardManager.removeListener(rewardListener)
+        OrderHistory.removeListener(historyListener)
     }
 
     private fun showFavoriteSummary() {
@@ -169,7 +189,7 @@ class MyPageFragment : Fragment() {
                 else getString(R.string.my_payment_count, list.size, default.displayName())
         }
 
-        b.textOrdersSummary.text = getString(R.string.my_menu_soon)
+        showOrdersSummary()
         showFavoriteSummary()
         StampCard.bind(b.stampCard)
         b.textSecuritySummary.text = getString(

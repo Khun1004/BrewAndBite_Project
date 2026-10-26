@@ -7,14 +7,15 @@ import java.util.Locale
 
 /**
  * 리뷰 한 개 (Firebase: reviews/{메뉴ID}/{회원ID}). 한 메뉴에 1명당 1개.
- *  ordered = 이 메뉴를 주문한 적이 있는 사람이 썼는지 ('주문 고객' 표시)
+ * 주문한 사람만 쓸 수 있다 → orderNo = 어느 주문으로 썼는지, options = 그때 고른 옵션 (예: "ICE · Large")
  */
 data class Review(
     var uid: String = "",
     var name: String = "",
     var rating: Int = 5,          // 1 ~ 5
     var text: String = "",
-    var ordered: Boolean = false,
+    var orderNo: String = "",
+    var options: String = "",
     var createdAt: Long = 0L,
     var updatedAt: Long = 0L
 ) {

@@ -33,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
  * 옵션 종류와 가격은 MenuOptions.kt 에서 정한다.
  *
  * 여는 법: MenuDetailActivity.start(context, item.id)
+ *         MenuDetailActivity.start(context, item.id, writeReview = true)  ← 리뷰 영역으로 내려가서 리뷰 쓰기 창 열기
  */
 class MenuDetailActivity : AppCompatActivity() {
 
@@ -82,6 +83,16 @@ class MenuDetailActivity : AppCompatActivity() {
 
         binding.buttonBack.setOnClickListener { finish() }
         binding.buttonCart.setOnClickListener { MainActivity.openTab(this, MainActivity.TAB_CART) }
+
+        // 주문 기록의 [리뷰 쓰기]로 들어왔으면 → 리뷰 영역으로 내려가서 쓰기 창 열기
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_WRITE_REVIEW, false)) {
+            binding.scrollView.postDelayed({
+                val section = binding.reviewSection.root
+                val y = (section.parent as View).top + section.top
+                binding.scrollView.smoothScrollTo(0, y)
+                reviews.openEditor()
+            }, 400)
+        }
 
         // 접시가 살짝 떠오르며 등장
         if (savedInstanceState == null) {
@@ -280,10 +291,15 @@ class MenuDetailActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_MENU_ID = "menu_id"
+        private const val EXTRA_WRITE_REVIEW = "write_review"
         private const val MAX_QUANTITY = 20
 
-        fun start(context: Context, menuId: String) {
-            context.startActivity(Intent(context, MenuDetailActivity::class.java).putExtra(EXTRA_MENU_ID, menuId))
+        fun start(context: Context, menuId: String, writeReview: Boolean = false) {
+            context.startActivity(
+                Intent(context, MenuDetailActivity::class.java)
+                    .putExtra(EXTRA_MENU_ID, menuId)
+                    .putExtra(EXTRA_WRITE_REVIEW, writeReview)
+            )
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.brewandbite.review
 
-import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -13,19 +12,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.brewandbite.R
 import com.example.brewandbite.auth.AuthManager
-import com.example.brewandbite.auth.LoginActivity
 import com.example.brewandbite.data.MenuItem
-import com.example.brewandbite.databinding.DialogReviewBinding
 import com.example.brewandbite.databinding.ItemReviewBinding
 import com.example.brewandbite.databinding.SectionMenuReviewsBinding
+import com.example.brewandbite.order.OrderHistory
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.google.android.material.snackbar.Snackbar
 
 /**
  * 메뉴 상세 화면의 ⭐ 리뷰 영역 (section_menu_reviews.xml).
  *  - 평균 별점 · 별점별 막대 · 최신 리뷰 3개 (+ [리뷰 전체 보기])
  *  - [리뷰 쓰기] → 별점 + 글 입력 창 (이미 썼으면 [내 리뷰 수정])
+ *    리뷰는 이 메뉴를 주문했고 배달·픽업이 끝난 사람만 (아니면 🔒 안내)
  *  - 내 리뷰에는 수정 · 삭제
  *
  * MenuDetailActivity 에서:  reviews = ReviewSection(this, binding.reviewSection, item)
@@ -40,6 +38,7 @@ class ReviewSection(
 ) {
     private var expanded = false
     private val listener = ReviewManager.ReviewListener { render() }
+    private val historyListener = OrderHistory.HistoryListener { render() }
 
     init {
         b.buttonWriteReview.setOnClickListener { openEditor() }
@@ -51,11 +50,13 @@ class ReviewSection(
 
     fun start() {
         ReviewManager.addListener(listener)
+        OrderHistory.addListener(historyListener)
         render()
     }
 
     fun stop() {
         ReviewManager.removeListener(listener)
+        OrderHistory.removeListener(historyListener)
     }
 
     // ───────── 그리기 ─────────
@@ -67,7 +68,17 @@ class ReviewSection(
         val mine = ReviewManager.myReview(item.id)
 
         b.textReviewCount.text = if (count > 0) ctx.getString(R.string.review_count, count) else ""
-        b.buttonWriteReview.setText(if (mine != null) R.string.review_edit_mine else R.string.review_write)
+        // 버튼: 내 리뷰 수정 / 리뷰 쓰기 / 배달 완료 후 / 🔒 주문 후
+        val loggedIn = AuthManager.isLoggedIn()
+        b.buttonWriteReview.setText(
+            when {
+                mine != null -> R.string.review_edit_mine
+                !loggedIn || OrderHistory.reviewableOrder(item.id) != null -> R.string.review_write
+                OrderHistory.isWaiting(item.id) -> R.string.review_wait_button
+                else -> R.string.review_locked_button
+            }
+        )
+        b.buttonWriteReview.alpha = if (!loggedIn || ReviewManager.canWrite(item.id)) 1f else 0.55f
 
         // 평균 + 막대 (리뷰가 없으면 숨김)
         b.summaryBox.visibility = if (count > 0) View.VISIBLE else View.GONE
@@ -140,7 +151,8 @@ class ReviewSection(
         val v = ItemReviewBinding.inflate(LayoutInflater.from(activity), b.reviewList, false)
         v.textAvatar.text = r.name.take(1).uppercase()
         v.textName.text = r.name
-        v.textOrdered.visibility = if (r.ordered) View.VISIBLE else View.GONE
+        v.textOptions.text = r.options
+        v.textOptions.visibility = if (r.options.isNotBlank()) View.VISIBLE else View.GONE
         v.textMine.visibility = if (isMine) View.VISIBLE else View.GONE
         v.stars.showStars(r.rating.toDouble(), 13)
         v.textDate.text = r.dateText
@@ -153,73 +165,8 @@ class ReviewSection(
 
     // ───────── 쓰기 · 수정 · 삭제 ─────────
 
-    private fun openEditor() {
-        if (!AuthManager.isLoggedIn()) {
-            Snackbar.make(b.root, R.string.review_login_needed, Snackbar.LENGTH_LONG)
-                .setAction(R.string.review_go_login) { activity.startActivity(LoginActivity.intent(activity)) }
-                .show()
-            return
-        }
-        val old = ReviewManager.myReview(item.id)
-        val d = DialogReviewBinding.inflate(LayoutInflater.from(activity))
-        var rating = old?.rating ?: 0
-        d.textMenu.text = "${item.emoji} ${item.name}"
-        d.editReview.setText(old?.text.orEmpty())
-
-        // 큰 별 5개: 누르면 그 개수만큼 채워짐
-        val density = activity.resources.displayMetrics.density
-        val stars = mutableListOf<ImageView>()
-        for (score in 1..5) {
-            val star = ImageView(activity).apply {
-                val pad = (4 * density).toInt()
-                setPadding(pad, pad, pad, pad)
-                setOnClickListener {
-                    rating = score
-                    paintPicker(d, rating, stars)
-                }
-            }
-            stars += star
-            d.starPicker.addView(star, LinearLayout.LayoutParams((44 * density).toInt(), (44 * density).toInt()))
-        }
-        paintPicker(d, rating, stars)
-
-        val dialog = MaterialAlertDialogBuilder(activity)
-            .setTitle(if (old == null) R.string.review_dialog_title else R.string.review_dialog_edit_title)
-            .setView(d.root)
-            .setNegativeButton(R.string.cart_cancel, null)
-            .setPositiveButton(if (old == null) R.string.review_submit else R.string.review_edit, null)
-            .show()
-
-        // 입력이 맞을 때만 닫히게 (버튼을 직접 처리)
-        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener { button ->
-            val text = d.editReview.text?.toString()?.trim().orEmpty()
-            when {
-                rating == 0 -> d.textRatingLabel.setText(R.string.review_err_rating)
-                text.length < ReviewManager.MIN_LENGTH -> d.layoutReview.error = activity.getString(R.string.review_err_short)
-                else -> {
-                    d.layoutReview.error = null
-                    button.isEnabled = false
-                    ReviewManager.save(item.id, rating, text) { ok ->
-                        button.isEnabled = true
-                        if (ok) dialog.dismiss()
-                        Toast.makeText(activity, if (ok) R.string.review_saved else R.string.review_failed, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-    }
-
-    /** 별점 고르기 창의 별 색 + 아래 글자 (최고예요! 😍 등) */
-    private fun paintPicker(d: DialogReviewBinding, rating: Int, stars: List<ImageView>) {
-        stars.forEachIndexed { i, star ->
-            val on = i < rating
-            star.setImageResource(if (on) R.drawable.ic_star else R.drawable.ic_star_outline)
-            star.imageTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(activity, if (on) R.color.bb_star else R.color.bb_beige)
-            )
-        }
-        d.textRatingLabel.setText(RATING_LABELS[rating])
-    }
+    /** 리뷰 쓰기 창 열기 (주문 기록의 [리뷰 쓰기]로 들어오면 MenuDetailActivity 가 바로 호출) */
+    fun openEditor() = ReviewEditor.open(activity, b.root, item)
 
     private fun confirmDelete() {
         MaterialAlertDialogBuilder(activity)
@@ -235,9 +182,5 @@ class ReviewSection(
 
     companion object {
         private const val PREVIEW_COUNT = 3
-        private val RATING_LABELS = intArrayOf(
-            R.string.review_rating_0, R.string.review_rating_1, R.string.review_rating_2,
-            R.string.review_rating_3, R.string.review_rating_4, R.string.review_rating_5
-        )
     }
 }

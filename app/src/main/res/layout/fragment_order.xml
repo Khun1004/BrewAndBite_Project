@@ -156,15 +156,25 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textItems"
+                    <!-- 메뉴 줄들 (item_order_line: 메뉴 · 옵션 · [✏️ 리뷰 쓰기]) -->
+                    <LinearLayout
+                        android:id="@+id/itemList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:lineSpacingExtra="4dp"
-                        android:textColor="@color/bb_espresso"
-                        android:textSize="14sp"
-                        tools:text="• Americano (ICE · Large) × 2\n• Cheesecake × 1" />
+                        android:orientation="vertical" />
+
+                    <!-- 리뷰 안내: 배달·픽업이 끝나면 메뉴마다 리뷰를 쓸 수 있어요 -->
+                    <TextView
+                        android:id="@+id/textReviewHint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_coupon_dday"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="8dp"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="12sp"
+                        tools:text="⭐ 맛있게 드셨나요? 메뉴 옆 [리뷰 쓰기]를 눌러 주세요" />
 
                     <View
                         android:layout_width="match_parent"
@@ -193,12 +203,28 @@
                         tools:text="총 결제 25,500원" />
                 </LinearLayout>
 
+                <!-- 완료 후에만 표시: 🧾 지난 주문 기록 (My Page 주문 기록으로) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonReview"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/order_go_review"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="18dp"
+                    app:strokeColor="@color/bb_nav_active"
+                    app:strokeWidth="1.5dp" />
+
                 <!-- 완료 후에만 표시 -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonNewOrder"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:backgroundTint="@color/bb_espresso"
                     android:text="새 주문하기"
                     android:textColor="@color/bb_nav_active"

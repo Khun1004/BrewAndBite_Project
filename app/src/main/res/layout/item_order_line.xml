@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 주문 카드 안의 메뉴 한 줄: 🍝 이름 × 1 / 옵션            [✏️ 리뷰 쓰기] · [✔ 작성 완료] · [배달 완료 후] -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="12dp">
+
+    <TextView
+        android:id="@+id/textEmoji"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_icon_circle"
+        android:gravity="center"
+        android:textSize="20sp"
+        tools:text="🍝" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/bb_espresso"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Cream Pasta × 1" />
+
+        <TextView
+            android:id="@+id/textOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/bb_muted"
+            android:textSize="12sp"
+            tools:text="양파 빼기 · +새우" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonReview"
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_marginStart="8dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingHorizontal="12dp"
+        android:textSize="12sp"
+        app:cornerRadius="12dp"
+        tools:text="✏️ 리뷰 쓰기" />
+</LinearLayout>

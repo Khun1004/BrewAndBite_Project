@@ -395,7 +395,6 @@
     <string name="review_empty">아직 리뷰가 없어요\n첫 리뷰를 남겨 주세요 ✍️</string>
     <string name="review_more">리뷰 전체 보기 (%1$d)  ⌄</string>
     <string name="review_less">접기  ⌃</string>
-    <string name="review_ordered">✔ 주문 고객</string>
     <string name="review_mine">내 리뷰</string>
     <string name="review_edit">수정</string>
     <string name="review_dialog_title">리뷰 쓰기</string>
@@ -416,4 +415,31 @@
     <string name="review_rating_3">보통이에요 🙂</string>
     <string name="review_rating_4">맛있어요! 😋</string>
     <string name="review_rating_5">최고예요! 😍</string>
+    <!-- 🧾 주문 기록 · 주문한 메뉴만 리뷰 -->
+    <string name="review_locked">이 메뉴를 주문한 분만 리뷰를 쓸 수 있어요 🔒</string>
+    <string name="review_wait">배달 · 픽업이 끝나면 리뷰를 쓸 수 있어요 🛵</string>
+    <string name="review_locked_button">🔒 주문 후 리뷰</string>
+    <string name="review_wait_button">🛵 완료 후 리뷰</string>
+    <string name="review_dialog_order">%1$s %2$s · %3$s 주문</string>
+    <string name="order_history_count">주문 %1$d건 · 리뷰는 배달 · 픽업이 끝난 뒤에 쓸 수 있어요</string>
+    <string name="order_history_info">%1$s · %2$s · %3$s</string>
+    <string name="order_mode_delivery">배달</string>
+    <string name="order_mode_pickup">포장</string>
+    <string name="order_status_delivered">배달 완료</string>
+    <string name="order_status_picked">픽업 완료</string>
+    <string name="order_status_delivering">배달 중</string>
+    <string name="order_status_preparing">준비 중</string>
+    <string name="order_line_name">%1$s × %2$d</string>
+    <string name="order_review_write">✏️ 리뷰 쓰기</string>
+    <string name="order_review_done">✔ 작성 완료</string>
+    <string name="order_review_done_other">✔ 리뷰 있음</string>
+    <string name="order_review_wait">완료 후 리뷰</string>
+    <string name="order_review_unavailable">판매 종료</string>
+    <string name="order_go_review">🧾 지난 주문 기록 보기</string>
+    <string name="my_orders_none">아직 없어요</string>
+    <string name="my_orders_summary">%1$d건</string>
+    <string name="my_orders_summary_review">%1$d건 · 리뷰 쓸 메뉴 %2$d개</string>
+    <string name="order_review_hint_ready">⭐ 맛있게 드셨나요? 메뉴 옆 [리뷰 쓰기]를 눌러 별점을 남겨 주세요</string>
+    <string name="order_review_hint_wait">🛵 배달 · 픽업이 끝나면 메뉴마다 리뷰를 쓸 수 있어요</string>
+    <string name="order_review_hint_loading">주문 기록을 불러오는 중이에요… (계속 이 문구가 보이면 Firebase 규칙에 orders 를 추가해 주세요)</string>
 </resources>
