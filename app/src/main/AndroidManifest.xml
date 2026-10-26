@@ -54,6 +54,10 @@
             android:name=".address.AddressSearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- 🧾 주문 상세 -->
+        <activity
+            android:name=".order.OrderDetailActivity"
+            android:exported="false" />
         <!-- 🔔 알림함 -->
         <activity
             android:name=".notice.NoticeActivity"

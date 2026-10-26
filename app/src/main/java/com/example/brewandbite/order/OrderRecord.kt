@@ -44,11 +44,37 @@ data class OrderRecord(
 
     fun isReviewed(menuId: String) = reviewed[menuId] == true
 
+    /** 진행 단계 (주문 접수 → 준비 → 배달 중 → 배달 완료 / 픽업 준비 완료) */
+    @Exclude
+    fun stages(): List<OrderManager.Stage> = OrderManager.stages(delivery)
+
+    /** 지금 몇 번째 단계인지 (0부터) */
+    @Exclude
+    fun stageIndex(now: Long = System.currentTimeMillis()): Int =
+        stages().indexOfLast { now - placedAt >= it.startMs }.coerceAtLeast(0)
+
+    /** 첫 메뉴 + 나머지 개수. 예) "☕ Americano 외 2개" */
+    @get:Exclude
+    val summary: String
+        get() {
+            val first = items.firstOrNull() ?: return ""
+            return if (items.size > 1) "${first.emoji} ${first.name} 외 ${items.size - 1}개" else "${first.emoji} ${first.name}"
+        }
+
     /** 예) "10.26 (월) 오후 3:12" */
     @get:Exclude
     val dateText: String
         get() = SimpleDateFormat("M.d (E) a h:mm", Locale.KOREA).format(Date(placedAt))
 }
+
+/** 휴대폰에 저장된 주문(OrderManager) → 주문 기록 모양으로 */
+fun OrderManager.OrderInfo.toRecord() = OrderRecord(
+    orderNo = orderNo, placedAt = placedAt,
+    finishAt = placedAt + OrderManager.stages(isDelivery).last().startMs,
+    delivery = isDelivery,
+    items = items.map { OrderLine(it.menuId, it.name, it.emoji, it.price, it.quantity, it.options) },
+    subtotal = subtotal, deliveryFee = deliveryFee, discount = discount, total = total
+)
 
 /**
  * 주문 기록 (Firebase Realtime Database 의 orders/{회원ID}).
@@ -74,6 +100,11 @@ object OrderHistory {
 
     /** 지난 주문 (최신 순) */
     fun all(): List<OrderRecord> = orders
+
+    /** 주문번호로 찾기 (Firebase 에 없으면 휴대폰에 저장된 마지막 주문에서) */
+    fun find(orderNo: String): OrderRecord? =
+        orders.find { it.orderNo == orderNo }
+            ?: OrderManager.current()?.takeIf { it.orderNo == orderNo }?.toRecord()
 
     /** 이 메뉴를 주문한 적이 있는지 */
     fun hasOrdered(menuId: String): Boolean = orders.any { o -> o.items.any { it.menuId == menuId } }

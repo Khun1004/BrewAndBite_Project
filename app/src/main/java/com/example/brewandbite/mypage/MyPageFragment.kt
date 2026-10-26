@@ -32,7 +32,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - 로그인 전: 로그인 안내 카드 + [로그인 / 회원가입]
  *  - 로그인 후: 프로필 카드 + 스탬프 카드(누르면 쿠폰함) + 메뉴 목록 (왼쪽 아이콘 · 가운데 글(요약) · 오른쪽 >)
  *      줄을 누르면 상세 화면(MyDetailActivity)이 새로 열린다
- *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ♡ 찜한 메뉴 · 🔒 계정 보안
+ *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ⭐ 리뷰 내역 · ♡ 찜한 메뉴 · 🔒 계정 보안
  */
 class MyPageFragment : Fragment() {
 
@@ -80,7 +80,8 @@ class MyPageFragment : Fragment() {
             binding.rowPayment to MyDetailActivity.Section.PAYMENT,
             binding.rowOrders to MyDetailActivity.Section.ORDERS,
             binding.rowFavorites to MyDetailActivity.Section.FAVORITES,
-            binding.rowSecurity to MyDetailActivity.Section.SECURITY
+            binding.rowSecurity to MyDetailActivity.Section.SECURITY,
+            binding.rowReviews to MyDetailActivity.Section.REVIEWS
         )
         rows.forEach { (row, section) ->
             row.setOnClickListener { startActivity(MyDetailActivity.intent(requireContext(), section)) }
@@ -105,6 +106,22 @@ class MyPageFragment : Fragment() {
             }
             true
         }
+    }
+
+    /** 리뷰가 바뀌면 '리뷰 내역' 줄 요약 다시 그리기. 예) "3개 · 평균 ★4.7" */
+    private val reviewListener = ReviewManager.ReviewListener {
+        showReviewsSummary()
+        showOrdersSummary()
+    }
+
+    private fun showReviewsSummary() {
+        val b = _binding ?: return
+        val mine = ReviewManager.myReviews()
+        b.textReviewsSummary.text = if (mine.isEmpty()) getString(R.string.my_reviews_none)
+        else getString(
+            R.string.my_reviews_summary, mine.size,
+            String.format(java.util.Locale.US, "%.1f", mine.map { it.second.rating }.average())
+        )
     }
 
     /** 주문 기록이 바뀌면 '주문 기록' 줄 요약 다시 그리기 */
@@ -134,6 +151,7 @@ class MyPageFragment : Fragment() {
         FavoriteManager.addListener(favoriteListener)
         RewardManager.addListener(rewardListener)
         OrderHistory.addListener(historyListener)
+        ReviewManager.addListener(reviewListener)
         refresh()
     }
 
@@ -142,6 +160,7 @@ class MyPageFragment : Fragment() {
         FavoriteManager.removeListener(favoriteListener)
         RewardManager.removeListener(rewardListener)
         OrderHistory.removeListener(historyListener)
+        ReviewManager.removeListener(reviewListener)
     }
 
     private fun showFavoriteSummary() {
@@ -190,6 +209,7 @@ class MyPageFragment : Fragment() {
         }
 
         showOrdersSummary()
+        showReviewsSummary()
         showFavoriteSummary()
         StampCard.bind(b.stampCard)
         b.textSecuritySummary.text = getString(

@@ -24,6 +24,7 @@ import java.util.Locale
  *  ReviewManager.count(menuId)        리뷰 수
  *  ReviewManager.myReview(menuId)     내가 쓴 리뷰 (없으면 null)
  *  ReviewManager.canWrite(menuId)     리뷰를 쓰거나 고칠 수 있는지
+ *  ReviewManager.myReviews()          내가 쓴 리뷰 전부 (My Page → 리뷰 내역)
  * ─────────────────────────
  */
 object ReviewManager {
@@ -60,6 +61,13 @@ object ReviewManager {
         val result = IntArray(5)
         reviews(menuId).forEach { result[(it.rating - 1).coerceIn(0, 4)]++ }
         return result
+    }
+
+    /** 내가 쓴 리뷰 전부 (메뉴ID, 리뷰) — 최근에 쓰거나 고친 순 (My Page → 리뷰 내역) */
+    fun myReviews(): List<Pair<String, Review>> {
+        val uid = AuthManager.currentUid() ?: return emptyList()
+        return byMenu.flatMap { (menuId, list) -> list.filter { it.uid == uid }.map { menuId to it } }
+            .sortedByDescending { maxOf(it.second.createdAt, it.second.updatedAt) }
     }
 
     fun myReview(menuId: String): Review? {

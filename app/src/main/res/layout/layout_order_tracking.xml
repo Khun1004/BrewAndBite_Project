@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    🛵 배달 현황 카드 (진행 중인 주문 1건)
+    BB-20261026-4821                         [🛵 배달]
+    배달 중이에요 🛵
+    약 12분 후 도착 · 오후 3:45
+    ━━━━━━━━━━━━━━━🛵─────────────  (진행 바 위를 오토바이가 움직임)
+    (🧾)────(☕)────(🛵)────(🏠)
+    접수     준비     배달 중  도착
+    3:10    3:11     3:20     3:35
+    ─────────────────────────────
+    ☕ Americano 외 2개 · 15,000원        상세 ⌄
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_brand_card"
+    android:orientation="vertical"
+    android:padding="18dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textOrderNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/bb_nav_inactive"
+            android:textSize="11sp"
+            tools:text="BB-20261026-4821" />
+
+        <TextView
+            android:id="@+id/textMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pill_glass"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:textColor="@color/bb_cream"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            tools:text="🛵 배달" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/bb_cream"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        tools:text="배달 중이에요 🛵" />
+
+    <TextView
+        android:id="@+id/textEta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/bb_nav_active"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="약 12분 후 도착 · 오후 3:45" />
+
+    <!-- 진행 바 + 움직이는 오토바이 / 쇼핑백 -->
+    <FrameLayout
+        android:id="@+id/trackBox"
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_marginTop="14dp">
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:max="1000"
+            app:indicatorColor="@color/bb_nav_active"
+            app:trackColor="@color/bb_glass_stroke"
+            app:trackCornerRadius="4dp"
+            app:trackThickness="6dp"
+            tools:progress="550" />
+
+        <ImageView
+            android:id="@+id/imageRider"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="@drawable/bg_stamp_filled"
+            android:importantForAccessibility="no"
+            android:padding="7dp"
+            android:src="@drawable/ic_delivery"
+            app:tint="@color/bb_espresso" />
+    </FrameLayout>
+
+    <!-- 단계: 아이콘 동그라미 + 이름 + 시간 (코드에서 만듦) -->
+    <LinearLayout
+        android:id="@+id/stepRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="14dp"
+        android:background="@color/bb_glass_stroke" />
+
+    <!-- 메뉴 요약 + 상세 펼치기 -->
+    <LinearLayout
+        android:id="@+id/rowSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="12dp">
+
+        <TextView
+            android:id="@+id/textSummary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/bb_cream"
+            android:textSize="14sp"
+            tools:text="☕ Americano 외 2개 · 15,000원" />
+
+        <TextView
+            android:id="@+id/textToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/bb_nav_active"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="상세 ⌄" />
+    </LinearLayout>
+
+    <!-- 펼쳤을 때: 메뉴 줄 (흰 바탕) -->
+    <LinearLayout
+        android:id="@+id/detailBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_order_card"
+        android:orientation="vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/lineList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/textPayInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:lineSpacingExtra="3dp"
+            android:textColor="@color/bb_muted"
+            android:textSize="12sp"
+            tools:text="주문 15,000원 · 배달비 1,000원 · 쿠폰 −2,000원" />
+    </LinearLayout>
+</LinearLayout>

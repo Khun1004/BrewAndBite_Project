@@ -46,8 +46,10 @@ import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.example.brewandbite.databinding.SectionMyAddressBinding
 import com.example.brewandbite.databinding.SectionMyCouponsBinding
 import com.example.brewandbite.databinding.SectionMyFavoritesBinding
+import com.example.brewandbite.databinding.ItemMyReviewBinding
 import com.example.brewandbite.databinding.SectionMyInfoBinding
 import com.example.brewandbite.databinding.SectionMyOrdersBinding
+import com.example.brewandbite.databinding.SectionMyReviewsBinding
 import com.example.brewandbite.databinding.SectionMyPaymentBinding
 import com.example.brewandbite.databinding.SectionMySecurityBinding
 import com.example.brewandbite.favorite.FavoriteManager
@@ -56,11 +58,14 @@ import com.example.brewandbite.menu.MenuDetailActivity
 import com.example.brewandbite.notice.NoticeActivity
 import com.example.brewandbite.notice.NoticeManager
 import com.example.brewandbite.notice.bindNoticeDot
+import com.example.brewandbite.order.OrderDetailActivity
 import com.example.brewandbite.order.OrderHistory
 import com.example.brewandbite.order.OrderLine
 import com.example.brewandbite.order.OrderRecord
 import com.example.brewandbite.order.bindOrderLine
+import com.example.brewandbite.review.ReviewEditor
 import com.example.brewandbite.review.ReviewManager
+import com.example.brewandbite.review.showStars
 import com.example.brewandbite.reward.CouponAdapter
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
@@ -75,6 +80,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
  *  🧾 주문 기록 : 지난 주문 카드 + 메뉴마다 [리뷰 쓰기] (배달·픽업이 끝난 뒤)
  *  ♡ 찜한 메뉴 : 찜한 메뉴 목록
+ *  ⭐ 리뷰 내역 : 내가 쓴 리뷰 (메뉴 · 별점 · 글) + [수정] [삭제]
  *  🔒 계정 보안 : [비밀번호 변경] (현재 비밀번호 확인 → 새 비밀번호)
  *  🎟 스탬프·쿠폰 : 스탬프 카드 + 쓸 수 있는 쿠폰 + 지난 쿠폰 (RewardManager)
  *
@@ -90,7 +96,8 @@ class MyDetailActivity : AppCompatActivity() {
         ORDERS(R.string.my_section_orders, R.drawable.ic_receipt),
         FAVORITES(R.string.my_section_favorites, R.drawable.ic_heart_outline),
         SECURITY(R.string.my_section_security, R.drawable.ic_lock),
-        COUPONS(R.string.my_section_coupons, R.drawable.ic_coupon)
+        COUPONS(R.string.my_section_coupons, R.drawable.ic_coupon),
+        REVIEWS(R.string.my_section_reviews, R.drawable.ic_star_outline)
     }
 
     private lateinit var binding: ActivityMyDetailBinding
@@ -113,7 +120,13 @@ class MyDetailActivity : AppCompatActivity() {
     // 🧾 주문 기록
     private var orders: SectionMyOrdersBinding? = null
     private val historyListener = OrderHistory.HistoryListener { showOrders() }
-    private val reviewListener = ReviewManager.ReviewListener { showOrders() }
+    private val reviewListener = ReviewManager.ReviewListener {
+        showOrders()
+        showMyReviews()
+    }
+
+    // ⭐ 리뷰 내역
+    private var myReviews: SectionMyReviewsBinding? = null
 
     /** 새 알림이 오면 🔔 빨간 점 다시 그리기 */
     private val noticeListener = NoticeManager.NoticeListener { binding.dotBell.bindNoticeDot() }
@@ -176,6 +189,11 @@ class MyDetailActivity : AppCompatActivity() {
             Section.SECURITY -> security = SectionMySecurityBinding.inflate(layoutInflater, parent, true).apply {
                 buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
             }
+            Section.REVIEWS -> myReviews = SectionMyReviewsBinding.inflate(layoutInflater, parent, true).apply {
+                buttonGoOrders.setOnClickListener {
+                    startActivity(MyDetailActivity.intent(this@MyDetailActivity, Section.ORDERS))
+                }
+            }
             Section.COUPONS -> coupons = SectionMyCouponsBinding.inflate(layoutInflater, parent, true).apply {
                 recyclerCoupons.layoutManager = LinearLayoutManager(this@MyDetailActivity)
                 recyclerCoupons.adapter = activeCouponAdapter
@@ -212,6 +230,10 @@ class MyDetailActivity : AppCompatActivity() {
                 ReviewManager.addListener(reviewListener)
                 showOrders()
             }
+            Section.REVIEWS -> {
+                ReviewManager.addListener(reviewListener)
+                showMyReviews()
+            }
             else -> Unit
         }
     }
@@ -223,6 +245,49 @@ class MyDetailActivity : AppCompatActivity() {
         NoticeManager.removeListener(noticeListener)
         OrderHistory.removeListener(historyListener)
         ReviewManager.removeListener(reviewListener)
+    }
+
+    // ───────── ⭐ 리뷰 내역 ─────────
+
+    /** 내가 쓴 리뷰 카드: 메뉴(누르면 메뉴 상세) · 별점 · 날짜 · 옵션 · 글 · [수정] [삭제] */
+    private fun showMyReviews() {
+        val r = myReviews ?: return
+        val list = ReviewManager.myReviews()
+        r.emptyReviews.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        r.textReviewCount.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+        if (list.isNotEmpty()) {
+            val avg = list.map { it.second.rating }.average()
+            r.textReviewCount.text = getString(R.string.my_reviews_count, list.size, String.format(java.util.Locale.US, "%.1f", avg))
+        }
+        r.reviewList.removeAllViews()
+        list.forEach { (menuId, review) ->
+            val menu = MenuRepository.findItem(menuId)
+            val v = ItemMyReviewBinding.inflate(layoutInflater, r.reviewList, false)
+            v.textEmoji.text = menu?.emoji ?: "🍽️"
+            v.textMenu.text = menu?.name ?: getString(R.string.order_review_unavailable)
+            v.stars.showStars(review.rating.toDouble(), 15)
+            v.textDate.text = review.dateText
+            v.textOptions.text = review.options
+            v.textOptions.visibility = if (review.options.isBlank()) View.GONE else View.VISIBLE
+            v.textReview.text = review.text
+            v.rowMenu.setOnClickListener { if (menu != null) MenuDetailActivity.start(this, menuId) }
+            // 수정: 리뷰 쓰기 창이 내 리뷰를 채운 채로 열림
+            v.buttonEdit.isEnabled = menu != null
+            v.buttonEdit.setOnClickListener { if (menu != null) ReviewEditor.open(this, binding.root, menu) }
+            v.buttonDelete.setOnClickListener { confirmDeleteReview(menuId, menu?.name.orEmpty()) }
+            r.reviewList.addView(v.root)
+        }
+    }
+
+    private fun confirmDeleteReview(menuId: String, name: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.review_delete_title)
+            .setMessage(name)
+            .setNegativeButton(R.string.cart_cancel, null)
+            .setPositiveButton(R.string.my_delete) { _, _ ->
+                ReviewManager.delete(menuId) { ok -> toast(if (ok) R.string.review_deleted else R.string.review_failed) }
+            }
+            .show()
     }
 
     // ───────── 🧾 주문 기록 ─────────
@@ -256,6 +321,7 @@ class MyDetailActivity : AppCompatActivity() {
             card.textStatus.setTextColor(ContextCompat.getColor(this, if (done) R.color.bb_open else R.color.bb_brown))
 
             record.items.forEach { line -> card.lineList.addView(orderLineView(record, line, card)) }
+            card.root.setOnClickListener { OrderDetailActivity.start(this, record.orderNo) }   // 카드 → 주문 상세
             o.orderList.addView(card.root)
         }
     }

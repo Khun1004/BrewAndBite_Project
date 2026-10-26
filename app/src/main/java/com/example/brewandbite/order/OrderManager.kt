@@ -94,9 +94,12 @@ object OrderManager {
         prefs.edit().remove(KEY_ORDER).apply()
     }
 
-    fun stages(order: OrderInfo): List<Stage> {
+    fun stages(order: OrderInfo): List<Stage> = stages(order.isDelivery)
+
+    /** 배달 / 포장 진행 단계 (주문 기록 OrderRecord 에서도 사용) */
+    fun stages(isDelivery: Boolean): List<Stage> {
         val min = 60_000L / DEMO_SPEED
-        return if (order.isDelivery) listOf(
+        return if (isDelivery) listOf(
             Stage("주문 접수", 0),
             Stage("메뉴 준비 중", 1 * min),
             Stage("배달 중", 10 * min),
