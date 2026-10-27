@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- My Page 상세 화면 내용 · ♡ 찜한 메뉴: 찜한 메뉴 목록 (♡ 다시 누르면 빠짐) / 없으면 안내 + [메뉴 보러 가기] -->
+<!--
+    My Page 상세 화면 내용 · ♡ 찜한 메뉴 (MyDetailActivity · FavoriteAdapter)
+    ┌ MY FAVORITES ──────────────── ♥ ┐  ← 요약 카드 (커피 → 베리 그라데이션)
+    │ 찜한 메뉴 2개                    │
+    │ 모두 담으면 9,500원   [🛒 모두 담기] │
+    └──────────────────────────────────┘
+    [최근 찜한 순] [낮은 가격순] [별점 높은 순]
+    메뉴 카드 (한 메뉴 = 카드 한 장)
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,43 +15,138 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textFavCount"
-        android:layout_width="wrap_content"
+    <!-- 요약 카드 -->
+    <FrameLayout
+        android:id="@+id/heroCard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:textColor="@color/bb_muted"
-        android:textSize="12sp"
-        tools:text="찜한 메뉴 3개 · 최근에 찜한 순" />
+        android:background="@drawable/bg_fav_hero"
+        android:clipChildren="true"
+        android:padding="20dp">
 
+        <!-- 장식: 큰 하트 -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="-30dp"
+            android:layout_marginEnd="-24dp"
+            android:alpha="0.12"
+            android:importantForAccessibility="no"
+            android:rotation="-14"
+            android:src="@drawable/ic_heart"
+            app:tint="@color/bb_cream" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.2"
+                android:text="@string/fav_hero_eyebrow"
+                android:textColor="@color/bb_nav_active"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textFavTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/bb_cream"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="찜한 메뉴 2개" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textFavTotal"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/bb_nav_inactive"
+                    android:textSize="13sp"
+                    tools:text="모두 담으면 9,500원" />
+
+                <TextView
+                    android:id="@+id/buttonAddAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_pill_glass"
+                    android:backgroundTint="@color/bb_nav_active"
+                    android:gravity="center"
+                    android:paddingHorizontal="16dp"
+                    android:text="@string/fav_add_all"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- 정렬 (칩은 코드에서) -->
+    <HorizontalScrollView
+        android:id="@+id/sortBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipsSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <!-- 메뉴 카드들 (item_favorite) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerFavorites"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         android:nestedScrollingEnabled="false"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        tools:itemCount="2"
+        tools:listitem="@layout/item_favorite" />
 
     <!-- 찜한 메뉴가 없을 때 -->
     <LinearLayout
         android:id="@+id/emptyFavorites"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_info_card"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingVertical="20dp"
+        android:paddingVertical="32dp"
         android:visibility="gone"
         tools:visibility="visible">
 
         <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_icon_circle"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_heart_outline" />
+            android:padding="22dp"
+            android:src="@drawable/ic_heart_outline"
+            app:tint="@color/bb_closed" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:gravity="center"
             android:lineSpacingExtra="2dp"
             android:text="@string/my_favorites_empty"

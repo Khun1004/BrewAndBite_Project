@@ -13,9 +13,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.brewandbite.MainActivity
 import com.example.brewandbite.R
-import com.bumptech.glide.Glide
 import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.cart.CartManager
@@ -33,6 +33,7 @@ import com.example.brewandbite.mypage.ProfilePhoto
 import com.example.brewandbite.notice.NoticeActivity
 import com.example.brewandbite.notice.NoticeManager
 import com.example.brewandbite.notice.bindNoticeDot
+import com.example.brewandbite.search.SearchActivity
 import java.util.Calendar
 
 /** Home 탭: 고정 헤더 + 검색 / 스크롤: 오늘의 추천 + 카테고리 + 인기 메뉴 + 추천 메뉴 */
@@ -231,19 +232,13 @@ class HomeFragment : Fragment() {
         showCategoryItems()
     }
 
+    /** 🔍 검색창을 누르면 → 검색 화면 (최근 · 인기 검색어 · 한글로 찾기) / 필터 버튼 → 검색 화면 + 정렬 */
     private fun setupSearch() {
-        binding.editSearch.doAfterTextChanged { text ->
-            val query = text?.toString().orEmpty()
-            if (query.isBlank()) {
-                showCategoryItems()
-            } else {
-                val results = MenuRepository.search(query)
-                binding.textRecommendTitle.text = getString(R.string.section_search_result, results.size)
-                binding.textRecommendSeeAll.visibility = View.GONE
-                submitMenu(results)
-            }
-        }
-        binding.buttonFilter.setOnClickListener { showComingSoon("필터") }
+        binding.editSearch.isFocusable = false          // 홈에서는 글자를 치지 않고 검색 화면으로
+        binding.editSearch.isCursorVisible = false
+        binding.editSearch.setOnClickListener { SearchActivity.start(requireContext()) }
+        (binding.editSearch.parent as? View)?.setOnClickListener { SearchActivity.start(requireContext()) }
+        binding.buttonFilter.setOnClickListener { SearchActivity.start(requireContext(), openSort = true) }
     }
 
     private fun showCategoryItems() {

@@ -66,6 +66,11 @@
             android:name=".review.ReviewWriteActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- 🔍 메뉴 검색 -->
+        <activity
+            android:name=".search.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
         <!-- 🔔 알림함 -->
         <activity
             android:name=".notice.NoticeActivity"

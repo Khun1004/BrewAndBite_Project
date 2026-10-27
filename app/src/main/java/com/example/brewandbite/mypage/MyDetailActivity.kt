@@ -39,6 +39,7 @@ import com.example.brewandbite.databinding.ActivityMyDetailBinding
 import com.example.brewandbite.databinding.DialogAddPaymentBinding
 import com.example.brewandbite.databinding.DialogChangePasswordBinding
 import com.example.brewandbite.databinding.DialogTwoFieldsBinding
+import com.example.brewandbite.databinding.ItemMyReviewBinding
 import com.example.brewandbite.databinding.ItemOrderHistoryBinding
 import com.example.brewandbite.databinding.ItemOrderLineBinding
 import com.example.brewandbite.databinding.ItemPaymentMethodBinding
@@ -46,12 +47,12 @@ import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.example.brewandbite.databinding.SectionMyAddressBinding
 import com.example.brewandbite.databinding.SectionMyCouponsBinding
 import com.example.brewandbite.databinding.SectionMyFavoritesBinding
-import com.example.brewandbite.databinding.ItemMyReviewBinding
 import com.example.brewandbite.databinding.SectionMyInfoBinding
 import com.example.brewandbite.databinding.SectionMyOrdersBinding
-import com.example.brewandbite.databinding.SectionMyReviewsBinding
 import com.example.brewandbite.databinding.SectionMyPaymentBinding
+import com.example.brewandbite.databinding.SectionMyReviewsBinding
 import com.example.brewandbite.databinding.SectionMySecurityBinding
+import com.example.brewandbite.favorite.FavoriteAdapter
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.home.MenuAdapter
 import com.example.brewandbite.menu.MenuDetailActivity
@@ -70,6 +71,7 @@ import com.example.brewandbite.review.showStars
 import com.example.brewandbite.reward.CouponAdapter
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
+import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -110,7 +112,7 @@ class MyDetailActivity : AppCompatActivity() {
     private var payment: SectionMyPaymentBinding? = null
     private var security: SectionMySecurityBinding? = null
     private var favorites: SectionMyFavoritesBinding? = null
-    private var favoriteAdapter: MenuAdapter? = null
+    private var favoriteAdapter: FavoriteAdapter? = null
     private var coupons: SectionMyCouponsBinding? = null
     private val activeCouponAdapter = CouponAdapter()
     private val pastCouponAdapter = CouponAdapter()
@@ -356,12 +358,19 @@ class MyDetailActivity : AppCompatActivity() {
 
     // ───────── ♡ 찜한 메뉴 ─────────
 
+    /** 찜한 메뉴 정렬: 최근 찜한 순 · 낮은 가격순 · 별점 높은 순 */
+    private var favSort = 0
+
     private fun setupFavorites() {
+        // 찜한 메뉴는 흰 상자 없이 크림 바탕 위에 카드를 한 장씩
+        binding.container.background = null
+        binding.container.setPadding(0, 0, 0, 0)
+
         val f = SectionMyFavoritesBinding.inflate(layoutInflater, binding.container, true)
         favorites = f
-        favoriteAdapter = MenuAdapter(
-            onItemClick = { item -> MenuDetailActivity.start(this, item.id) },   // 메뉴 상세 화면으로
-            onAddClick = { item ->
+        favoriteAdapter = FavoriteAdapter(
+            onOpen = { item -> MenuDetailActivity.start(this, item.id) },   // 메뉴 상세 (옵션 고르고 주문)
+            onAdd = { item ->
                 CartManager.add(item)
                 Toast.makeText(
                     this, getString(R.string.added_to_cart, item.name, CartManager.totalCount()), Toast.LENGTH_SHORT
@@ -374,16 +383,56 @@ class MyDetailActivity : AppCompatActivity() {
             MainActivity.openTab(this, MainActivity.TAB_HOME)
             finish()
         }
+        // 🛒 모두 담기 → 장바구니로
+        f.buttonAddAll.setOnClickListener {
+            val items = FavoriteManager.favoriteItems()
+            if (items.isEmpty()) return@setOnClickListener
+            items.forEach { CartManager.add(it) }
+            Toast.makeText(this, getString(R.string.fav_added_all, items.size), Toast.LENGTH_SHORT).show()
+            MainActivity.openTab(this, MainActivity.TAB_CART)
+        }
+        // 정렬 칩
+        val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+        fun colors(on: Int, off: Int) = ColorStateList(
+            states, intArrayOf(ContextCompat.getColor(this, on), ContextCompat.getColor(this, off))
+        )
+        listOf(R.string.fav_sort_recent, R.string.search_sort_price_low, R.string.search_sort_rating)
+            .forEachIndexed { index, label ->
+                f.chipsSort.addView(Chip(this).apply {
+                    setText(label)
+                    isCheckable = true
+                    isCheckedIconVisible = false
+                    isChecked = index == favSort
+                    chipBackgroundColor = colors(R.color.bb_espresso, R.color.white)
+                    setTextColor(colors(R.color.bb_cream, R.color.bb_brown))
+                    chipStrokeColor = colors(R.color.bb_espresso, R.color.bb_divider)
+                    chipStrokeWidth = resources.displayMetrics.density
+                    setOnCheckedChangeListener { _, checked ->
+                        if (checked) {
+                            favSort = index
+                            showFavorites()
+                        }
+                    }
+                })
+            }
     }
 
     private fun showFavorites() {
         val f = favorites ?: return
-        val items = FavoriteManager.favoriteItems()
+        val recent = FavoriteManager.favoriteItems()   // 최근에 찜한 순
+        val items = when (favSort) {
+            1 -> recent.sortedBy { it.price }
+            2 -> recent.sortedByDescending { ReviewManager.ratingText(it).toDoubleOrNull() ?: it.rating }
+            else -> recent
+        }
         favoriteAdapter?.submitList(items)
-        favoriteAdapter?.notifyDataSetChanged()   // ♡ 모양도 새로
-        f.textFavCount.text = getString(R.string.fav_count, items.size)
-        f.textFavCount.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
-        f.emptyFavorites.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        favoriteAdapter?.notifyDataSetChanged()   // ♥ · 별점 · "N일 전 찜" 도 새로
+        val empty = items.isEmpty()
+        f.heroCard.visibility = if (empty) View.GONE else View.VISIBLE
+        f.sortBar.visibility = if (empty || items.size < 2) View.GONE else View.VISIBLE
+        f.emptyFavorites.visibility = if (empty) View.VISIBLE else View.GONE
+        f.textFavTitle.text = getString(R.string.fav_hero_title, items.size)
+        f.textFavTotal.text = getString(R.string.fav_hero_total, items.sumOf { it.price }.toWon())
     }
 
     // ───────── 👤 내 정보 / 📍 배달 주소 ─────────
