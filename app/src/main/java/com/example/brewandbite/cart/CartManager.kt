@@ -35,6 +35,7 @@ object CartManager {
     fun interface CartListener {
         fun onCartChanged()
     }
+
     /** 수령 방법 */
     enum class Fulfillment { DELIVERY, PICKUP }
 
@@ -42,14 +43,13 @@ object CartManager {
     const val DELIVERY_FEE = 1000
     const val MIN_ORDER_AMOUNT = 14000
 
+    private const val PREF_NAME = "brewbite_cart"
+    private const val KEY_ITEMS = "cart_items"
     private const val KEY_FULFILLMENT = "fulfillment"
 
     /** 현재 선택된 수령 방법 (앱을 껐다 켜도 유지) */
     var fulfillment: Fulfillment = Fulfillment.DELIVERY
         private set
-
-    private const val PREF_NAME = "brewbite_cart"
-    private const val KEY_ITEMS = "cart_items"
 
     private lateinit var prefs: SharedPreferences
     private val gson = Gson()
@@ -68,33 +68,7 @@ object CartManager {
 
     // ───────── 읽기 ─────────
 
-    /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
-    fun deliveryFee(): Int =
-        if (items.isEmpty() || fulfillment == Fulfillment.PICKUP) 0 else DELIVERY_FEE
-
-    /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
-    fun payableTotal(): Int = totalPrice() + deliveryFee()
-
-    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
-    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
-
-    /** 최소 주문 금액까지 남은 금액 */
-    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
-
     /** 담긴 메뉴 목록 (복사본이라 바깥에서 바꿔도 장바구니는 안전) */
-    /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
-    fun deliveryFee(): Int =
-        if (items.isEmpty() || fulfillment == Fulfillment.PICKUP) 0 else DELIVERY_FEE
-
-    /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
-    fun payableTotal(): Int = totalPrice() + deliveryFee()
-
-    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
-    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
-
-    /** 최소 주문 금액까지 남은 금액 */
-    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
-
     fun getItems(): List<CartItem> = items.map { it.copy() }
 
     fun totalCount(): Int = items.sumOf { it.quantity }
@@ -102,6 +76,19 @@ object CartManager {
     fun totalPrice(): Int = items.sumOf { it.totalPrice }
 
     fun isEmpty(): Boolean = items.isEmpty()
+
+    /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
+    fun deliveryFee(): Int =
+        if (items.isEmpty() || fulfillment == Fulfillment.PICKUP) 0 else DELIVERY_FEE
+
+    /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
+    fun payableTotal(): Int = totalPrice() + deliveryFee()
+
+    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
+    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
+
+    /** 최소 주문 금액까지 남은 금액 */
+    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
 
     // ───────── 바꾸기 ─────────
 
