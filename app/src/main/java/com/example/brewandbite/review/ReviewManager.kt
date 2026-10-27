@@ -11,20 +11,23 @@ import com.google.firebase.database.ValueEventListener
 import java.util.Locale
 
 /**
- * 메뉴 리뷰 · 별점 (Firebase Realtime Database 의 reviews/{메뉴ID}/{회원ID}).
+ * 메뉴 리뷰 · 별점 (Firebase Realtime Database 의 reviews/{메뉴ID}/{리뷰ID}).
  *
+ *  - 리뷰는 '주문 1건의 메뉴마다 1개'. 같은 메뉴를 두 번 주문하면 리뷰도 두 번 쓸 수 있다.
+ *    리뷰ID = "{회원ID}_{주문번호}" (예전 리뷰는 회원ID 그대로 — 그대로 보이고 고치고 지울 수 있음)
  *  - 앱이 시작되면 모든 리뷰를 불러와서(BrewBiteApp) 메뉴별 평균 별점을 계산한다.
  *  - 리뷰가 있는 메뉴는 목록 · 홈 · 상세 화면의 별점이 '실제 평균'으로 바뀐다 (없으면 원래 숫자).
- *  - 누구나 읽을 수 있고, 리뷰는 '그 메뉴를 주문했고 배달·픽업이 끝난' 사람만 쓸 수 있다 (OrderHistory).
- *  - 메뉴마다 1명당 리뷰 1개 → 쓰고 · 고치고 · 지울 수 있다.
+ *  - 누구나 읽을 수 있고, 리뷰는 그 메뉴를 주문했고 배달·픽업이 끝난 사람만 쓸 수 있다 (OrderHistory).
+ *  - 시연용으로 메뉴마다 '다른 손님' 리뷰 3~5개를 같이 보여 준다 (DemoReviews.kt · ENABLED = false 로 끄기).
  *
  * ───────── 사용법 ─────────
- *  ReviewManager.reviews(menuId)      리뷰 목록 (최신 순)
- *  ReviewManager.ratingText(item)     "4.6" (화면에 보여 줄 별점)
- *  ReviewManager.count(menuId)        리뷰 수
- *  ReviewManager.myReview(menuId)     내가 쓴 리뷰 (없으면 null)
- *  ReviewManager.canWrite(menuId)     리뷰를 쓰거나 고칠 수 있는지
- *  ReviewManager.myReviews()          내가 쓴 리뷰 전부 (My Page → 리뷰 내역)
+ *  ReviewManager.reviews(menuId)            리뷰 목록 (최신 순)
+ *  ReviewManager.ratingText(item)           "4.6" (화면에 보여 줄 별점)
+ *  ReviewManager.count(menuId)              리뷰 수
+ *  ReviewManager.reviewFor(menuId, 주문번호)  그 주문으로 내가 쓴 리뷰 (없으면 null)
+ *  ReviewManager.myReviewsOf(menuId)        이 메뉴에 내가 쓴 리뷰들
+ *  ReviewManager.myReviews()                내가 쓴 리뷰 전부 (My Page → 리뷰 내역)
+ *  ReviewManager.canWrite(menuId)           새 리뷰를 쓸 수 있는 주문이 있는지
  * ─────────────────────────
  */
 object ReviewManager {
@@ -45,7 +48,9 @@ object ReviewManager {
 
     // ───────── 읽기 ─────────
 
-    fun reviews(menuId: String): List<Review> = byMenu[menuId].orEmpty()
+    /** 리뷰 목록 (최신 순) = 손님들이 쓴 리뷰 + 시연용 다른 손님 리뷰 (DemoReviews · 끌 수 있음) */
+    fun reviews(menuId: String): List<Review> =
+        (byMenu[menuId].orEmpty() + DemoReviews.forMenu(menuId)).sortedByDescending { it.createdAt }
 
     fun count(menuId: String): Int = reviews(menuId).size
 
@@ -70,34 +75,49 @@ object ReviewManager {
             .sortedByDescending { maxOf(it.second.createdAt, it.second.updatedAt) }
     }
 
-    fun myReview(menuId: String): Review? {
-        val uid = AuthManager.currentUid() ?: return null
-        return reviews(menuId).find { it.uid == uid }
+    /** 이 메뉴에 내가 쓴 리뷰들 (최신 순) */
+    fun myReviewsOf(menuId: String): List<Review> {
+        val uid = AuthManager.currentUid() ?: return emptyList()
+        return reviews(menuId).filter { it.uid == uid }
     }
 
-    /** 리뷰를 쓸 수 있는지: 이미 쓴 리뷰가 있거나(수정), 리뷰 가능한 주문이 있으면 */
-    fun canWrite(menuId: String): Boolean =
-        myReview(menuId) != null || OrderHistory.reviewableOrder(menuId) != null
+    /** 그 주문으로 내가 쓴 리뷰 (없으면 null) */
+    fun reviewFor(menuId: String, orderNo: String): Review? =
+        if (orderNo.isEmpty()) null else myReviewsOf(menuId).find { it.orderNo == orderNo }
+
+    /** 리뷰ID 로 찾기 */
+    fun find(menuId: String, reviewId: String): Review? = reviews(menuId).find { it.id == reviewId }
+
+    /** 새 리뷰를 쓸 수 있는 주문이 있는지 (주문했고 · 끝났고 · 아직 리뷰 안 쓴 주문) */
+    fun canWrite(menuId: String): Boolean = OrderHistory.reviewableOrder(menuId) != null
 
     // ───────── 쓰기 ─────────
 
     /**
-     * 리뷰 저장 (처음이면 등록, 이미 있으면 수정). 이름은 회원 정보에서 가져온다.
-     * @param photos 📷 사진 (Base64, 최대 3장). 리뷰 글과 사진을 한 번에 저장한다
+     * 리뷰 저장. 이름은 회원 정보에서 가져온다.
+     * @param reviewId 고치는 리뷰의 ID (새로 쓰면 null)
+     * @param orderNo  새로 쓸 때 어느 주문의 리뷰인지 (null 이면 리뷰 가능한 가장 최근 주문)
+     * @param photos   📷 사진 (Base64, 최대 3장). 리뷰 글과 사진을 한 번에 저장한다
      */
     fun save(
         menuId: String, rating: Int, text: String,
-        orderNo: String? = null,                       // Order 탭처럼 어느 주문인지 알 때
+        reviewId: String? = null,
+        orderNo: String? = null,
         photos: List<String> = emptyList(),
         onDone: (success: Boolean) -> Unit
     ) {
         val uid = AuthManager.currentUid() ?: return onDone(false)
-        val old = myReview(menuId)
-        // 어느 주문으로 쓰는지: 수정이면 원래 주문, 처음이면 (지정한 주문 또는) 리뷰 가능한 가장 최근 주문
-        val order = old?.orderNo?.takeIf { it.isNotEmpty() }?.let { no -> OrderHistory.all().find { it.orderNo == no } }
-            ?: orderNo?.let { no -> OrderHistory.all().find { it.orderNo == no && it.finished } }
+        val old = reviewId?.let { find(menuId, it) }?.takeIf { it.uid == uid }
+        // 어느 주문으로 쓰는지: 수정이면 원래 주문, 새로 쓰면 지정한 주문(끝난 주문) 또는 리뷰 가능한 가장 최근 주문
+        val order = if (old != null) OrderHistory.all().find { it.orderNo == old.orderNo }
+        else orderNo?.let { no -> OrderHistory.all().find { it.orderNo == no && it.finished } }
             ?: OrderHistory.reviewableOrder(menuId)
         if (old == null && order == null) return onDone(false)   // 주문 안 한 메뉴
+        // 이미 그 주문으로 쓴 리뷰가 있으면 새로 만들지 않고 그 리뷰를 고친다
+        val target = old ?: order?.let { reviewFor(menuId, it.orderNo) }
+        val no = target?.orderNo?.takeIf { it.isNotEmpty() } ?: order?.orderNo.orEmpty()
+        val id = target?.id?.takeIf { it.isNotEmpty() } ?: "${uid}_$no"
+
         val options = order?.items?.firstOrNull { it.menuId == menuId }?.options.orEmpty()
             .substringBefore("요청:").trim().removeSuffix("·").trim()   // 요청사항은 빼고 옵션만
         val pics = photos.take(ReviewPhotos.MAX_PHOTOS)
@@ -105,17 +125,16 @@ object ReviewManager {
             val name = profile?.name?.takeIf { it.isNotBlank() }
                 ?: AuthManager.currentEmail()?.substringBefore("@").orEmpty().ifBlank { "고객" }
             val now = System.currentTimeMillis()
-            val no = order?.orderNo ?: old?.orderNo.orEmpty()
             val review = Review(
-                uid = uid, name = name, rating = rating.coerceIn(1, 5), text = text.trim(),
-                orderNo = no, options = options.ifEmpty { old?.options.orEmpty() },
+                id = id, uid = uid, name = name, rating = rating.coerceIn(1, 5), text = text.trim(),
+                orderNo = no, options = options.ifEmpty { target?.options.orEmpty() },
                 photoCount = pics.size,
-                createdAt = old?.createdAt ?: now, updatedAt = now
+                createdAt = target?.createdAt ?: now, updatedAt = now
             )
             // 리뷰 글 + 사진을 한 번에 (사진이 없으면 사진 칸은 지움)
             val updates = hashMapOf<String, Any?>(
-                "reviews/$menuId/$uid" to review,
-                ReviewPhotos.path(menuId, uid) to pics.ifEmpty { null }
+                "reviews/$menuId/$id" to review,
+                ReviewPhotos.path(menuId, id) to pics.ifEmpty { null }
             )
             FirebaseDatabase.getInstance().reference.updateChildren(updates)
                 .addOnSuccessListener {
@@ -126,16 +145,17 @@ object ReviewManager {
         }
     }
 
-    fun delete(menuId: String, onDone: (success: Boolean) -> Unit) {
+    /** 리뷰 지우기 (사진도 같이). 그 주문에서 다시 [리뷰 쓰기]를 할 수 있게 된다 */
+    fun delete(menuId: String, reviewId: String, onDone: (success: Boolean) -> Unit) {
         val uid = AuthManager.currentUid() ?: return onDone(false)
-        val orderNo = myReview(menuId)?.orderNo.orEmpty()
+        val review = find(menuId, reviewId)?.takeIf { it.uid == uid } ?: return onDone(false)
         val updates = hashMapOf<String, Any?>(
-            "reviews/$menuId/$uid" to null,
-            ReviewPhotos.path(menuId, uid) to null
+            "reviews/$menuId/$reviewId" to null,
+            ReviewPhotos.path(menuId, reviewId) to null
         )
         FirebaseDatabase.getInstance().reference.updateChildren(updates)
             .addOnSuccessListener {
-                OrderHistory.setReviewed(orderNo, menuId, false)   // 다시 쓸 수 있게
+                OrderHistory.setReviewed(review.orderNo, menuId, false)
                 onDone(true)
             }
             .addOnFailureListener { onDone(false) }
@@ -151,7 +171,10 @@ object ReviewManager {
             override fun onDataChange(snapshot: DataSnapshot) {
                 byMenu = snapshot.children.associate { menu ->
                     menu.key.orEmpty() to menu.children.mapNotNull { child ->
-                        child.getValue(Review::class.java)?.apply { if (uid.isEmpty()) uid = child.key.orEmpty() }
+                        child.getValue(Review::class.java)?.apply {
+                            id = child.key.orEmpty()                     // 리뷰ID = Firebase 키
+                            if (uid.isEmpty()) uid = child.key.orEmpty()  // 예전 리뷰 (키 = 회원ID)
+                        }
                     }.sortedByDescending { it.createdAt }
                 }
                 notifyChanged()

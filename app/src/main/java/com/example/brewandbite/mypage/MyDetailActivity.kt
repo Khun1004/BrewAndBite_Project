@@ -275,19 +275,19 @@ class MyDetailActivity : AppCompatActivity() {
             v.rowMenu.setOnClickListener { if (menu != null) MenuDetailActivity.start(this, menuId) }
             // 수정: 리뷰 쓰기 창이 내 리뷰를 채운 채로 열림
             v.buttonEdit.isEnabled = menu != null
-            v.buttonEdit.setOnClickListener { if (menu != null) ReviewEditor.open(this, binding.root, menu) }
-            v.buttonDelete.setOnClickListener { confirmDeleteReview(menuId, menu?.name.orEmpty()) }
+            v.buttonEdit.setOnClickListener { if (menu != null) ReviewEditor.edit(this, menu, review.id) }
+            v.buttonDelete.setOnClickListener { confirmDeleteReview(menuId, review.id, menu?.name.orEmpty()) }
             r.reviewList.addView(v.root)
         }
     }
 
-    private fun confirmDeleteReview(menuId: String, name: String) {
+    private fun confirmDeleteReview(menuId: String, reviewId: String, name: String) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.review_delete_title)
             .setMessage(name)
             .setNegativeButton(R.string.cart_cancel, null)
             .setPositiveButton(R.string.my_delete) { _, _ ->
-                ReviewManager.delete(menuId) { ok -> toast(if (ok) R.string.review_deleted else R.string.review_failed) }
+                ReviewManager.delete(menuId, reviewId) { ok -> toast(if (ok) R.string.review_deleted else R.string.review_failed) }
             }
             .show()
     }
@@ -328,11 +328,12 @@ class MyDetailActivity : AppCompatActivity() {
         }
     }
 
-    /** 메뉴 한 줄 + 리뷰 버튼 (OrderLineView.kt) → 메뉴 상세 화면에서 리뷰 쓰기 / 내 리뷰 보기 */
+    /** 메뉴 한 줄 + 리뷰 버튼 (OrderLineView.kt) → 이 주문의 리뷰 쓰기 / 고치기 */
     private fun orderLineView(record: OrderRecord, line: OrderLine, card: ItemOrderHistoryBinding): View {
         val v = ItemOrderLineBinding.inflate(layoutInflater, card.lineList, false)
-        v.bindOrderLine(record, line) { canWrite ->
-            MenuDetailActivity.start(this, line.menuId, writeReview = canWrite)
+        v.bindOrderLine(record, line) { _ ->
+            val menu = MenuRepository.findItem(line.menuId) ?: return@bindOrderLine
+            ReviewEditor.open(this, binding.root, menu, record.orderNo)   // 이 주문의 리뷰 쓰기 / 고치기
         }
         return v.root
     }

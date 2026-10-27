@@ -424,7 +424,7 @@ class OrderFragment : Fragment() {
 
         // 리뷰를 기다리는 메뉴 수
         val waiting = record.items.map { it.menuId }.distinct().count {
-            !record.isReviewed(it) && ReviewManager.myReview(it) == null && MenuRepository.findItem(it) != null
+            !record.isReviewed(it) && ReviewManager.reviewFor(it, record.orderNo) == null && MenuRepository.findItem(it) != null
         }
         c.textReviewBadge.visibility = if (waiting > 0) View.VISIBLE else View.GONE
         c.textReviewBadge.text = getString(R.string.order_review_waiting, waiting)
@@ -438,13 +438,10 @@ class OrderFragment : Fragment() {
     private fun lineView(record: OrderRecord, line: OrderLine, parent: ViewGroup): View {
         val v = ItemOrderLineBinding.inflate(layoutInflater, parent, false)
         val saved = OrderHistory.all().any { it.orderNo == record.orderNo }
-        v.bindOrderLine(if (saved) record else null, line) { canWrite ->
+        v.bindOrderLine(if (saved) record else null, line) { _ ->
             val menu = MenuRepository.findItem(line.menuId) ?: return@bindOrderLine
-            if (canWrite) {
-                ReviewEditor.open(requireContext(), binding.root, menu, record.orderNo) { refreshAll() }
-            } else {
-                MenuDetailActivity.start(requireContext(), menu.id)   // 내 리뷰 보기 · 수정
-            }
+            // 이 주문의 리뷰: 안 썼으면 쓰기, 썼으면 고치기
+            ReviewEditor.open(requireContext(), binding.root, menu, record.orderNo)
         }
         return v.root
     }

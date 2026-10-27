@@ -95,6 +95,9 @@ class OrderDetailActivity : AppCompatActivity() {
     /** 마지막으로 그린 메뉴 줄 상태 (바뀔 때만 다시 만들기) */
     private var linesKey = ""
 
+    /** 주문 기록에 채워 넣으려고 시도한 주문번호 (한 번만) */
+    private var backfilled = ""
+
     private fun render() {
         val record = OrderHistory.find(orderNo)
         if (record == null) {
@@ -145,19 +148,25 @@ class OrderDetailActivity : AppCompatActivity() {
         // ② 메뉴 (리뷰 상태가 바뀔 때만 다시 만들기)
         val key = listOf(
             finished, record.reviewed, OrderHistory.all().any { it.orderNo == orderNo },
-            record.items.map { ReviewManager.myReview(it.menuId)?.updatedAt }
+            record.items.map { ReviewManager.reviewFor(it.menuId, record.orderNo)?.updatedAt }
         ).toString()
         if (key != linesKey) {
             linesKey = key
             binding.textMenuTitle.text = getString(R.string.order_detail_menu_title, record.items.sumOf { it.quantity })
             binding.lineList.removeAllViews()
             val saved = OrderHistory.all().any { it.orderNo == orderNo }
+            // Firebase 주문 기록에 없으면 (휴대폰에만 있는 주문) 한 번 채워 넣기 → 저장되면 리뷰 버튼이 생김
+            if (!saved && backfilled != orderNo) {
+                OrderManager.current()?.takeIf { it.orderNo == orderNo }?.let { local ->
+                    if (OrderHistory.save(local)) backfilled = orderNo
+                }
+            }
             record.items.forEach { line ->
                 val v = ItemOrderLineBinding.inflate(layoutInflater, binding.lineList, false)
-                v.bindOrderLine(if (saved) record else null, line) { canWrite ->
+                v.bindOrderLine(if (saved) record else null, line) { _ ->
                     val menu = MenuRepository.findItem(line.menuId) ?: return@bindOrderLine
-                    if (canWrite) ReviewEditor.open(this, binding.root, menu, record.orderNo) { render() }
-                    else MenuDetailActivity.start(this, menu.id)   // 내 리뷰 보기 · 수정
+                    // 이 주문의 리뷰: 안 썼으면 쓰기, 썼으면 고치기
+                    ReviewEditor.open(this, binding.root, menu, record.orderNo)
                 }
                 // 메뉴 이름을 누르면 메뉴 상세로
                 v.textName.setOnClickListener { if (MenuRepository.findItem(line.menuId) != null) MenuDetailActivity.start(this, line.menuId) }

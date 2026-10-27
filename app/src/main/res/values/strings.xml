@@ -441,7 +441,7 @@
     <string name="my_orders_summary_review">%1$d건 · 리뷰 쓸 메뉴 %2$d개</string>
     <string name="order_review_hint_ready">⭐ 맛있게 드셨나요? 메뉴 옆 [리뷰 쓰기]를 눌러 별점을 남겨 주세요</string>
     <string name="order_review_hint_wait">🛵 배달 · 픽업이 끝나면 메뉴마다 리뷰를 쓸 수 있어요</string>
-    <string name="order_review_hint_loading">주문 기록을 불러오는 중이에요… (계속 이 문구가 보이면 Firebase 규칙에 orders 를 추가해 주세요)</string>
+    <string name="order_review_hint_loading">주문 기록을 저장하는 중이에요… 계속 이 문구가 보이면 인터넷 연결과 Firebase 규칙(orders)을 확인해 주세요</string>
     <!-- Order 탭: 배달 현황 · 주문 내역 -->
     <string name="order_header_running">진행 중인 주문 %1$d건</string>
     <string name="order_tracking_title">🛵 진행 중인 주문 %1$d건</string>
@@ -519,4 +519,6 @@
     <string name="review_submit_long">등록하기</string>
     <string name="review_edit_long">수정 완료</string>
     <string name="review_saving">저장하는 중…</string>
+    <string name="review_done_button">✔ 리뷰 작성 완료</string>
+    <string name="review_all_done">주문한 메뉴의 리뷰를 모두 썼어요 😊 다시 주문하면 또 쓸 수 있어요. 고치려면 리뷰 카드의 [수정]을 눌러 주세요</string>
 </resources>

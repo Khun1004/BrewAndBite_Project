@@ -102,7 +102,7 @@ fun LinearLayout.showReviewPhotos(menuId: String, r: Review, sizeDp: Int) {
         return
     }
     visibility = View.VISIBLE
-    val key = "$menuId/${r.uid}/${r.updatedAt}"
+    val key = "$menuId/${r.id}/${r.updatedAt}"
     tag = key
     val px = (sizeDp * resources.displayMetrics.density).toInt()
     val gap = (8 * resources.displayMetrics.density).toInt()

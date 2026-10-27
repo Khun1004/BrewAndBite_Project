@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.brewandbite.R
+import com.example.brewandbite.auth.AuthManager
 import com.example.brewandbite.common.applyStatusBarPadding
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.MenuRepository
@@ -115,10 +116,9 @@ class ReviewListActivity : AppCompatActivity() {
         val all = ReviewManager.reviews(item.id)
         val count = all.size
         val photoCount = all.count { it.photoCount > 0 }
-        val mine = ReviewManager.myReview(item.id)
+        val uid = AuthManager.currentUid()
 
         binding.textTitle.text = getString(R.string.review_list_title, count)
-        binding.headerRight.setText(if (mine != null) R.string.review_edit_short else R.string.review_write_short)
         binding.headerRight.alpha = if (ReviewManager.canWrite(item.id)) 1f else 0.6f
 
         // 평균 + 막대
@@ -138,15 +138,15 @@ class ReviewListActivity : AppCompatActivity() {
             Sort.PHOTO -> all.filter { it.photoCount > 0 }.sortedByDescending { it.createdAt }
         }
         // 내 리뷰는 맨 위
-        val list = sorted.filter { it.uid == mine?.uid } + sorted.filter { it.uid != mine?.uid }
+        val list = sorted.filter { it.uid == uid } + sorted.filter { it.uid != uid }
 
         binding.reviewList.removeAllViews()
         list.forEach { r ->
             val v = ItemReviewBinding.inflate(layoutInflater, binding.reviewList, false)
             v.bindReview(
-                item.id, r, r.uid == mine?.uid,
-                onEdit = { ReviewEditor.open(this, binding.root, item) },
-                onDelete = { confirmDelete() }
+                item.id, r, r.uid == uid,
+                onEdit = { ReviewEditor.edit(this, item, r.id) },
+                onDelete = { confirmDelete(r) }
             )
             binding.reviewList.addView(v.root)
         }
@@ -161,12 +161,12 @@ class ReviewListActivity : AppCompatActivity() {
         )
     }
 
-    private fun confirmDelete() {
+    private fun confirmDelete(r: Review) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.review_delete_title)
             .setNegativeButton(R.string.cart_cancel, null)
             .setPositiveButton(R.string.my_delete) { _, _ ->
-                ReviewManager.delete(item.id) { ok ->
+                ReviewManager.delete(item.id, r.id) { ok ->
                     Toast.makeText(this, if (ok) R.string.review_deleted else R.string.review_failed, Toast.LENGTH_SHORT).show()
                 }
             }

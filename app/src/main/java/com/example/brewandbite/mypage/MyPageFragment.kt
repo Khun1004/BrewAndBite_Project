@@ -131,8 +131,10 @@ class MyPageFragment : Fragment() {
     private fun showOrdersSummary() {
         val b = _binding ?: return
         val list = OrderHistory.all()
-        val toReview = list.filter { it.finished }.flatMap { o -> o.items.filter { !o.isReviewed(it.menuId) }.map { it.menuId } }
-            .distinct().count { ReviewManager.myReview(it) == null }
+        // 리뷰를 기다리는 메뉴 = 끝난 주문의 메뉴 중 그 주문으로 아직 리뷰를 안 쓴 것 (주문마다 따로)
+        val toReview = list.filter { it.finished }.sumOf { o ->
+            o.items.map { it.menuId }.distinct().count { !o.isReviewed(it) && ReviewManager.reviewFor(it, o.orderNo) == null }
+        }
         b.textOrdersSummary.text = when {
             list.isEmpty() -> getString(R.string.my_orders_none)
             toReview > 0 -> getString(R.string.my_orders_summary_review, list.size, toReview)

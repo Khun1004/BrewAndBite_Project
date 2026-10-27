@@ -18,7 +18,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - [리뷰 전체 보기] → 리뷰 전체 화면 (ReviewListActivity: 정렬 · 사진 리뷰만)
  *  - [리뷰 쓰기] → 리뷰 쓰기 화면 (ReviewWriteActivity: 별점 · 사진 · 글)
  *    리뷰는 이 메뉴를 주문했고 배달·픽업이 끝난 사람만 (아니면 🔒 안내)
- *  - 내 리뷰에는 수정 · 삭제
+ *  - 내 리뷰에는 수정 · 삭제 (같은 메뉴를 여러 번 주문했으면 리뷰도 여러 개)
  *
  * MenuDetailActivity 에서:  reviews = ReviewSection(this, binding.reviewSection, item)
  *                          onStart → reviews.start() / onStop → reviews.stop()
@@ -56,16 +56,17 @@ class ReviewSection(
         val ctx = activity
         val reviews = ReviewManager.reviews(item.id)
         val count = reviews.size
-        val mine = ReviewManager.myReview(item.id)
+        val uid = AuthManager.currentUid()
+        val mine = ReviewManager.myReviewsOf(item.id)
 
         b.textReviewCount.text = if (count > 0) ctx.getString(R.string.review_count, count) else ""
-        // 버튼: 내 리뷰 수정 / 리뷰 쓰기 / 배달 완료 후 / 🔒 주문 후
+        // 버튼: 리뷰 쓰기 / 배달 완료 후 / ✔ 다 씀 / 🔒 주문 후  (내 리뷰 수정은 리뷰 카드의 [수정])
         val loggedIn = AuthManager.isLoggedIn()
         b.buttonWriteReview.setText(
             when {
-                mine != null -> R.string.review_edit_mine
                 !loggedIn || OrderHistory.reviewableOrder(item.id) != null -> R.string.review_write
                 OrderHistory.isWaiting(item.id) -> R.string.review_wait_button
+                mine.isNotEmpty() -> R.string.review_done_button      // 주문한 만큼 다 씀 → 또 주문하면 또 쓸 수 있음
                 else -> R.string.review_locked_button
             }
         )
@@ -82,12 +83,16 @@ class ReviewSection(
             b.barsContainer.drawRatingBars(ReviewManager.distribution(item.id), count)
         }
 
-        // 최신 리뷰 3개 (내 리뷰는 항상 맨 위)
-        val ordered = if (mine != null) listOf(mine) + reviews.filter { it.uid != mine.uid } else reviews
+        // 최신 리뷰 3개 (내 리뷰는 맨 위)
+        val ordered = mine + reviews.filter { it.uid != uid }
         b.reviewList.removeAllViews()
         ordered.take(PREVIEW_COUNT).forEach { r ->
             val v = ItemReviewBinding.inflate(LayoutInflater.from(activity), b.reviewList, false)
-            v.bindReview(item.id, r, r.uid == mine?.uid, onEdit = { openEditor() }, onDelete = { confirmDelete() })
+            v.bindReview(
+                item.id, r, r.uid == uid,
+                onEdit = { ReviewEditor.edit(activity, item, r.id) },
+                onDelete = { confirmDelete(r) }
+            )
             b.reviewList.addView(v.root)
         }
 
@@ -103,12 +108,12 @@ class ReviewSection(
     /** 리뷰 쓰기 화면 열기 (주문 기록의 [리뷰 쓰기]로 들어오면 MenuDetailActivity 가 바로 호출) */
     fun openEditor() = ReviewEditor.open(activity, b.root, item)
 
-    private fun confirmDelete() {
+    private fun confirmDelete(r: Review) {
         MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.review_delete_title)
             .setNegativeButton(R.string.cart_cancel, null)
             .setPositiveButton(R.string.my_delete) { _, _ ->
-                ReviewManager.delete(item.id) { ok ->
+                ReviewManager.delete(item.id, r.id) { ok ->
                     Toast.makeText(activity, if (ok) R.string.review_deleted else R.string.review_failed, Toast.LENGTH_SHORT).show()
                 }
             }

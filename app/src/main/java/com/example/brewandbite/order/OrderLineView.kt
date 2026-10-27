@@ -13,7 +13,8 @@ import com.example.brewandbite.review.ReviewManager
  *  🍝 Cream Pasta × 1  /  옵션            [✏️ 리뷰 쓰기] · [✔ 작성 완료] · [완료 후 리뷰]
  *
  * @param record  이 주문의 Firebase 주문 기록 (아직 못 불러왔으면 null → 버튼 숨김)
- * @param onReview [리뷰 쓰기] 또는 [작성 완료](= 내 리뷰 보기 · 수정)를 눌렀을 때. canWrite = 새로 쓸 수 있는지
+ * @param onReview [리뷰 쓰기] 또는 [작성 완료](= 이 주문의 내 리뷰 고치기)를 눌렀을 때. canWrite = 새로 쓰는지
+ *                 → 보통 ReviewEditor.open(context, view, menu, record.orderNo) 를 부르면 알아서 쓰기 / 고치기
  */
 fun ItemOrderLineBinding.bindOrderLine(
     record: OrderRecord?,
@@ -31,17 +32,16 @@ fun ItemOrderLineBinding.bindOrderLine(
         return
     }
     buttonReview.visibility = View.VISIBLE
-    val reviewedHere = record.isReviewed(line.menuId)
-    val reviewedOther = !reviewedHere && ReviewManager.myReview(line.menuId) != null
+    // 이 주문으로 리뷰를 썼는지 (같은 메뉴라도 주문마다 따로)
+    val reviewedHere = record.isReviewed(line.menuId) || ReviewManager.reviewFor(line.menuId, record.orderNo) != null
     val exists = MenuRepository.findItem(line.menuId) != null
     val (label, enabled) = when {
         !exists -> R.string.order_review_unavailable to false
-        reviewedHere -> R.string.order_review_done to true          // 눌러서 내 리뷰 보기 · 수정
-        reviewedOther -> R.string.order_review_done_other to true
+        reviewedHere -> R.string.order_review_done to true          // 눌러서 내 리뷰 고치기
         !record.finished -> R.string.order_review_wait to false
         else -> R.string.order_review_write to true
     }
-    val canWrite = enabled && !reviewedHere && !reviewedOther
+    val canWrite = enabled && !reviewedHere
     buttonReview.setText(label)
     buttonReview.isEnabled = enabled
     buttonReview.setTextColor(ContextCompat.getColor(ctx, if (canWrite) R.color.bb_espresso else R.color.bb_muted))

@@ -47,6 +47,7 @@ class ReviewWriteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReviewWriteBinding
     private lateinit var item: MenuItem
     private var orderNo: String? = null
+    private var reviewId: String? = null
 
     private var rating = 0
     private val stars = mutableListOf<ImageView>()
@@ -75,6 +76,7 @@ class ReviewWriteActivity : AppCompatActivity() {
         }
         item = found
         orderNo = intent.getStringExtra(EXTRA_ORDER_NO)
+        reviewId = intent.getStringExtra(EXTRA_REVIEW_ID)
 
         enableEdgeToEdge()
         binding = ActivityReviewWriteBinding.inflate(layoutInflater)
@@ -89,7 +91,8 @@ class ReviewWriteActivity : AppCompatActivity() {
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false
         binding.buttonBack.setOnClickListener { finish() }
 
-        val old = ReviewManager.myReview(item.id)
+        // 고치는 리뷰 (새로 쓰면 null)
+        val old = reviewId?.let { ReviewManager.find(item.id, it) }
         binding.textTitle.setText(if (old == null) R.string.review_dialog_title else R.string.review_dialog_edit_title)
         binding.textSubtitle.text = "${item.emoji} ${item.name}"
         binding.buttonSubmit.setText(if (old == null) R.string.review_submit_long else R.string.review_edit_long)
@@ -97,9 +100,9 @@ class ReviewWriteActivity : AppCompatActivity() {
         // ① 메뉴 · 주문 정보
         binding.textEmoji.text = item.emoji
         binding.textMenu.text = item.name
-        val order = orderNo?.let { OrderHistory.find(it) }
-            ?: old?.orderNo?.takeIf { it.isNotEmpty() }?.let { OrderHistory.find(it) }
-            ?: OrderHistory.reviewableOrder(item.id)
+        val order = old?.orderNo?.takeIf { it.isNotEmpty() }?.let { OrderHistory.find(it) }
+            ?: orderNo?.let { OrderHistory.find(it) }
+            ?: if (old == null) OrderHistory.reviewableOrder(item.id) else null
         val options = order?.items?.firstOrNull { it.menuId == item.id }?.options.orEmpty()
             .substringBefore("요청:").trim().removeSuffix("·").trim()
         binding.textOrder.text = when {
@@ -120,7 +123,7 @@ class ReviewWriteActivity : AppCompatActivity() {
         // ③ 사진: 수정이면 예전 사진 불러오기
         renderPhotos()
         if (old != null && old.photoCount > 0) {
-            ReviewPhotos.loadRaw(item.id, old.uid) { list ->
+            ReviewPhotos.loadRaw(item.id, old.id) { list ->
                 if (photos.isNotEmpty()) return@loadRaw   // 그 사이 새로 고른 사진이 있으면 그대로
                 list.take(ReviewPhotos.MAX_PHOTOS).forEach { b64 ->
                     val bmp = ReviewPhotos.decode(b64) ?: return@forEach
@@ -279,12 +282,12 @@ class ReviewWriteActivity : AppCompatActivity() {
         saving = true
         binding.buttonSubmit.isEnabled = false
         binding.buttonSubmit.setText(R.string.review_saving)
-        ReviewManager.save(item.id, rating, text, orderNo, photos.toList()) { ok ->
+        ReviewManager.save(item.id, rating, text, reviewId = reviewId, orderNo = orderNo, photos = photos.toList()) { ok ->
             saving = false
             Toast.makeText(this, if (ok) R.string.review_saved else R.string.review_failed, Toast.LENGTH_SHORT).show()
             if (ok) finish() else {
                 binding.buttonSubmit.isEnabled = true
-                binding.buttonSubmit.setText(R.string.review_submit_long)
+                binding.buttonSubmit.setText(if (reviewId == null) R.string.review_submit_long else R.string.review_edit_long)
             }
         }
     }
@@ -292,17 +295,20 @@ class ReviewWriteActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_MENU_ID = "menu_id"
         private const val EXTRA_ORDER_NO = "order_no"
+        private const val EXTRA_REVIEW_ID = "review_id"
 
         private val RATING_LABELS = intArrayOf(
             R.string.review_rating_0, R.string.review_rating_1, R.string.review_rating_2,
             R.string.review_rating_3, R.string.review_rating_4, R.string.review_rating_5
         )
 
-        fun start(context: Context, menuId: String, orderNo: String? = null) {
+        /** 새로 쓰기: orderNo / 고치기: reviewId */
+        fun start(context: Context, menuId: String, orderNo: String? = null, reviewId: String? = null) {
             context.startActivity(
                 Intent(context, ReviewWriteActivity::class.java)
                     .putExtra(EXTRA_MENU_ID, menuId)
                     .putExtra(EXTRA_ORDER_NO, orderNo)
+                    .putExtra(EXTRA_REVIEW_ID, reviewId)
             )
         }
     }
