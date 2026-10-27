@@ -185,20 +185,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp" />
 
-                <!-- 메뉴 목록: 왼쪽 아이콘 · 가운데 글 · 오른쪽 >  (누르면 상세 화면 MyDetailActivity 로 이동) -->
+                <!-- 메뉴 목록: 줄마다 흰 카드 한 장 (왼쪽 아이콘 · 가운데 글 · 오른쪽 >) · 누르면 상세 화면 MyDetailActivity -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_info_card"
-                    android:orientation="vertical"
-                    android:paddingVertical="4dp">
+                    android:orientation="vertical">
 
                     <!-- ic_person -->
                     <LinearLayout
                         android:id="@+id/rowInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -250,18 +250,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_location -->
                     <LinearLayout
                         android:id="@+id/rowAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -313,18 +310,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_card -->
                     <LinearLayout
                         android:id="@+id/rowPayment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -376,18 +370,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_receipt -->
                     <LinearLayout
                         android:id="@+id/rowOrders"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -439,18 +430,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_star_outline : ⭐ 리뷰 내역 -->
                     <LinearLayout
                         android:id="@+id/rowReviews"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -502,18 +490,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_heart_outline -->
                     <LinearLayout
                         android:id="@+id/rowFavorites"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"
@@ -565,18 +550,15 @@
                             app:tint="@color/bb_muted" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="72dp"
-                        android:background="@color/bb_divider" />
 
                     <!-- ic_lock -->
                     <LinearLayout
                         android:id="@+id/rowSecurity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_info_card"
+                        android:foreground="?attr/selectableItemBackground"
                         android:gravity="center_vertical"
                         android:minHeight="68dp"
                         android:orientation="horizontal"

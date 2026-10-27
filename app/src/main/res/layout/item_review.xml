@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 리뷰 한 개: (쿤) 이름 [내 리뷰] / ★★★★★ 2026.10.24 / [주문 옵션] / 글 / (내 리뷰면) 수정 · 삭제 -->
+<!--
+    리뷰 한 개 = 카드 한 장 (손님 한 명마다 따로)
+    (민) 민지 [내 리뷰] / ★★★★★ 2026.10.24 / [주문 옵션] / 📷 / 글 / (내 리뷰면) 수정 · 삭제
+    내 리뷰는 살구색 테두리 (ReviewViews.bindReview)
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardReview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/bg_order_card"
     android:orientation="vertical"
-    android:paddingTop="16dp">
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="14dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -160,10 +169,4 @@
             android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="12dp"
-        android:background="@color/bb_divider" />
 </LinearLayout>

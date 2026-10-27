@@ -210,16 +210,12 @@
                     app:singleSelection="true" />
             </HorizontalScrollView>
 
-            <!-- 리뷰 카드들 (item_review) -->
+            <!-- 리뷰 카드들 (item_review · 손님 한 명마다 카드 한 장) -->
             <LinearLayout
                 android:id="@+id/reviewList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/bg_order_card"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingBottom="12dp" />
+                android:orientation="vertical" />
 
             <TextView
                 android:id="@+id/textEmpty"

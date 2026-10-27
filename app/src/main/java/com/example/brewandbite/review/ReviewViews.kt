@@ -77,7 +77,12 @@ fun ItemReviewBinding.bindReview(
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {}
 ) {
+    // 카드: 손님마다 한 장 · 내 리뷰는 살구색 테두리
+    cardReview.setBackgroundResource(if (isMine) R.drawable.bg_review_mine else R.drawable.bg_order_card)
+    // 동그라미: 이름 첫 글자 + 손님마다 다른 색 (내 리뷰는 기본 커피색)
     textAvatar.text = r.name.take(1).uppercase()
+    textAvatar.backgroundTintList =
+        if (isMine) null else ColorStateList.valueOf(avatarColor(r.uid.ifEmpty { r.name }))
     textName.text = r.name
     textOptions.text = r.options
     textOptions.visibility = if (r.options.isNotBlank()) View.VISIBLE else View.GONE
@@ -124,6 +129,20 @@ fun LinearLayout.showReviewPhotos(menuId: String, r: Review, sizeDp: Int) {
         }
     }
 }
+
+/** 손님마다 다른 동그라미 색 (같은 사람은 항상 같은 색) */
+private val AVATAR_COLORS = intArrayOf(
+    0xFF8D6E63.toInt(), // 밀크 브라운
+    0xFFC9503F.toInt(), // 토마토
+    0xFF2F9E5B.toInt(), // 그린
+    0xFF4A6FA5.toInt(), // 블루
+    0xFFB0793A.toInt(), // 카라멜
+    0xFF7E57C2.toInt(), // 라벤더
+    0xFF00897B.toInt(), // 민트
+    0xFFD81B60.toInt()  // 베리
+)
+
+private fun avatarColor(key: String): Int = AVATAR_COLORS[Math.floorMod(key.hashCode(), AVATAR_COLORS.size)]
 
 /** 사진 크게 보기 */
 fun showPhotoLarge(context: Context, bitmap: Bitmap) {
