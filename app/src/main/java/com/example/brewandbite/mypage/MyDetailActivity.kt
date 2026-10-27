@@ -3,6 +3,7 @@ package com.example.brewandbite.mypage
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
@@ -32,34 +33,57 @@ import com.example.brewandbite.auth.UserProfile
 import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.cart.CartManager
 import com.example.brewandbite.common.applyStatusBarPadding
+import com.example.brewandbite.data.MenuRepository
+import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.ActivityMyDetailBinding
 import com.example.brewandbite.databinding.DialogAddPaymentBinding
 import com.example.brewandbite.databinding.DialogChangePasswordBinding
 import com.example.brewandbite.databinding.DialogTwoFieldsBinding
+import com.example.brewandbite.databinding.ItemMyReviewBinding
+import com.example.brewandbite.databinding.ItemOrderHistoryBinding
+import com.example.brewandbite.databinding.ItemOrderLineBinding
 import com.example.brewandbite.databinding.ItemPaymentMethodBinding
 import com.example.brewandbite.databinding.LayoutPhoneVerifyBinding
 import com.example.brewandbite.databinding.SectionMyAddressBinding
 import com.example.brewandbite.databinding.SectionMyCouponsBinding
 import com.example.brewandbite.databinding.SectionMyFavoritesBinding
 import com.example.brewandbite.databinding.SectionMyInfoBinding
+import com.example.brewandbite.databinding.SectionMyOrdersBinding
 import com.example.brewandbite.databinding.SectionMyPaymentBinding
+import com.example.brewandbite.databinding.SectionMyReviewsBinding
 import com.example.brewandbite.databinding.SectionMySecurityBinding
+import com.example.brewandbite.favorite.FavoriteAdapter
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.home.MenuAdapter
 import com.example.brewandbite.menu.MenuDetailActivity
+import com.example.brewandbite.notice.NoticeActivity
+import com.example.brewandbite.notice.NoticeManager
+import com.example.brewandbite.notice.bindNoticeDot
+import com.example.brewandbite.order.OrderDetailActivity
+import com.example.brewandbite.order.OrderHistory
+import com.example.brewandbite.order.OrderLine
+import com.example.brewandbite.order.OrderRecord
+import com.example.brewandbite.order.bindOrderLine
+import com.example.brewandbite.review.ReviewEditor
+import com.example.brewandbite.review.ReviewManager
+import com.example.brewandbite.review.showReviewPhotos
+import com.example.brewandbite.review.showStars
 import com.example.brewandbite.reward.CouponAdapter
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
+import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * My Page 상세 화면. My Page 목록에서 > 를 누르면 열린다.
- * 헤더: [<] 뒤로 (왼쪽) · MY PAGE / 섹션 이름 (가운데) · [♡ 찜한 메뉴][🔔 알림] (오른쪽)
+ * 헤더: [<] 뒤로 (왼쪽) · MY PAGE / 섹션 이름 (가운데) · [♡ 찜한 메뉴][🔔 알림함] (오른쪽)
  *
  *  👤 내 정보   : 이름·이메일·연락처 + [이름 수정] [휴대폰 번호 변경(인증번호 확인)]
  *  📍 배달 주소 : 주소·상세 주소 + [주소 검색] → 상세 주소 입력
  *  💳 결제 수단 : 목록(눌러서 기본 설정, ✕ 삭제) + [결제 수단 추가]
- *  🧾 주문 기록 / ♡ 찜한 메뉴 : 다음 단계
+ *  🧾 주문 기록 : 지난 주문 카드 + 메뉴마다 [리뷰 쓰기] (배달·픽업이 끝난 뒤)
+ *  ♡ 찜한 메뉴 : 찜한 메뉴 목록
+ *  ⭐ 리뷰 내역 : 내가 쓴 리뷰 (메뉴 · 별점 · 글) + [수정] [삭제]
  *  🔒 계정 보안 : [비밀번호 변경] (현재 비밀번호 확인 → 새 비밀번호)
  *  🎟 스탬프·쿠폰 : 스탬프 카드 + 쓸 수 있는 쿠폰 + 지난 쿠폰 (RewardManager)
  *
@@ -75,7 +99,8 @@ class MyDetailActivity : AppCompatActivity() {
         ORDERS(R.string.my_section_orders, R.drawable.ic_receipt),
         FAVORITES(R.string.my_section_favorites, R.drawable.ic_heart_outline),
         SECURITY(R.string.my_section_security, R.drawable.ic_lock),
-        COUPONS(R.string.my_section_coupons, R.drawable.ic_coupon)
+        COUPONS(R.string.my_section_coupons, R.drawable.ic_coupon),
+        REVIEWS(R.string.my_section_reviews, R.drawable.ic_star_outline)
     }
 
     private lateinit var binding: ActivityMyDetailBinding
@@ -87,13 +112,27 @@ class MyDetailActivity : AppCompatActivity() {
     private var payment: SectionMyPaymentBinding? = null
     private var security: SectionMySecurityBinding? = null
     private var favorites: SectionMyFavoritesBinding? = null
-    private var favoriteAdapter: MenuAdapter? = null
+    private var favoriteAdapter: FavoriteAdapter? = null
     private var coupons: SectionMyCouponsBinding? = null
     private val activeCouponAdapter = CouponAdapter()
     private val pastCouponAdapter = CouponAdapter()
 
     /** 스탬프·쿠폰이 바뀌면 다시 그린다 */
     private val rewardListener = RewardManager.RewardListener { showCoupons() }
+
+    // 🧾 주문 기록
+    private var orders: SectionMyOrdersBinding? = null
+    private val historyListener = OrderHistory.HistoryListener { showOrders() }
+    private val reviewListener = ReviewManager.ReviewListener {
+        showOrders()
+        showMyReviews()
+    }
+
+    // ⭐ 리뷰 내역
+    private var myReviews: SectionMyReviewsBinding? = null
+
+    /** 새 알림이 오면 🔔 빨간 점 다시 그리기 */
+    private val noticeListener = NoticeManager.NoticeListener { binding.dotBell.bindNoticeDot() }
 
     /** 찜이 바뀌면 (♡ 해제 등) 목록을 다시 그린다 */
     private val favoriteListener = FavoriteManager.FavoriteListener { showFavorites() }
@@ -127,8 +166,8 @@ class MyDetailActivity : AppCompatActivity() {
         binding.buttonFavorite.setOnClickListener {
             if (section != Section.FAVORITES) startActivity(MyDetailActivity.intent(this, Section.FAVORITES))
         }
-        // 🔔 → 알림 (다음 단계)
-        binding.buttonBell.setOnClickListener { toast(R.string.my_notifications_soon) }
+        // 🔔 → 알림함
+        binding.buttonBell.setOnClickListener { NoticeActivity.start(this) }
 
         // 섹션 내용을 카드 안에 넣기
         val parent = binding.container
@@ -143,10 +182,20 @@ class MyDetailActivity : AppCompatActivity() {
             Section.PAYMENT -> payment = SectionMyPaymentBinding.inflate(layoutInflater, parent, true).apply {
                 buttonAddPayment.setOnClickListener { showAddPaymentDialog() }
             }
-            Section.ORDERS -> addNote(R.string.my_orders_empty)
+            Section.ORDERS -> orders = SectionMyOrdersBinding.inflate(layoutInflater, parent, true).apply {
+                buttonOrderNow.setOnClickListener {
+                    MainActivity.openTab(this@MyDetailActivity, MainActivity.TAB_HOME)
+                    finish()
+                }
+            }
             Section.FAVORITES -> setupFavorites()
             Section.SECURITY -> security = SectionMySecurityBinding.inflate(layoutInflater, parent, true).apply {
                 buttonChangePassword.setOnClickListener { showChangePasswordDialog() }
+            }
+            Section.REVIEWS -> myReviews = SectionMyReviewsBinding.inflate(layoutInflater, parent, true).apply {
+                buttonGoOrders.setOnClickListener {
+                    startActivity(MyDetailActivity.intent(this@MyDetailActivity, Section.ORDERS))
+                }
             }
             Section.COUPONS -> coupons = SectionMyCouponsBinding.inflate(layoutInflater, parent, true).apply {
                 recyclerCoupons.layoutManager = LinearLayoutManager(this@MyDetailActivity)
@@ -165,6 +214,8 @@ class MyDetailActivity : AppCompatActivity() {
             finish()
             return
         }
+        NoticeManager.addListener(noticeListener)
+        binding.dotBell.bindNoticeDot()
         when (section) {
             Section.INFO, Section.ADDRESS -> UserRepository.loadMyProfile { showProfile(it) }
             Section.PAYMENT -> loadPayments()
@@ -177,6 +228,15 @@ class MyDetailActivity : AppCompatActivity() {
                 RewardManager.addListener(rewardListener)
                 showCoupons()
             }
+            Section.ORDERS -> {
+                OrderHistory.addListener(historyListener)
+                ReviewManager.addListener(reviewListener)
+                showOrders()
+            }
+            Section.REVIEWS -> {
+                ReviewManager.addListener(reviewListener)
+                showMyReviews()
+            }
             else -> Unit
         }
     }
@@ -185,6 +245,99 @@ class MyDetailActivity : AppCompatActivity() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
         RewardManager.removeListener(rewardListener)
+        NoticeManager.removeListener(noticeListener)
+        OrderHistory.removeListener(historyListener)
+        ReviewManager.removeListener(reviewListener)
+    }
+
+    // ───────── ⭐ 리뷰 내역 ─────────
+
+    /** 내가 쓴 리뷰 카드: 메뉴(누르면 메뉴 상세) · 별점 · 날짜 · 옵션 · 글 · [수정] [삭제] */
+    private fun showMyReviews() {
+        val r = myReviews ?: return
+        val list = ReviewManager.myReviews()
+        r.emptyReviews.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        r.textReviewCount.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+        if (list.isNotEmpty()) {
+            val avg = list.map { it.second.rating }.average()
+            r.textReviewCount.text = getString(R.string.my_reviews_count, list.size, String.format(java.util.Locale.US, "%.1f", avg))
+        }
+        r.reviewList.removeAllViews()
+        list.forEach { (menuId, review) ->
+            val menu = MenuRepository.findItem(menuId)
+            val v = ItemMyReviewBinding.inflate(layoutInflater, r.reviewList, false)
+            v.textEmoji.text = menu?.emoji ?: "🍽️"
+            v.textMenu.text = menu?.name ?: getString(R.string.order_review_unavailable)
+            v.stars.showStars(review.rating.toDouble(), 15)
+            v.textDate.text = review.dateText
+            v.textOptions.text = review.options
+            v.textOptions.visibility = if (review.options.isBlank()) View.GONE else View.VISIBLE
+            v.textReview.text = review.text
+            v.photoRow.showReviewPhotos(menuId, review, 76)   // 📷 사진
+            v.rowMenu.setOnClickListener { if (menu != null) MenuDetailActivity.start(this, menuId) }
+            // 수정: 리뷰 쓰기 창이 내 리뷰를 채운 채로 열림
+            v.buttonEdit.isEnabled = menu != null
+            v.buttonEdit.setOnClickListener { if (menu != null) ReviewEditor.edit(this, menu, review.id) }
+            v.buttonDelete.setOnClickListener { confirmDeleteReview(menuId, review.id, menu?.name.orEmpty()) }
+            r.reviewList.addView(v.root)
+        }
+    }
+
+    private fun confirmDeleteReview(menuId: String, reviewId: String, name: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.review_delete_title)
+            .setMessage(name)
+            .setNegativeButton(R.string.cart_cancel, null)
+            .setPositiveButton(R.string.my_delete) { _, _ ->
+                ReviewManager.delete(menuId, reviewId) { ok -> toast(if (ok) R.string.review_deleted else R.string.review_failed) }
+            }
+            .show()
+    }
+
+    // ───────── 🧾 주문 기록 ─────────
+
+    /** 지난 주문 카드: 날짜 · 상태 · 주문번호 · 메뉴 줄마다 [리뷰 쓰기] */
+    private fun showOrders() {
+        val o = orders ?: return
+        val list = OrderHistory.all()
+        o.emptyOrders.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        o.textOrderCount.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+        o.textOrderCount.text = getString(R.string.order_history_count, list.size)
+        o.orderList.removeAllViews()
+        list.forEach { record ->
+            val card = ItemOrderHistoryBinding.inflate(layoutInflater, o.orderList, false)
+            card.textDate.text = record.dateText
+            val mode = getString(if (record.delivery) R.string.order_mode_delivery else R.string.order_mode_pickup)
+            card.textInfo.text = getString(R.string.order_history_info, record.orderNo, mode, record.total.toWon())
+            // 상태 꼬리표: 배달 완료(초록) / 배달 중(살구)
+            val done = record.finished
+            card.textStatus.text = getString(
+                when {
+                    done && record.delivery -> R.string.order_status_delivered
+                    done -> R.string.order_status_picked
+                    record.delivery -> R.string.order_status_delivering
+                    else -> R.string.order_status_preparing
+                }
+            )
+            card.textStatus.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(this, if (done) R.color.bb_open_bg else R.color.bb_beige_light)
+            )
+            card.textStatus.setTextColor(ContextCompat.getColor(this, if (done) R.color.bb_open else R.color.bb_brown))
+
+            record.items.forEach { line -> card.lineList.addView(orderLineView(record, line, card)) }
+            card.root.setOnClickListener { OrderDetailActivity.start(this, record.orderNo) }   // 카드 → 주문 상세
+            o.orderList.addView(card.root)
+        }
+    }
+
+    /** 메뉴 한 줄 + 리뷰 버튼 (OrderLineView.kt) → 이 주문의 리뷰 쓰기 / 고치기 */
+    private fun orderLineView(record: OrderRecord, line: OrderLine, card: ItemOrderHistoryBinding): View {
+        val v = ItemOrderLineBinding.inflate(layoutInflater, card.lineList, false)
+        v.bindOrderLine(record, line) { _ ->
+            val menu = MenuRepository.findItem(line.menuId) ?: return@bindOrderLine
+            ReviewEditor.open(this, binding.root, menu, record.orderNo)   // 이 주문의 리뷰 쓰기 / 고치기
+        }
+        return v.root
     }
 
     // ───────── 🎟 스탬프 · 쿠폰 ─────────
@@ -203,28 +356,21 @@ class MyDetailActivity : AppCompatActivity() {
         c.recyclerPastCoupons.visibility = if (past.isEmpty()) View.GONE else View.VISIBLE
     }
 
-    /** 주문 기록 · 찜한 메뉴: 아직 준비 중이라 안내 글자만 (다음 단계에서 목록으로 바꿀 예정) */
-    private fun addNote(@StringRes text: Int) {
-        val note = TextView(this).apply {
-            setText(text)
-            gravity = Gravity.CENTER
-            textSize = 14f
-            setTextColor(ContextCompat.getColor(this@MyDetailActivity, R.color.bb_muted))
-            setLineSpacing(4f, 1f)
-            val pad = (24 * resources.displayMetrics.density).toInt()
-            setPadding(0, pad, 0, pad)
-        }
-        binding.container.addView(note)
-    }
-
     // ───────── ♡ 찜한 메뉴 ─────────
 
+    /** 찜한 메뉴 정렬: 최근 찜한 순 · 낮은 가격순 · 별점 높은 순 */
+    private var favSort = 0
+
     private fun setupFavorites() {
+        // 찜한 메뉴는 흰 상자 없이 크림 바탕 위에 카드를 한 장씩
+        binding.container.background = null
+        binding.container.setPadding(0, 0, 0, 0)
+
         val f = SectionMyFavoritesBinding.inflate(layoutInflater, binding.container, true)
         favorites = f
-        favoriteAdapter = MenuAdapter(
-            onItemClick = { item -> MenuDetailActivity.start(this, item.id) },   // 메뉴 상세 화면으로
-            onAddClick = { item ->
+        favoriteAdapter = FavoriteAdapter(
+            onOpen = { item -> MenuDetailActivity.start(this, item.id) },   // 메뉴 상세 (옵션 고르고 주문)
+            onAdd = { item ->
                 CartManager.add(item)
                 Toast.makeText(
                     this, getString(R.string.added_to_cart, item.name, CartManager.totalCount()), Toast.LENGTH_SHORT
@@ -237,16 +383,56 @@ class MyDetailActivity : AppCompatActivity() {
             MainActivity.openTab(this, MainActivity.TAB_HOME)
             finish()
         }
+        // 🛒 모두 담기 → 장바구니로
+        f.buttonAddAll.setOnClickListener {
+            val items = FavoriteManager.favoriteItems()
+            if (items.isEmpty()) return@setOnClickListener
+            items.forEach { CartManager.add(it) }
+            Toast.makeText(this, getString(R.string.fav_added_all, items.size), Toast.LENGTH_SHORT).show()
+            MainActivity.openTab(this, MainActivity.TAB_CART)
+        }
+        // 정렬 칩
+        val states = arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf())
+        fun colors(on: Int, off: Int) = ColorStateList(
+            states, intArrayOf(ContextCompat.getColor(this, on), ContextCompat.getColor(this, off))
+        )
+        listOf(R.string.fav_sort_recent, R.string.search_sort_price_low, R.string.search_sort_rating)
+            .forEachIndexed { index, label ->
+                f.chipsSort.addView(Chip(this).apply {
+                    setText(label)
+                    isCheckable = true
+                    isCheckedIconVisible = false
+                    isChecked = index == favSort
+                    chipBackgroundColor = colors(R.color.bb_espresso, R.color.white)
+                    setTextColor(colors(R.color.bb_cream, R.color.bb_brown))
+                    chipStrokeColor = colors(R.color.bb_espresso, R.color.bb_divider)
+                    chipStrokeWidth = resources.displayMetrics.density
+                    setOnCheckedChangeListener { _, checked ->
+                        if (checked) {
+                            favSort = index
+                            showFavorites()
+                        }
+                    }
+                })
+            }
     }
 
     private fun showFavorites() {
         val f = favorites ?: return
-        val items = FavoriteManager.favoriteItems()
+        val recent = FavoriteManager.favoriteItems()   // 최근에 찜한 순
+        val items = when (favSort) {
+            1 -> recent.sortedBy { it.price }
+            2 -> recent.sortedByDescending { ReviewManager.ratingText(it).toDoubleOrNull() ?: it.rating }
+            else -> recent
+        }
         favoriteAdapter?.submitList(items)
-        favoriteAdapter?.notifyDataSetChanged()   // ♡ 모양도 새로
-        f.textFavCount.text = getString(R.string.fav_count, items.size)
-        f.textFavCount.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
-        f.emptyFavorites.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        favoriteAdapter?.notifyDataSetChanged()   // ♥ · 별점 · "N일 전 찜" 도 새로
+        val empty = items.isEmpty()
+        f.heroCard.visibility = if (empty) View.GONE else View.VISIBLE
+        f.sortBar.visibility = if (empty || items.size < 2) View.GONE else View.VISIBLE
+        f.emptyFavorites.visibility = if (empty) View.VISIBLE else View.GONE
+        f.textFavTitle.text = getString(R.string.fav_hero_title, items.size)
+        f.textFavTotal.text = getString(R.string.fav_hero_total, items.sumOf { it.price }.toWon())
     }
 
     // ───────── 👤 내 정보 / 📍 배달 주소 ─────────

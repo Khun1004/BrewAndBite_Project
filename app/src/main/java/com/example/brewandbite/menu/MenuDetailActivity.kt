@@ -22,20 +22,27 @@ import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.ActivityMenuDetailBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewListActivity
+import com.example.brewandbite.review.ReviewManager
+import com.example.brewandbite.review.ReviewSection
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 재료 빼기/추가 · 요청사항 · 수량 → [담기]
+ * 메뉴 상세 화면: 큰 메뉴 그림 · 설명 · 옵션(온도/사이즈/샷/데우기) · 재료 빼기/추가 · 요청사항 · ⭐ 리뷰 · 수량 → [담기]
  * 옵션 종류와 가격은 MenuOptions.kt 에서 정한다.
  *
  * 여는 법: MenuDetailActivity.start(context, item.id)
+ *         MenuDetailActivity.start(context, item.id, writeReview = true)  ← 리뷰 영역으로 내려가서 리뷰 쓰기 창 열기
  */
 class MenuDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMenuDetailBinding
     private lateinit var item: MenuItem
+
+    /** 아래쪽 ⭐ 리뷰 영역 */
+    private lateinit var reviews: ReviewSection
 
     private var selection = MenuOptions.Selection()
     private var quantity = 1
@@ -69,11 +76,24 @@ class MenuDetailActivity : AppCompatActivity() {
         }
 
         showMenu()
+        reviews = ReviewSection(this, binding.reviewSection, item) {
+            showRating()   // 위쪽 별점도 실제 평균으로
+        }
         setupOptions()
         setupBottomBar()
 
         binding.buttonBack.setOnClickListener { finish() }
         binding.buttonCart.setOnClickListener { MainActivity.openTab(this, MainActivity.TAB_CART) }
+
+        // 주문 기록의 [리뷰 쓰기]로 들어왔으면 → 리뷰 영역으로 내려가서 쓰기 창 열기
+        if (savedInstanceState == null && intent.getBooleanExtra(EXTRA_WRITE_REVIEW, false)) {
+            binding.scrollView.postDelayed({
+                val section = binding.reviewSection.root
+                val y = (section.parent as View).top + section.top
+                binding.scrollView.smoothScrollTo(0, y)
+                reviews.openEditor()
+            }, 400)
+        }
 
         // 접시가 살짝 떠오르며 등장
         if (savedInstanceState == null) {
@@ -91,12 +111,14 @@ class MenuDetailActivity : AppCompatActivity() {
         FavoriteManager.addListener(favoriteListener)
         updateCartBadge()
         binding.buttonFavorite.bindFavorite(item)
+        reviews.start()
     }
 
     override fun onStop() {
         super.onStop()
         CartManager.removeListener(cartListener)
         FavoriteManager.removeListener(favoriteListener)
+        if (::reviews.isInitialized) reviews.stop()
     }
 
     // ───────── 메뉴 정보 ─────────
@@ -105,10 +127,19 @@ class MenuDetailActivity : AppCompatActivity() {
         val category = MenuRepository.findCategory(item.categoryId)
         binding.textEmoji.text = item.emoji
         binding.textCategory.text = "${category.emoji} ${category.nameKo}"
-        binding.textRating.text = item.rating.toString()
+        showRating()
+        // ★ 별점을 누르면 → 리뷰 전체 화면 (다른 사람들의 리뷰)
+        binding.textRating.setOnClickListener { ReviewListActivity.start(this, item.id) }
         binding.textName.text = item.name
         binding.textDescription.text = item.description
         binding.textBasePrice.text = item.price.toWon()
+    }
+
+    /** 위쪽 별점: "4.6 · 리뷰 12 ›" (리뷰가 없으면 "4.6") */
+    private fun showRating() {
+        val count = ReviewManager.count(item.id)
+        binding.textRating.text = if (count > 0) getString(R.string.review_rating_link, ReviewManager.ratingText(item), count)
+        else ReviewManager.ratingText(item)
     }
 
     // ───────── 옵션 ─────────
@@ -270,10 +301,15 @@ class MenuDetailActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_MENU_ID = "menu_id"
+        private const val EXTRA_WRITE_REVIEW = "write_review"
         private const val MAX_QUANTITY = 20
 
-        fun start(context: Context, menuId: String) {
-            context.startActivity(Intent(context, MenuDetailActivity::class.java).putExtra(EXTRA_MENU_ID, menuId))
+        fun start(context: Context, menuId: String, writeReview: Boolean = false) {
+            context.startActivity(
+                Intent(context, MenuDetailActivity::class.java)
+                    .putExtra(EXTRA_MENU_ID, menuId)
+                    .putExtra(EXTRA_WRITE_REVIEW, writeReview)
+            )
         }
     }
 }

@@ -1,15 +1,108 @@
 package com.example.brewandbite.data
 
+import android.util.Log
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.text.NumberFormat
 import java.util.Locale
 
 /**
- * 홈 화면에서 쓰는 샘플 데이터.
- * 지금은 앱 안에 고정된 데이터를 쓰고, 이후 Firebase 연동 시 이 파일만 바꾸면 된다.
+ * 메뉴 데이터 (카테고리 · 메뉴).
+ *
+ *  - Firebase Realtime Database 의 menu/categories · menu/items 에서 불러온다 (BrewBiteApp 에서 start()).
+ *    메뉴를 바꾸고 싶으면 Firebase 콘솔에서 값만 고치면 앱에 바로 반영된다 (가격 · 이름 · 인기 등).
+ *  - Firebase 에서 불러오기 전 · 인터넷이 없을 때는 아래 기본 메뉴(앱 안에 들어 있는 것)를 쓴다.
+ *  - 메뉴가 바뀌면 MenuRepository.addListener { ... } 로 알림 → 홈 · 메뉴 목록이 다시 그린다.
+ *
+ *  Firebase 구조 (firebase/menu.json 을 가져오기):
+ *   menu/categories/coffee = { name: "Coffee", nameKo: "커피", emoji: "☕", order: 1 }
+ *   menu/items/c1 = { name, description, price, rating, categoryId, emoji, popular, imageUrl, order }
  */
 object MenuRepository {
 
-    val categories = listOf(
+    fun interface MenuListener {
+        fun onMenuChanged()
+    }
+
+    private const val TAG = "MenuRepository"
+
+    /** 지금 메뉴가 Firebase 에서 온 것인지 (false = 앱 안의 기본 메뉴) */
+    var fromFirebase = false
+        private set
+
+    /** 카테고리 (Firebase → 없으면 기본) */
+    var categories: List<Category> = defaultCategories()
+        private set
+
+    /** 전체 메뉴 (Firebase → 없으면 기본) */
+    var menuItems: List<MenuItem> = defaultItems()
+        private set
+
+    private val listeners = mutableSetOf<MenuListener>()
+    private var started = false
+
+    // ───────── Firebase 에서 불러오기 ─────────
+
+    /** 앱 시작 시 한 번 (BrewBiteApp). 콘솔에서 메뉴를 고치면 자동으로 다시 불러온다 */
+    fun start() {
+        if (started) return
+        started = true
+        FirebaseDatabase.getInstance().getReference("menu").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val cats = snapshot.child("categories").children.mapNotNull { c ->
+                    val id = c.key ?: return@mapNotNull null
+                    Category(id, c.str("name"), c.str("nameKo"), c.str("emoji")) to c.num("order").toInt()
+                }.sortedBy { it.second }.map { it.first }
+                val items = snapshot.child("items").children.mapNotNull { m ->
+                    val id = m.key ?: return@mapNotNull null
+                    MenuItem(
+                        id = id,
+                        name = m.str("name"),
+                        description = m.str("description"),
+                        price = m.num("price").toInt(),
+                        rating = m.num("rating").toDouble(),
+                        categoryId = m.str("categoryId"),
+                        emoji = m.str("emoji"),
+                        popular = m.child("popular").value == true,
+                        imageUrl = m.str("imageUrl")
+                    ) to m.num("order").toInt()
+                }.sortedBy { it.second }.map { it.first }
+
+                // Firebase 에 메뉴가 아직 없으면 기본 메뉴 그대로
+                if (cats.isEmpty() || items.isEmpty()) {
+                    Log.d(TAG, "Firebase 에 menu 가 없어서 기본 메뉴를 써요")
+                    return
+                }
+                categories = cats
+                menuItems = items
+                fromFirebase = true
+                Log.d(TAG, "Firebase 메뉴 불러옴: 카테고리 ${cats.size}개 · 메뉴 ${items.size}개")
+                listeners.toList().forEach { it.onMenuChanged() }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "메뉴 불러오기 실패 (규칙에 menu 읽기가 있는지 확인): ${error.message}")
+                started = false
+            }
+        })
+    }
+
+    private fun DataSnapshot.str(key: String): String = child(key).value?.toString().orEmpty()
+    private fun DataSnapshot.num(key: String): Number = child(key).value as? Number ?: 0
+
+    fun addListener(listener: MenuListener) {
+        listeners.add(listener)
+    }
+
+    fun removeListener(listener: MenuListener) {
+        listeners.remove(listener)
+    }
+
+    // ───────── 앱 안의 기본 메뉴 (Firebase 를 못 불러왔을 때) ─────────
+
+    private fun defaultCategories() = listOf(
         Category("coffee", "Coffee", "커피", "☕"),
         Category("drinks", "Drinks", "음료", "🥤"),
         Category("tea", "Tea", "차", "🍵"),
@@ -18,7 +111,7 @@ object MenuRepository {
         Category("food", "Food", "식사", "🍔")
     )
 
-    val menuItems = listOf(
+    private fun defaultItems() = listOf(
         // Coffee
         MenuItem("c1", "Americano", "깔끔하고 진한 에스프레소에 물을 더한 기본 커피", 4500, 4.7, "coffee", "☕", popular = true),
         MenuItem("c2", "Caffè Latte", "부드러운 우유와 에스프레소의 조화", 5000, 4.8, "coffee", "🥛", popular = true),

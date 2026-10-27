@@ -12,7 +12,7 @@ import kotlin.math.max
  * 담은 메뉴는 휴대폰에 저장되므로 앱을 껐다 켜도 남아 있다.
  *
  * ───────── Order 화면을 만드는 팀원용 사용법 ─────────
- *  (Cart 화면의 주문하기 버튼은 이미 order/OrderActivity 로 연결되어 있음)
+ *  (Cart 화면의 결제하기 버튼 → PaymentBottomSheet → 결제가 끝나면 Order 탭)
  *  목록 가져오기      CartManager.getItems()          → List<CartItem>
  *  총 수량 / 총 금액   CartManager.totalCount() / CartManager.totalPrice()
  *  수량 +1 / -1       CartManager.increase(item.key) / CartManager.decrease(item.key)
@@ -21,6 +21,9 @@ import kotlin.math.max
  *  (item.key = 메뉴 ID + 옵션. 같은 메뉴라도 옵션이 다르면 다른 줄)
  *  옵션 표시          item.options  예) "ICE · Large · 샷 +1"
  *  전부 비우기        CartManager.clear()             (주문 완료 후 호출)
+ *  배달 / 포장        CartManager.fulfillment · setFulfillment(...)
+ *  배달비 · 결제 금액  CartManager.deliveryFee() · payableTotal()
+ *  최소 주문 금액      CartManager.isMinOrderReached() · shortfall()
  *  변경 알림 받기      CartManager.addListener(listener) / removeListener(listener)
  *                    → 화면의 onStart에서 add, onStop에서 remove 하면 된다.
  *  금액 표시          totalPrice().toWon()            (data/MenuRepository.kt의 함수)
@@ -65,6 +68,19 @@ object CartManager {
 
     // ───────── 읽기 ─────────
 
+    /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
+    fun deliveryFee(): Int =
+        if (items.isEmpty() || fulfillment == Fulfillment.PICKUP) 0 else DELIVERY_FEE
+
+    /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
+    fun payableTotal(): Int = totalPrice() + deliveryFee()
+
+    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
+    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
+
+    /** 최소 주문 금액까지 남은 금액 */
+    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
+
     /** 담긴 메뉴 목록 (복사본이라 바깥에서 바꿔도 장바구니는 안전) */
     /** 배달비: 포장이거나 장바구니가 비어 있으면 0원 */
     fun deliveryFee(): Int =
@@ -105,11 +121,15 @@ object CartManager {
         }
         saveAndNotify()
     }
+
+    /** 배달 / 포장 바꾸기 */
     fun setFulfillment(value: Fulfillment) {
         if (fulfillment == value) return
         fulfillment = value
         saveAndNotify()
     }
+
+    /** 수량 +1 */
     fun increase(key: String) {
         val item = items.find { it.key == key } ?: return
         item.quantity += 1

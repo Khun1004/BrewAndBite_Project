@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.brewandbite.data.MenuItem
 import com.example.brewandbite.data.toWon
-import com.example.brewandbite.favorite.bindFavorite
 import com.example.brewandbite.databinding.ItemMenuBinding
+import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewListActivity
+import com.example.brewandbite.review.ReviewManager
 
 /** 홈 화면 '추천 메뉴' 세로 리스트 (카테고리/검색 결과에 따라 바뀜) */
 class MenuAdapter(
@@ -30,7 +32,9 @@ class MenuAdapter(
             textName.text = item.name
             textDescription.text = item.description
             textPrice.text = item.price.toWon()
-            textRating.text = item.rating.toString()
+            textRating.text = ReviewManager.ratingText(item)   // 리뷰 평균 (없으면 원래 별점)
+            // ★ 별점을 누르면 → 리뷰 전체 화면
+            textRating.setOnClickListener { ReviewListActivity.start(it.context, item.id) }
 
             root.setOnClickListener { onItemClick(item) }
             buttonAdd.setOnClickListener { onAddClick(item) }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Order 화면 타임라인 한 줄: 표시(✅/🟤/⚪) · 단계 이름 · 시간 -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stepRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/textMarker"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        tools:text="✅" />
+
+    <TextView
+        android:id="@+id/textStepTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/bb_espresso"
+        android:textSize="15sp"
+        tools:text="메뉴 준비 중" />
+
+    <TextView
+        android:id="@+id/textStepTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp"
+        tools:text="오후 3:12" />
+</LinearLayout>

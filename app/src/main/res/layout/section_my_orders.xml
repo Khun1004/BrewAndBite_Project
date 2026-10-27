@@ -1,18 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- My Page 상세 화면 내용 · 🧾 주문 기록 (다음 단계) (MyDetailActivity 가 카드 안에 넣음) -->
+<!-- My Page 상세 화면 내용 · 🧾 주문 기록: 지난 주문 카드들 (메뉴마다 [리뷰 쓰기]) / 없으면 안내 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <TextView
+        android:id="@+id/textOrderCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/bb_muted"
+        android:textSize="12sp"
+        tools:text="주문 3건 · 리뷰는 배달 · 픽업이 끝난 뒤에 쓸 수 있어요" />
+
+    <!-- 주문 카드들 (코드에서 item_order_history 를 넣음) -->
+    <LinearLayout
+        android:id="@+id/orderList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:lineSpacingExtra="2dp"
-        android:paddingVertical="10dp"
-        android:text="@string/my_orders_empty"
-        android:textColor="@color/bb_muted"
-        android:textSize="13sp" />
+        android:orientation="vertical" />
+
+    <!-- 주문이 없을 때 -->
+    <LinearLayout
+        android:id="@+id/emptyOrders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingVertical="20dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_receipt"
+            app:tint="@color/bb_brown" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="@string/my_orders_empty"
+            android:textColor="@color/bb_muted"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonOrderNow"
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/bb_espresso"
+            android:paddingHorizontal="24dp"
+            android:text="@string/fav_go_menu"
+            android:textColor="@color/bb_nav_active"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
+    </LinearLayout>
 </LinearLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 결제하기 버튼 배경: 최소 주문 금액이 안 되면(비활성) 회색 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/bb_divider" android:state_enabled="false" />
+    <item android:color="@color/bb_espresso" />
+</selector>

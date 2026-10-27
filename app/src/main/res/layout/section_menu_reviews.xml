@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    메뉴 상세 화면 아래 ⭐ 리뷰 영역 (ReviewSection.kt 가 채움)
+    리뷰 ⭐4.6 (12)                  [✏️ 리뷰 쓰기]
+    ┌ 4.6  ★★★★★   5 ████████ 8 ┐
+    │ 리뷰 12개      4 ███      3 │ …
+    └──────────────────────────────┘
+    리뷰 카드 3개 + [리뷰 전체 보기]
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="26dp"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bb_divider" />
+
+    <!-- 제목 + 리뷰 쓰기 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/MenuOptionTitle"
+            android:text="@string/review_title" />
+
+        <TextView
+            android:id="@+id/textReviewCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:textColor="@color/bb_muted"
+            android:textSize="14sp"
+            tools:text="12" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonWriteReview"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingHorizontal="14dp"
+            android:textColor="@color/bb_brown"
+            android:textSize="13sp"
+            app:cornerRadius="14dp"
+            app:strokeColor="@color/bb_beige"
+            tools:text="✏️ 리뷰 쓰기" />
+    </LinearLayout>
+
+    <!-- 평균 별점 + 별점별 막대 -->
+    <LinearLayout
+        android:id="@+id/summaryBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_coupon_dday"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:minWidth="96dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textAverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/bb_espresso"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                tools:text="4.6" />
+
+            <LinearLayout
+                android:id="@+id/starsAverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:id="@+id/textAverageCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/bb_muted"
+                android:textSize="11sp"
+                tools:text="리뷰 12개" />
+        </LinearLayout>
+
+        <!-- 5점 ~ 1점 막대 (코드에서 만듦) -->
+        <LinearLayout
+            android:id="@+id/barsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <!-- 리뷰 카드들 (코드에서 item_review 를 넣음) -->
+    <LinearLayout
+        android:id="@+id/reviewList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="vertical" />
+
+    <!-- 리뷰가 없을 때 -->
+    <TextView
+        android:id="@+id/textNoReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="3dp"
+        android:paddingVertical="22dp"
+        android:text="@string/review_empty"
+        android:textColor="@color/bb_muted"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/buttonMoreReviews"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_chip"
+        android:gravity="center"
+        android:textColor="@color/bb_brown"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        tools:text="리뷰 전체 보기 (12)  ⌄"
+        tools:visibility="visible" />
+</LinearLayout>

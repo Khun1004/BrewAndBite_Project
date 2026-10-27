@@ -61,13 +61,26 @@ class MenuListActivity : AppCompatActivity() {
         binding.recyclerGrid.adapter = gridAdapter
 
         // 카테고리 칩: 인기 + 6개 카테고리
-        val chips = listOf(MenuRepository.popularCategory) + MenuRepository.categories
-        val chipAdapter = ChipAdapter(chips, startId) { category -> showCategory(category) }
         binding.recyclerChips.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        setupChips(startId)
+        showCategory(MenuRepository.findCategory(startId))
+    }
+
+    /** 지금 보고 있는 카테고리 */
+    private var currentId = ""
+
+    /** 카테고리 칩: 인기 + 카테고리들 (Firebase 메뉴가 바뀌면 다시 만듦) */
+    private fun setupChips(selectedId: String) {
+        val chips = listOf(MenuRepository.popularCategory) + MenuRepository.categories
+        val chipAdapter = ChipAdapter(chips, selectedId) { category -> showCategory(category) }
         binding.recyclerChips.adapter = chipAdapter
         binding.recyclerChips.scrollToPosition(chipAdapter.selectedIndex())
+    }
 
-        showCategory(MenuRepository.findCategory(startId))
+    /** Firebase 에서 메뉴를 (다시) 불러오면 칩 · 메뉴 다시 그리기 */
+    private val menuListener = MenuRepository.MenuListener {
+        setupChips(currentId)
+        showCategory(MenuRepository.findCategory(currentId))
     }
 
     override fun onStart() {
@@ -75,6 +88,7 @@ class MenuListActivity : AppCompatActivity() {
         CartManager.addListener(cartListener)
         updateCartBadge()
         FavoriteManager.addListener(favoriteListener)
+        MenuRepository.addListener(menuListener)
         gridAdapter.notifyDataSetChanged()
     }
 
@@ -82,6 +96,7 @@ class MenuListActivity : AppCompatActivity() {
         super.onStop()
         CartManager.removeListener(cartListener)
         FavoriteManager.removeListener(favoriteListener)
+        MenuRepository.removeListener(menuListener)
     }
 
     /** 헤더의 장바구니 숫자 (0이면 숨김) */
@@ -92,6 +107,7 @@ class MenuListActivity : AppCompatActivity() {
     }
 
     private fun showCategory(category: Category) {
+        currentId = category.id
         val items = MenuRepository.itemsFor(category.id)
         binding.textCategoryEmoji.text = category.emoji
         binding.textTitle.text = category.name

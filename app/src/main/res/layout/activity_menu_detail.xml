@@ -432,6 +432,11 @@
                     android:textColor="@color/bb_muted"
                     android:textSize="13sp"
                     android:visibility="gone" />
+
+                <!-- ⭐ 리뷰 (section_menu_reviews.xml · ReviewSection.kt) -->
+                <include
+                    android:id="@+id/reviewSection"
+                    layout="@layout/section_menu_reviews" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

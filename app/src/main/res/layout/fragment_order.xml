@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Order 탭 화면 (헤더 아래는 빈 화면 · 팀원 작업 공간) -->
+<!--
+    Order 탭 (OrderFragment)
+     ① 진행 중인 주문: 배달 현황 카드 (layout_order_tracking) — 여러 건이면 여러 장
+     ② 주문 내역: 기간 칩(오늘 · 이번 주 · 이번 달 · 전체) + 날짜별 주문 카드 (item_order_card)
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/orderRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bb_cream"
     tools:context=".order.OrderFragment">
 
-    <!-- 공통 헤더 (Cart / Store / Order / My Page 동일) -->
     <include
         android:id="@+id/pageHeader"
         layout="@layout/layout_page_header"
@@ -19,7 +21,144 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- TODO (팀원): 헤더 아래에 Order 화면 내용을 작성하세요 -->
-    <!-- 예) app:layout_constraintTop_toBottomOf="@+id/pageHeader" 로 헤더 아래에 붙이기 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollOrder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="110dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pageHeader">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- ① 진행 중인 주문 -->
+            <LinearLayout
+                android:id="@+id/trackingSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/textTrackingTitle"
+                    style="@style/MenuOptionTitle"
+                    android:layout_marginBottom="10dp"
+                    tools:text="진행 중인 주문 1건" />
+
+                <LinearLayout
+                    android:id="@+id/trackingList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <!-- ② 주문 내역 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/MenuOptionTitle"
+                    android:text="@string/order_history_title" />
+
+                <TextView
+                    android:id="@+id/textPeriodSummary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="3건 · 42,500원" />
+            </LinearLayout>
+
+            <!-- 기간: 오늘 · 이번 주 · 이번 달 · 전체 (칩은 코드에서 만듦) -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipsPeriod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+
+            <!-- 날짜 제목 + 주문 카드 (코드에서 넣음) -->
+            <LinearLayout
+                android:id="@+id/historyList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- 주문이 없을 때 -->
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_icon_circle"
+                    android:importantForAccessibility="no"
+                    android:padding="22dp"
+                    android:src="@drawable/ic_receipt"
+                    app:tint="@color/bb_brown" />
+
+                <TextView
+                    android:id="@+id/textEmptyTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="이번 주에는 주문이 없어요" />
+
+                <TextView
+                    android:id="@+id/textEmptyDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:textColor="@color/bb_muted"
+                    android:textSize="13sp"
+                    tools:text="메뉴를 담고 결제하면 여기서 확인할 수 있어요" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonGoMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/bb_espresso"
+                    android:paddingHorizontal="24dp"
+                    android:text="@string/fav_go_menu"
+                    android:textColor="@color/bb_nav_active"
+                    android:textStyle="bold"
+                    app:cornerRadius="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

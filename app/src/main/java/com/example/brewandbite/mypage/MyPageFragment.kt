@@ -20,6 +20,8 @@ import com.example.brewandbite.auth.UserRepository
 import com.example.brewandbite.common.setup
 import com.example.brewandbite.databinding.FragmentMypageBinding
 import com.example.brewandbite.favorite.FavoriteManager
+import com.example.brewandbite.order.OrderHistory
+import com.example.brewandbite.review.ReviewManager
 import com.example.brewandbite.reward.RewardManager
 import com.example.brewandbite.reward.StampCard
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -30,7 +32,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  *  - 로그인 전: 로그인 안내 카드 + [로그인 / 회원가입]
  *  - 로그인 후: 프로필 카드 + 스탬프 카드(누르면 쿠폰함) + 메뉴 목록 (왼쪽 아이콘 · 가운데 글(요약) · 오른쪽 >)
  *      줄을 누르면 상세 화면(MyDetailActivity)이 새로 열린다
- *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ♡ 찜한 메뉴 · 🔒 계정 보안
+ *      👤 내 정보 · 📍 배달 주소 · 💳 결제 수단 · 🧾 주문 기록 · ⭐ 리뷰 내역 · ♡ 찜한 메뉴 · 🔒 계정 보안
  */
 class MyPageFragment : Fragment() {
 
@@ -78,7 +80,8 @@ class MyPageFragment : Fragment() {
             binding.rowPayment to MyDetailActivity.Section.PAYMENT,
             binding.rowOrders to MyDetailActivity.Section.ORDERS,
             binding.rowFavorites to MyDetailActivity.Section.FAVORITES,
-            binding.rowSecurity to MyDetailActivity.Section.SECURITY
+            binding.rowSecurity to MyDetailActivity.Section.SECURITY,
+            binding.rowReviews to MyDetailActivity.Section.REVIEWS
         )
         rows.forEach { (row, section) ->
             row.setOnClickListener { startActivity(MyDetailActivity.intent(requireContext(), section)) }
@@ -105,6 +108,40 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    /** 리뷰가 바뀌면 '리뷰 내역' 줄 요약 다시 그리기. 예) "3개 · 평균 ★4.7" */
+    private val reviewListener = ReviewManager.ReviewListener {
+        showReviewsSummary()
+        showOrdersSummary()
+    }
+
+    private fun showReviewsSummary() {
+        val b = _binding ?: return
+        val mine = ReviewManager.myReviews()
+        b.textReviewsSummary.text = if (mine.isEmpty()) getString(R.string.my_reviews_none)
+        else getString(
+            R.string.my_reviews_summary, mine.size,
+            String.format(java.util.Locale.US, "%.1f", mine.map { it.second.rating }.average())
+        )
+    }
+
+    /** 주문 기록이 바뀌면 '주문 기록' 줄 요약 다시 그리기 */
+    private val historyListener = OrderHistory.HistoryListener { showOrdersSummary() }
+
+    /** 예) "3건 · 리뷰 쓸 메뉴 2개" */
+    private fun showOrdersSummary() {
+        val b = _binding ?: return
+        val list = OrderHistory.all()
+        // 리뷰를 기다리는 메뉴 = 끝난 주문의 메뉴 중 그 주문으로 아직 리뷰를 안 쓴 것 (주문마다 따로)
+        val toReview = list.filter { it.finished }.sumOf { o ->
+            o.items.map { it.menuId }.distinct().count { !o.isReviewed(it) && ReviewManager.reviewFor(it, o.orderNo) == null }
+        }
+        b.textOrdersSummary.text = when {
+            list.isEmpty() -> getString(R.string.my_orders_none)
+            toReview > 0 -> getString(R.string.my_orders_summary_review, list.size, toReview)
+            else -> getString(R.string.my_orders_summary, list.size)
+        }
+    }
+
     /** 스탬프·쿠폰이 바뀌면 카드를 다시 그린다 */
     private val rewardListener = RewardManager.RewardListener { _binding?.let { StampCard.bind(it.stampCard) } }
 
@@ -115,6 +152,8 @@ class MyPageFragment : Fragment() {
         super.onStart()
         FavoriteManager.addListener(favoriteListener)
         RewardManager.addListener(rewardListener)
+        OrderHistory.addListener(historyListener)
+        ReviewManager.addListener(reviewListener)
         refresh()
     }
 
@@ -122,6 +161,8 @@ class MyPageFragment : Fragment() {
         super.onStop()
         FavoriteManager.removeListener(favoriteListener)
         RewardManager.removeListener(rewardListener)
+        OrderHistory.removeListener(historyListener)
+        ReviewManager.removeListener(reviewListener)
     }
 
     private fun showFavoriteSummary() {
@@ -169,7 +210,8 @@ class MyPageFragment : Fragment() {
                 else getString(R.string.my_payment_count, list.size, default.displayName())
         }
 
-        b.textOrdersSummary.text = getString(R.string.my_menu_soon)
+        showOrdersSummary()
+        showReviewsSummary()
         showFavoriteSummary()
         StampCard.bind(b.stampCard)
         b.textSecuritySummary.text = getString(

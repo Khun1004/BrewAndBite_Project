@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 안 읽은 알림 빨간 점 (🔔 버튼 위 · 알림 목록) -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/bb_closed" />
+    <stroke
+        android:width="1.5dp"
+        android:color="@color/bb_cream" />
+</shape>

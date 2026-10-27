@@ -40,6 +40,9 @@ object FavoriteManager {
 
     fun count(): Int = favorites.size
 
+    /** 찜한 시각 (안 찜했으면 0) */
+    fun favoritedAt(menuId: String): Long = favorites[menuId] ?: 0L
+
     /** 찜한 메뉴 목록 (최근에 찜한 것이 위, 메뉴판에서 없어진 메뉴는 빼고) */
     fun favoriteItems(): List<MenuItem> =
         favorites.entries.sortedByDescending { it.value }

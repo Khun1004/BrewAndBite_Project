@@ -33,4 +33,6 @@
     <color name="bb_header_end">#1E130D</color>
     <color name="bb_glass">#1AFFFFFF</color>
     <color name="bb_glass_stroke">#2EFFFFFF</color>
+    <!-- 별점 노란색 (리뷰) -->
+    <color name="bb_star">#F2A93B</color>
 </resources>

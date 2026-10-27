@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    찜한 메뉴 카드 (한 메뉴 = 카드 한 장 · FavoriteAdapter)
+    ┌──────────────────────────────────────────┐
+    │ ┌────────┐ [☕ 커피]                  (♥) │
+    │ │   🥛   │ Caffè Latte                    │
+    │ │ (색 칸) │ 카페라떼                        │
+    │ └────────┘ ★ 4.3 · 리뷰 5 · 3일 전 찜      │
+    │ ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄ │
+    │ 5,000원                [🛒 담기] [주문 ›]   │
+    └──────────────────────────────────────────┘
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardFavorite"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/bb_divider"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- 메뉴 그림 칸 (카테고리 색) -->
+            <FrameLayout
+                android:id="@+id/plate"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:background="@drawable/bg_fav_plate">
+
+                <!-- 장식 동그라미 -->
+                <View
+                    android:id="@+id/plateRing"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.55"
+                    android:background="@drawable/bg_dot" />
+
+                <TextView
+                    android:id="@+id/textEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="42sp"
+                    tools:text="🥛" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_notice_type"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="2dp"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        tools:backgroundTint="@color/bb_beige_light"
+                        tools:text="☕ 커피" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/buttonFavorite"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_fav_button"
+                        android:padding="8dp"
+                        app:tint="@color/bb_closed"
+                        tools:src="@drawable/ic_heart" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    tools:text="Caffè Latte" />
+
+                <TextView
+                    android:id="@+id/textKorean"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/bb_brown"
+                    android:textSize="12sp"
+                    tools:text="카페라떼 · 부드러운 우유와 에스프레소의 조화" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_star"
+                        app:tint="@color/bb_star" />
+
+                    <TextView
+                        android:id="@+id/textRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        tools:text="4.3" />
+
+                    <TextView
+                        android:id="@+id/textMeta"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="11sp"
+                        tools:text="· 리뷰 5 · 3일 전 찜" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 점선 (티켓 느낌) -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_dash_line"
+            android:layerType="software" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textPrice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/bb_espresso"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                tools:text="5,000원" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonAdd"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="14dp"
+                android:text="@string/fav_add_cart"
+                android:textColor="@color/bb_brown"
+                android:textSize="13sp"
+                app:cornerRadius="14dp"
+                app:strokeColor="@color/bb_beige" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonOrder"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/bb_espresso"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="14dp"
+                android:text="@string/fav_order"
+                android:textColor="@color/bb_nav_active"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="14dp" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

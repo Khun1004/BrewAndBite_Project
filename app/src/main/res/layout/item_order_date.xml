@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 주문 내역 날짜 제목: 오늘 / 어제 / 10.24 (금) -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/textDate"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="4dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="8dp"
+    android:textColor="@color/bb_muted"
+    android:textSize="13sp"
+    android:textStyle="bold"
+    tools:text="오늘" />

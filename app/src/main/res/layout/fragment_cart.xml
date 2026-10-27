@@ -122,7 +122,6 @@
             app:cornerRadius="16dp" />
     </LinearLayout>
 
-    <!-- 아래쪽 결제 금액 -->
     <!-- 아래쪽: 수령 방법 + 결제 금액 -->
     <LinearLayout
         android:id="@+id/summaryBox"
@@ -152,9 +151,9 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@drawable/bb_toggle_bg"
+                android:backgroundTint="@color/bb_toggle_bg"
                 android:text="@string/cart_mode_delivery"
-                android:textColor="@drawable/bb_toggle_text"
+                android:textColor="@color/bb_toggle_text"
                 app:strokeColor="@color/bb_brown" />
 
             <com.google.android.material.button.MaterialButton
@@ -163,9 +162,9 @@
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@drawable/bb_toggle_bg"
+                android:backgroundTint="@color/bb_toggle_bg"
                 android:text="@string/cart_mode_pickup"
-                android:textColor="@drawable/bb_toggle_text"
+                android:textColor="@color/bb_toggle_text"
                 app:strokeColor="@color/bb_brown" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -290,8 +289,8 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="12dp"
-            android:backgroundTint="@drawable/bb_pay_bg"
-            android:textColor="@drawable/bb_pay_text"
+            android:backgroundTint="@color/bb_pay_bg"
+            android:textColor="@color/bb_pay_text"
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="18dp"

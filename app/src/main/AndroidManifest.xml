@@ -54,6 +54,27 @@
             android:name=".address.AddressSearchActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- 🧾 주문 상세 -->
+        <activity
+            android:name=".order.OrderDetailActivity"
+            android:exported="false" />
+        <!-- ⭐ 리뷰 전체 / 리뷰 쓰기 -->
+        <activity
+            android:name=".review.ReviewListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".review.ReviewWriteActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- 🔍 메뉴 검색 -->
+        <activity
+            android:name=".search.SearchActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
+        <!-- 🔔 알림함 -->
+        <activity
+            android:name=".notice.NoticeActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
