@@ -51,12 +51,23 @@ class HomeFragment : Fragment() {
         b.recyclerMenu.adapter?.notifyDataSetChanged()
     }
 
+    /** Firebase 에서 메뉴를 (다시) 불러오면 카테고리 · 인기 · 추천 · 오늘의 추천 다시 그리기 */
+    private val menuListener = MenuRepository.MenuListener {
+        if (_binding == null) return@MenuListener
+        selectedCategory = MenuRepository.findCategory(selectedCategory.id)
+        setupCategories()
+        setupPopular()
+        showTodayPick()
+        if (binding.editSearch.text.isNullOrBlank()) showCategoryItems()
+    }
+
     /** 새 알림이 오면 🔔 빨간 점 다시 그리기 */
     private val noticeListener = NoticeManager.NoticeListener { _binding?.dotBell?.bindNoticeDot() }
 
     override fun onStart() {
         super.onStart()
         NoticeManager.addListener(noticeListener)
+        MenuRepository.addListener(menuListener)
         binding.dotBell.bindNoticeDot()
         FavoriteManager.addListener(favoriteListener)
         favoriteListener.onFavoritesChanged()
@@ -101,6 +112,7 @@ class HomeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         NoticeManager.removeListener(noticeListener)
+        MenuRepository.removeListener(menuListener)
         FavoriteManager.removeListener(favoriteListener)
     }
 
@@ -157,13 +169,7 @@ class HomeFragment : Fragment() {
             binding.textBrand.text = spannable
         }
 
-        // 오늘의 추천 카드: 날짜마다 다른 메뉴 하나
-        val all = MenuRepository.menuItems
-        val today = all[Calendar.getInstance().get(Calendar.DAY_OF_YEAR) % all.size]
-        binding.textTodayEmoji.text = today.emoji
-        binding.textTodayName.text = today.name
-        binding.textTodayPrice.text = today.price.toWon()
-        binding.todayPick.setOnClickListener { MenuDetailActivity.start(requireContext(), today.id) }
+        showTodayPick()
 
         binding.imageProfile.setOnClickListener { (requireActivity() as MainActivity).showTab(MainActivity.TAB_MY) }
         // ♡ → 찜한 메뉴 화면 (로그인해야 볼 수 있음)
@@ -176,6 +182,17 @@ class HomeFragment : Fragment() {
         }
         // 🔔 → 알림함
         binding.buttonBell.setOnClickListener { NoticeActivity.start(requireContext()) }
+    }
+
+    /** 오늘의 추천 카드: 날짜마다 다른 메뉴 하나 */
+    private fun showTodayPick() {
+        val all = MenuRepository.menuItems
+        if (all.isEmpty()) return
+        val today = all[Calendar.getInstance().get(Calendar.DAY_OF_YEAR) % all.size]
+        binding.textTodayEmoji.text = today.emoji
+        binding.textTodayName.text = today.name
+        binding.textTodayPrice.text = today.price.toWon()
+        binding.todayPick.setOnClickListener { MenuDetailActivity.start(requireContext(), today.id) }
     }
 
     // ───────── 카테고리 / 인기 / 추천 / 검색 ─────────

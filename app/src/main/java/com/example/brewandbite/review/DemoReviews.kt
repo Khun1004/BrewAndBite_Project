@@ -15,8 +15,11 @@ import kotlin.random.Random
  */
 object DemoReviews {
 
-    /** false 로 바꾸면 시연용 리뷰가 모두 사라진다 */
-    const val ENABLED = true
+    /**
+     * false = 앱 안의 예시 리뷰를 안 씀 (지금은 Firebase sampleReviews 를 쓰므로 꺼 둠).
+     * Firebase 에 예시 리뷰를 못 넣었을 때만 true 로.
+     */
+    const val ENABLED = false
 
     private const val DAY = 24 * 60 * 60 * 1000L
 

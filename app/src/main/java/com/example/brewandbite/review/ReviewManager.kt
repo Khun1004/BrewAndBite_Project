@@ -18,7 +18,8 @@ import java.util.Locale
  *  - 앱이 시작되면 모든 리뷰를 불러와서(BrewBiteApp) 메뉴별 평균 별점을 계산한다.
  *  - 리뷰가 있는 메뉴는 목록 · 홈 · 상세 화면의 별점이 '실제 평균'으로 바뀐다 (없으면 원래 숫자).
  *  - 누구나 읽을 수 있고, 리뷰는 그 메뉴를 주문했고 배달·픽업이 끝난 사람만 쓸 수 있다 (OrderHistory).
- *  - 시연용으로 메뉴마다 '다른 손님' 리뷰 3~5개를 같이 보여 준다 (DemoReviews.kt · ENABLED = false 로 끄기).
+ *  - 예시 손님 리뷰는 Firebase 의 sampleReviews/{메뉴ID}/{리뷰ID} 에서 같이 불러온다
+ *    (firebase/sampleReviews.json 을 콘솔에서 가져오기 · 앱에서는 읽기만. 지우면 진짜 리뷰만 남음)
  *
  * ───────── 사용법 ─────────
  *  ReviewManager.reviews(menuId)            리뷰 목록 (최신 순)
@@ -48,9 +49,13 @@ object ReviewManager {
 
     // ───────── 읽기 ─────────
 
-    /** 리뷰 목록 (최신 순) = 손님들이 쓴 리뷰 + 시연용 다른 손님 리뷰 (DemoReviews · 끌 수 있음) */
+    /** Firebase 의 예시 손님 리뷰 (sampleReviews — 콘솔에서 넣은 읽기 전용 데이터) */
+    private var samples: Map<String, List<Review>> = emptyMap()
+
+    /** 리뷰 목록 (최신 순) = 손님들이 쓴 리뷰 + Firebase 예시 리뷰 (+ 앱 안 예시 리뷰: DemoReviews, 기본은 꺼짐) */
     fun reviews(menuId: String): List<Review> =
-        (byMenu[menuId].orEmpty() + DemoReviews.forMenu(menuId)).sortedByDescending { it.createdAt }
+        (byMenu[menuId].orEmpty() + samples[menuId].orEmpty() + DemoReviews.forMenu(menuId))
+            .sortedByDescending { it.createdAt }
 
     fun count(menuId: String): Int = reviews(menuId).size
 
@@ -163,20 +168,35 @@ object ReviewManager {
 
     // ───────── 불러오기 ─────────
 
+    /** reviews · sampleReviews 공통: 메뉴ID → 리뷰들 */
+    private fun parse(snapshot: DataSnapshot): Map<String, List<Review>> =
+        snapshot.children.associate { menu ->
+            menu.key.orEmpty() to menu.children.mapNotNull { child ->
+                child.getValue(Review::class.java)?.apply {
+                    id = child.key.orEmpty()                     // 리뷰ID = Firebase 키
+                    if (uid.isEmpty()) uid = child.key.orEmpty()  // 예전 리뷰 (키 = 회원ID)
+                }
+            }.sortedByDescending { it.createdAt }
+        }
+
     /** 앱 시작 시 한 번 (BrewBiteApp). 이후 리뷰가 바뀌면 자동으로 다시 계산 */
     fun start() {
         if (started) return
         started = true
+        // 예시 손님 리뷰 (읽기 전용)
+        FirebaseDatabase.getInstance().getReference("sampleReviews").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                samples = parse(snapshot)
+                notifyChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // 규칙에 sampleReviews 읽기가 없으면 → 예시 리뷰 없이
+            }
+        })
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                byMenu = snapshot.children.associate { menu ->
-                    menu.key.orEmpty() to menu.children.mapNotNull { child ->
-                        child.getValue(Review::class.java)?.apply {
-                            id = child.key.orEmpty()                     // 리뷰ID = Firebase 키
-                            if (uid.isEmpty()) uid = child.key.orEmpty()  // 예전 리뷰 (키 = 회원ID)
-                        }
-                    }.sortedByDescending { it.createdAt }
-                }
+                byMenu = parse(snapshot)
                 notifyChanged()
             }
 
