@@ -16,6 +16,7 @@ data class Review(
     var text: String = "",
     var orderNo: String = "",
     var options: String = "",
+    var photoCount: Int = 0,      // 📷 사진 수 (사진은 reviewPhotos 에 따로 저장 · ReviewPhotos.kt)
     var createdAt: Long = 0L,
     var updatedAt: Long = 0L
 ) {

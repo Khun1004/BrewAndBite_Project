@@ -58,6 +58,14 @@
         <activity
             android:name=".order.OrderDetailActivity"
             android:exported="false" />
+        <!-- ⭐ 리뷰 전체 / 리뷰 쓰기 -->
+        <activity
+            android:name=".review.ReviewListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".review.ReviewWriteActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <!-- 🔔 알림함 -->
         <activity
             android:name=".notice.NoticeActivity"

@@ -81,10 +81,14 @@ object ReviewManager {
 
     // ───────── 쓰기 ─────────
 
-    /** 리뷰 저장 (처음이면 등록, 이미 있으면 수정). 이름은 회원 정보에서 가져온다 */
+    /**
+     * 리뷰 저장 (처음이면 등록, 이미 있으면 수정). 이름은 회원 정보에서 가져온다.
+     * @param photos 📷 사진 (Base64, 최대 3장). 리뷰 글과 사진을 한 번에 저장한다
+     */
     fun save(
         menuId: String, rating: Int, text: String,
         orderNo: String? = null,                       // Order 탭처럼 어느 주문인지 알 때
+        photos: List<String> = emptyList(),
         onDone: (success: Boolean) -> Unit
     ) {
         val uid = AuthManager.currentUid() ?: return onDone(false)
@@ -96,19 +100,26 @@ object ReviewManager {
         if (old == null && order == null) return onDone(false)   // 주문 안 한 메뉴
         val options = order?.items?.firstOrNull { it.menuId == menuId }?.options.orEmpty()
             .substringBefore("요청:").trim().removeSuffix("·").trim()   // 요청사항은 빼고 옵션만
+        val pics = photos.take(ReviewPhotos.MAX_PHOTOS)
         UserRepository.loadMyProfile { profile ->
             val name = profile?.name?.takeIf { it.isNotBlank() }
                 ?: AuthManager.currentEmail()?.substringBefore("@").orEmpty().ifBlank { "고객" }
             val now = System.currentTimeMillis()
-            val orderNo = order?.orderNo ?: old?.orderNo.orEmpty()
+            val no = order?.orderNo ?: old?.orderNo.orEmpty()
             val review = Review(
                 uid = uid, name = name, rating = rating.coerceIn(1, 5), text = text.trim(),
-                orderNo = orderNo, options = options.ifEmpty { old?.options.orEmpty() },
+                orderNo = no, options = options.ifEmpty { old?.options.orEmpty() },
+                photoCount = pics.size,
                 createdAt = old?.createdAt ?: now, updatedAt = now
             )
-            ref.child(menuId).child(uid).setValue(review)
+            // 리뷰 글 + 사진을 한 번에 (사진이 없으면 사진 칸은 지움)
+            val updates = hashMapOf<String, Any?>(
+                "reviews/$menuId/$uid" to review,
+                ReviewPhotos.path(menuId, uid) to pics.ifEmpty { null }
+            )
+            FirebaseDatabase.getInstance().reference.updateChildren(updates)
                 .addOnSuccessListener {
-                    OrderHistory.setReviewed(orderNo, menuId, true)   // 주문 기록에 '작성 완료'
+                    OrderHistory.setReviewed(no, menuId, true)   // 주문 기록에 '작성 완료'
                     onDone(true)
                 }
                 .addOnFailureListener { onDone(false) }
@@ -118,7 +129,11 @@ object ReviewManager {
     fun delete(menuId: String, onDone: (success: Boolean) -> Unit) {
         val uid = AuthManager.currentUid() ?: return onDone(false)
         val orderNo = myReview(menuId)?.orderNo.orEmpty()
-        ref.child(menuId).child(uid).removeValue()
+        val updates = hashMapOf<String, Any?>(
+            "reviews/$menuId/$uid" to null,
+            ReviewPhotos.path(menuId, uid) to null
+        )
+        FirebaseDatabase.getInstance().reference.updateChildren(updates)
             .addOnSuccessListener {
                 OrderHistory.setReviewed(orderNo, menuId, false)   // 다시 쓸 수 있게
                 onDone(true)

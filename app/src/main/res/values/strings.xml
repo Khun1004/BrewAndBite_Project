@@ -493,4 +493,30 @@
     <string name="my_reviews_go_orders">🧾 주문 기록에서 리뷰 쓰기</string>
     <string name="my_review_edit">✏️ 수정</string>
     <string name="my_review_delete">🗑 삭제</string>
+    <!-- ⭐ 리뷰 전체 화면 · 리뷰 쓰기 화면 · 📷 사진 -->
+    <string name="review_eyebrow">REVIEWS</string>
+    <string name="review_rating_link">%1$s · 리뷰 %2$d ›</string>
+    <string name="review_more_all">리뷰 전체 보기 (%1$d)  ›</string>
+    <string name="review_list_title">리뷰 %1$d</string>
+    <string name="review_list_count">리뷰 %1$d개 · 사진 %2$d개</string>
+    <string name="review_write_short">✏️ 쓰기</string>
+    <string name="review_edit_short">✏️ 수정</string>
+    <string name="review_sort_latest">최신순</string>
+    <string name="review_sort_high">별점 높은 순</string>
+    <string name="review_sort_low">별점 낮은 순</string>
+    <string name="review_sort_photo">📷 사진 리뷰</string>
+    <string name="review_empty_photo">아직 사진 리뷰가 없어요</string>
+    <string name="review_question">이 메뉴, 어떠셨나요?</string>
+    <string name="review_order_info">%1$s 주문</string>
+    <string name="review_order_info_options">%1$s 주문 · %2$s</string>
+    <string name="review_star_desc">별점 %1$d점</string>
+    <string name="review_photo_title">📷 사진</string>
+    <string name="review_photo_desc">최대 3장 · 선택</string>
+    <string name="review_photo_count">%1$d / %2$d</string>
+    <string name="review_photo_remove">사진 빼기</string>
+    <string name="review_photo_max">사진은 %1$d장까지 올릴 수 있어요</string>
+    <string name="review_text_title">✍️ 리뷰</string>
+    <string name="review_submit_long">등록하기</string>
+    <string name="review_edit_long">수정 완료</string>
+    <string name="review_saving">저장하는 중…</string>
 </resources>

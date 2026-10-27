@@ -65,6 +65,7 @@ import com.example.brewandbite.order.OrderRecord
 import com.example.brewandbite.order.bindOrderLine
 import com.example.brewandbite.review.ReviewEditor
 import com.example.brewandbite.review.ReviewManager
+import com.example.brewandbite.review.showReviewPhotos
 import com.example.brewandbite.review.showStars
 import com.example.brewandbite.reward.CouponAdapter
 import com.example.brewandbite.reward.RewardManager
@@ -270,6 +271,7 @@ class MyDetailActivity : AppCompatActivity() {
             v.textOptions.text = review.options
             v.textOptions.visibility = if (review.options.isBlank()) View.GONE else View.VISIBLE
             v.textReview.text = review.text
+            v.photoRow.showReviewPhotos(menuId, review, 76)   // 📷 사진
             v.rowMenu.setOnClickListener { if (menu != null) MenuDetailActivity.start(this, menuId) }
             // 수정: 리뷰 쓰기 창이 내 리뷰를 채운 채로 열림
             v.buttonEdit.isEnabled = menu != null

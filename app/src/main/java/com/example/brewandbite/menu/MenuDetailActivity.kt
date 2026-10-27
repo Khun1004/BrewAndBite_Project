@@ -22,6 +22,7 @@ import com.example.brewandbite.data.toWon
 import com.example.brewandbite.databinding.ActivityMenuDetailBinding
 import com.example.brewandbite.favorite.FavoriteManager
 import com.example.brewandbite.favorite.bindFavorite
+import com.example.brewandbite.review.ReviewListActivity
 import com.example.brewandbite.review.ReviewManager
 import com.example.brewandbite.review.ReviewSection
 import com.google.android.material.chip.Chip
@@ -76,7 +77,7 @@ class MenuDetailActivity : AppCompatActivity() {
 
         showMenu()
         reviews = ReviewSection(this, binding.reviewSection, item) {
-            binding.textRating.text = ReviewManager.ratingText(item)   // 위쪽 별점도 실제 평균으로
+            showRating()   // 위쪽 별점도 실제 평균으로
         }
         setupOptions()
         setupBottomBar()
@@ -126,10 +127,19 @@ class MenuDetailActivity : AppCompatActivity() {
         val category = MenuRepository.findCategory(item.categoryId)
         binding.textEmoji.text = item.emoji
         binding.textCategory.text = "${category.emoji} ${category.nameKo}"
-        binding.textRating.text = ReviewManager.ratingText(item)
+        showRating()
+        // ★ 별점을 누르면 → 리뷰 전체 화면 (다른 사람들의 리뷰)
+        binding.textRating.setOnClickListener { ReviewListActivity.start(this, item.id) }
         binding.textName.text = item.name
         binding.textDescription.text = item.description
         binding.textBasePrice.text = item.price.toWon()
+    }
+
+    /** 위쪽 별점: "4.6 · 리뷰 12 ›" (리뷰가 없으면 "4.6") */
+    private fun showRating() {
+        val count = ReviewManager.count(item.id)
+        binding.textRating.text = if (count > 0) getString(R.string.review_rating_link, ReviewManager.ratingText(item), count)
+        else ReviewManager.ratingText(item)
     }
 
     // ───────── 옵션 ─────────

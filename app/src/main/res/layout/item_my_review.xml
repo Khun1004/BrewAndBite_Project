@@ -101,6 +101,15 @@
             tools:text="ICE · Large"
             tools:visibility="visible" />
 
+        <!-- 📷 리뷰 사진 (코드에서 채움) -->
+        <LinearLayout
+            android:id="@+id/photoRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/textReview"
             android:layout_width="match_parent"
