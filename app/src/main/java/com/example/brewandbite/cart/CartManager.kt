@@ -84,11 +84,13 @@ object CartManager {
     /** 실제 결제 금액 = 메뉴 합계 + 배달비 */
     fun payableTotal(): Int = totalPrice() + deliveryFee()
 
-    /** 최소 주문 금액 달성 여부 (배달비 제외, 메뉴 합계 기준) */
-    fun isMinOrderReached(): Boolean = totalPrice() >= MIN_ORDER_AMOUNT
+    /** 최소 주문 금액 달성 여부 (포장은 최소 금액 없음) */
+    fun isMinOrderReached(): Boolean =
+        items.isNotEmpty() && (fulfillment == Fulfillment.PICKUP || totalPrice() >= MIN_ORDER_AMOUNT)
 
-    /** 최소 주문 금액까지 남은 금액 */
-    fun shortfall(): Int = max(0, MIN_ORDER_AMOUNT - totalPrice())
+    /** 최소 주문 금액까지 남은 금액 (포장이면 0) */
+    fun shortfall(): Int =
+        if (fulfillment == Fulfillment.PICKUP) 0 else max(0, MIN_ORDER_AMOUNT - totalPrice())
 
     // ───────── 바꾸기 ─────────
 

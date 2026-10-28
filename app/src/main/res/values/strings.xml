@@ -552,4 +552,6 @@
     <string name="fav_order">주문 ›</string>
     <string name="fav_meta_reviews">리뷰 %1$d</string>
     <string name="fav_meta_ago">%1$s 찜</string>
+    <string name="pay_card_add">+ 새 카드 추가</string>
+    <string name="pay_card_masked">••••  ••••  ••••  %1$s</string>
 </resources>

@@ -133,112 +133,392 @@
                 android:layout_marginVertical="14dp"
                 android:background="@color/bb_divider" />
 
-            <RadioGroup
-                android:id="@+id/groupMethod"
+            <!-- 결제 수단 (브랜드 색) -->
+            <LinearLayout
+                android:id="@+id/layoutMethods"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/rbCard"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCard"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:checked="true"
-                    android:text="  💳  신용 · 체크카드"
-                    android:textColor="@color/bb_espresso"
-                    android:textSize="15sp"
-                    app:buttonTint="@color/bb_brown" />
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="@color/bb_espresso"
+                    android:text="신용 · 체크카드"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#3E2723" />
 
-                <RadioButton
-                    android:id="@+id/rbKakao"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKakao"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="  💛  카카오페이"
-                    android:textColor="@color/bb_espresso"
-                    android:textSize="15sp"
-                    app:buttonTint="@color/bb_brown" />
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#FEE500"
+                    android:text="카카오페이"
+                    android:textColor="#191919"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#3E2723" />
 
-                <RadioButton
-                    android:id="@+id/rbNaver"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNaver"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="  💚  네이버페이"
-                    android:textColor="@color/bb_espresso"
-                    android:textSize="15sp"
-                    app:buttonTint="@color/bb_brown" />
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#03C75A"
+                    android:text="네이버페이"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#3E2723" />
 
-                <RadioButton
-                    android:id="@+id/rbToss"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnToss"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:text="  💙  토스페이"
-                    android:textColor="@color/bb_espresso"
-                    android:textSize="15sp"
-                    app:buttonTint="@color/bb_brown" />
-            </RadioGroup>
+                    android:layout_height="52dp"
+                    android:backgroundTint="#0064FF"
+                    android:text="토스페이"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:cornerRadius="14dp"
+                    app:strokeColor="#3E2723" />
+            </LinearLayout>
 
             <!-- 카드 입력 폼 (카드 선택 시만 표시) -->
+            <!-- 카드 영역 (카드 선택 시만 표시) -->
             <LinearLayout
-                android:id="@+id/layoutCardForm"
+                android:id="@+id/layoutCardArea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputCardNumberLayout"
+                <!-- 저장된 카드 목록 -->
+                <LinearLayout
+                    android:id="@+id/layoutSavedCards"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="카드 번호 (16자리)">
+                    android:orientation="vertical" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/editCardNumber"
+
+
+                <!-- 카드 미리보기 -->
+                <FrameLayout
+                    android:id="@+id/cardPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/bg_card_preview"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/textCardBrand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|end"
+                        android:text="CARD"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold|italic" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|start"
+                        android:text="BREW &amp; BITE"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textCardNumberPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="monospace"
+                        android:text="••••  ••••  ••••  ••••"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|start"
+                        android:text="VALID THRU"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/textCardExpiryPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:fontFamily="monospace"
+                        android:text="MM/YY"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
+
+                <!-- 새 카드 입력 폼 -->
+                <LinearLayout
+                    android:id="@+id/layoutCardForm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/toggleOrigin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLength="19" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginBottom="10dp"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDomestic"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@drawable/bb_toggle_bg"
+                            android:text="국내 발행 카드"
+                            android:textColor="@drawable/bb_toggle_text"
+                            app:strokeColor="@color/bb_brown" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnForeign"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@drawable/bb_toggle_bg"
+                            android:text="해외 발행 카드"
+                            android:textColor="@drawable/bb_toggle_text"
+                            app:strokeColor="@color/bb_brown" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    <TextView
+                        android:id="@+id/textForeignNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:text="VISA · Mastercard · AMEX · JCB 등 해외에서 발행된 카드예요"
+                        android:textColor="@color/bb_muted"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                    <LinearLayout
+                        android:id="@+id/rowIssuer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/bg_coupon_dday"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="52dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="14dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="카드사"
+                            android:textColor="@color/bb_espresso"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textIssuer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="카드사를 선택해 주세요"
+                            android:textColor="@color/bb_brown"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="4dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/bb_muted" />
+                    </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputExpiryLayout"
-                        android:layout_width="0dp"
+                        android:id="@+id/inputCardNumberLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:hint="유효기간 (MM/YY)">
+                        android:hint="카드 번호 (16자리)">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editExpiry"
+                            android:id="@+id/editCardNumber"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:maxLength="5" />
+                            android:maxLength="19" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/inputCvcLayout"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:hint="CVC (3자리)"
-                        app:endIconMode="password_toggle">
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editCvc"
-                            android:layout_width="match_parent"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputExpiryLayout"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="numberPassword"
-                            android:maxLength="3" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:hint="유효기간 (MM/YY)">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editExpiry"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="number"
+                                android:maxLength="5" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/inputCvcLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:hint="CVC (3자리)"
+                            app:endIconMode="password_toggle">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editCvc"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberPassword"
+                                android:maxLength="3" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/checkSaveCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:checked="true"
+                        android:text="이 카드를 저장하고 다음에 간편하게 결제"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="13sp"
+                        app:buttonTint="@color/bb_brown" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 배달 요청사항 (배달일 때만 표시) -->
+            <!-- 배달 주소 + 요청사항 (배달일 때만 표시) -->
+            <LinearLayout
+                android:id="@+id/layoutDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="배달 주소"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/rowAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_coupon_dday"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <TextView
+                        android:id="@+id/textAddress"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/bb_espresso"
+                        android:textSize="14sp"
+                        tools:text="서울시 강남구 테헤란로 123 101호" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="변경"
+                        android:textColor="@color/bb_brown"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="배달 요청사항"
+                    android:textColor="@color/bb_espresso"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    app:selectionRequired="false"
+                    app:singleSelection="true" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputNoteLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:hint="요청사항을 직접 입력해 주세요"
+                    android:visibility="gone">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editRequestNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:maxLength="60"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+            <!-- 결제 실패 안내 -->
+            <TextView
+                android:id="@+id/textPayError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:text="결제에 실패했어요. 카드 정보를 확인하고 다시 시도해 주세요."
+                android:textColor="#C62828"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonPay"
                 android:layout_width="match_parent"

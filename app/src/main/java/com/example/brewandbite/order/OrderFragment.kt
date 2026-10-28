@@ -1,8 +1,10 @@
 package com.example.brewandbite.order
 
+
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +12,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -81,7 +84,7 @@ class OrderFragment : Fragment() {
 
     /** 주문 기록에 채워 넣은 주문번호 (주문 기록 기능 전에 한 주문, 한 번만) */
     private var backfilled = ""
-
+    private val riderStage = mutableMapOf<String, Int>()
     private val historyListener = OrderHistory.HistoryListener { refreshAll() }
     private val reviewListener = ReviewManager.ReviewListener { refreshAll() }
 
@@ -205,15 +208,18 @@ class OrderFragment : Fragment() {
     /** 배달 현황 카드 1장 */
     private inner class Tracker(val b: LayoutOrderTrackingBinding, val record: OrderRecord) {
         private val stages = record.stages()
+        private val stepIcons = if (record.delivery)
+            listOf(R.drawable.ic_receipt, R.drawable.ic_coffee, R.drawable.ic_delivery, R.drawable.ic_home)
+        else listOf(R.drawable.ic_receipt, R.drawable.ic_coffee, R.drawable.ic_takeout)
         private val icons = mutableListOf<ImageView>()
         private val labels = mutableListOf<TextView>()
         private var lastStage = -1
+        private var painted = false
         private var pulse: ObjectAnimator? = null
-
+        private val riderStage = mutableMapOf<String, Int>()
         init {
             b.textOrderNo.text = record.orderNo
             b.textMode.text = getString(if (record.delivery) R.string.order_mode_delivery_chip else R.string.order_mode_pickup_chip)
-            b.imageRider.setImageResource(if (record.delivery) R.drawable.ic_delivery else R.drawable.ic_takeout)
             b.textSummary.text = getString(R.string.order_summary_total, record.summary, record.total.toWon())
             buildSteps()
             buildDetail()
@@ -232,9 +238,7 @@ class OrderFragment : Fragment() {
         private fun buildSteps() {
             val ctx = requireContext()
             val d = resources.displayMetrics.density
-            val stepIcons = if (record.delivery)
-                listOf(R.drawable.ic_receipt, R.drawable.ic_coffee, R.drawable.ic_delivery, R.drawable.ic_home)
-            else listOf(R.drawable.ic_receipt, R.drawable.ic_coffee, R.drawable.ic_takeout)
+
             stages.forEachIndexed { i, stage ->
                 val col = LinearLayout(ctx).apply {
                     orientation = LinearLayout.VERTICAL
@@ -298,28 +302,45 @@ class OrderFragment : Fragment() {
                 if (room > 0) b.imageRider.translationX = (room * ratio).toFloat()
             }
 
+            // 단계에 맞는 아이콘이 진행 바 위를 움직인다 (접수 → 준비 → 배달/포장 → 도착)
+            b.imageRider.setImageResource(stepIcons[cur])
+            val before = riderStage[record.orderNo]
+            if (before != null && before != cur) {
+                b.imageRider.scaleX = 0.5f
+                b.imageRider.scaleY = 0.5f
+                b.imageRider.animate().scaleX(1f).scaleY(1f).setDuration(400)
+                    .setInterpolator(OvershootInterpolator(2.5f)).start()
+            }
+            riderStage[record.orderNo] = cur
+
             if (cur != lastStage) {
                 lastStage = cur
                 paintSteps(cur, finished, last)
             }
         }
 
-        /** 끝난 단계: 살구색 · 지금 단계: 살구색 + 두근두근 · 남은 단계: 점선 */
+        /** 지난 단계: ✓ · 지금 단계: 자기 아이콘 + 두근두근 · 남은 단계: 흐리게 */
         private fun paintSteps(cur: Int, finished: Boolean, last: Int) {
             val ctx = requireContext()
+            val firstPaint = !painted
+            painted = true
             pulse?.cancel()
             icons.forEachIndexed { i, icon ->
                 val reached = i <= cur
+
+                // 지난 단계는 체크, 나머지는 원래 아이콘
+                icon.setImageResource(stepIcons[i])
                 icon.setBackgroundResource(if (reached) R.drawable.bg_stamp_filled else R.drawable.bg_stamp_empty)
                 icon.imageTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(ctx, if (reached) R.color.bb_espresso else R.color.bb_glass_stroke)
                 )
+                icon.alpha = if (reached) 1f else 0.5f
                 icon.scaleX = 1f
                 icon.scaleY = 1f
                 labels[i].setTextColor(ContextCompat.getColor(ctx, if (reached) R.color.bb_cream else R.color.bb_nav_inactive))
-                labels[i].setTypeface(null, if (i == cur) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+                labels[i].setTypeface(null, if (i == cur) Typeface.BOLD else Typeface.NORMAL)
             }
-            // 지금 단계 아이콘을 살짝 커졌다 작아졌다 (끝났으면 멈춤)
+            // 지금 단계 아이콘만 계속 두근두근 (끝났으면 멈춤)
             if (!finished && cur <= last) {
                 val icon = icons[cur]
                 pulse = ObjectAnimator.ofFloat(icon, View.SCALE_X, 1f, 1.15f).apply {

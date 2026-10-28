@@ -32,7 +32,11 @@ object OrderManager {
         val deliveryFee: Int = 0,
         val discount: Int = 0,           // 쿠폰 할인 금액 (없으면 0)
         val couponTitle: String = "",    // 사용한 쿠폰 이름 (없으면 빈 글자)
-        val stampsEarned: Int = 0        // 이 주문으로 받은 스탬프 수
+        val stampsEarned: Int = 0,     // 이 주문으로 받은 스탬프 수
+        val paymentMethod: String = "",  // 예) "신용·체크카드 ****3456"
+        val requestNote: String = "",     // 배달 요청사항
+        val address: String = ""
+
     ) {
         /** 실제 결제 금액 = 메뉴 합계 + 배달비 - 쿠폰 할인 */
         val total: Int get() = (subtotal + deliveryFee - discount).coerceAtLeast(0)
@@ -63,10 +67,14 @@ object OrderManager {
         deliveryFee: Int,
         discount: Int = 0,
         couponTitle: String = "",
-        stampsEarned: Int = 0
+        stampsEarned: Int = 0,
+        paymentMethod: String = "",
+        requestNote: String = "",
+        address: String = ""
     ): OrderInfo {
         val now = System.currentTimeMillis()
         val date = SimpleDateFormat("yyyyMMdd", Locale.KOREA).format(Date(now))
+
         val order = OrderInfo(
             orderNo = "BB-$date-${(1000..9999).random()}",
             placedAt = now,
@@ -76,8 +84,12 @@ object OrderManager {
             deliveryFee = deliveryFee,
             discount = discount,
             couponTitle = couponTitle,
-            stampsEarned = stampsEarned
+            stampsEarned = stampsEarned,
+            paymentMethod = paymentMethod,
+            requestNote = requestNote,
+            address = address
         )
+          // 배달 요청사항
         current = order
         prefs.edit().putString(KEY_ORDER, gson.toJson(order)).apply()
         // 주문 기록 (My Page → 주문 기록 · 리뷰 쓰기 자격) + 🔔 알림
